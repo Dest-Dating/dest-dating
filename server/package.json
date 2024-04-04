@@ -1,0 +1,13 @@
+{
+  "name": "dest",
+  "version": "1.0.0",
+  "description": "Dating app for coding enthusiasts",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "AXV",
+  "license": "MIT"
+}
