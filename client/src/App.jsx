@@ -1,6 +1,13 @@
 import "./App.css";
 import { userRequest } from "./requestMethods";
 import { useSelector } from "react-redux";
+import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Home from "./components/Home";
+
 function App() {
   // user data of currently logged in user from redux state
   const currentUser = useSelector((state) => state?.user?.currentUser);
@@ -12,7 +19,11 @@ function App() {
 
   return (
     <>
-      <h1>hola</h1>
+      <Routes>
+        <Route path="/" element={<Login />}></Route>
+        <Route path="/register" element={<Register />}></Route>
+        <Route path="/home/*" element={<Home />}></Route>
+      </Routes>
     </>
   );
 }
