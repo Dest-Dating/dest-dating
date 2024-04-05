@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const billSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -39,12 +39,6 @@ const userSchema = new mongoose.Schema(
     location: [
       {
         type: Number,
-      },
-    ],
-    bills: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Bills",
       },
     ],
     rejectedArray: [
@@ -104,4 +98,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Bill", userSchema);
