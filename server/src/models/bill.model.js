@@ -2,95 +2,24 @@ const mongoose = require("mongoose");
 
 const billSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
+    subscriber: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
-    age:{
-      type: Number,
-      required: true
+    startDate:{
+      type: Date
     },
-    email:{
-      type: String,
-      required: true,
-      unique: true,
+    endDate:{
+      type: Date
     },
-    hashedPassword:{
-      type: String,
-      required: true,
+    amount:{
+      type: Integer
     },
-    phoneNumber:{
-      type: Number
-    },
-    height: {
-      type: Number,
-      required: true,
-    },
-    gender:{
-      type: String,
-      enum: ["Male", "Female", "NonBinary"],
-      required: true,
-    },
-    interestedInGender: {
-      type: String,
-      enum: ["Male", "Female", "NonBinary"],
-      required: true,
-    },
-    location: [
-      {
-        type: Number,
-      },
-    ],
-    rejectedArray: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    likedArray: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    matchedArray: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    chatArray: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Message",
-      },
-    ],
-    mainProfilePhotoLink:{
+    transactionId:{
       type: String
     },
-    photosLink: [
-      {
-        type: String,
-      },
-    ],
-    passwordConfirmed:{
-      type: String,
-      required: true,
-    },
-    passwordChangedAt:{
-      type: Date,
-    },
-    passwordResetToken:{
+    billingAddress:{
       type: String
-    },
-    passwordResetExpires:{
-      type: Number,
-    },
-    otp: {
-      type: Number,
-    },
-    isEmailVerified: {
-      type: Boolean,
     },
   },
   {

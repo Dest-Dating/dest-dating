@@ -7,10 +7,10 @@ const multer = require("multer");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
 
-const { login, signup, verification } = require("../controllers/auth");
-const { auth } = require("../middlewares/Auth");
-const { postChat, getChats } = require("../controllers/chat");
-const { addComment, getComments } = require("../controllers/commentController");
+// const { login, signup, verification } = require("../controllers/auth");
+// const { auth } = require("../middlewares/Auth");
+// const { postChat, getChats } = require("../controllers/chat");
+// const { addComment, getComments } = require("../controllers/commentController");
 
 // Multer storage configuration
 const storage = multer.diskStorage({
