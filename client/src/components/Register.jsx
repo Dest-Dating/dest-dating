@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "react-google-login";
+
 import { toast, ToastContainer } from "react-toastify";
 import NecessaryQuestions from "./NecessaryQuestions";
 import "react-toastify/dist/ReactToastify.css";
+import { GoogleLogin } from "@react-oauth/google";
+import { googleAuthInitiator } from "../utils/googleOAuth";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -143,24 +145,24 @@ function Register() {
               >
                 Register
               </button>
+              {/* Custom oAuth */}
+
               {/* Google Sign-In Button */}
-              <div className="hover:bg-gray-100">
-                <GoogleLogin
-                  className="hover:bg-gray-200 w-full"
-                  clientId="YOUR_CLIENT_ID"
-                  buttonText="Sign in with Google"
-                  onSuccess={responseGoogle}
-                  onFailure={responseGoogle}
-                  cookiePolicy={"single_host_origin"}
-                />
-              </div>
               <ToastContainer />
             </form>
+            <button
+              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+              onClick={(e) => {
+                googleAuthInitiator(e);
+              }}
+            >
+              Google Sign in
+            </button>
           </div>
         </div>
       )}
       {/* Render component after registration */}
-      {verified && <NecessaryQuestions />}
+      {/* {verified && <NecessaryQuestions />} */}
     </div>
   );
 }
