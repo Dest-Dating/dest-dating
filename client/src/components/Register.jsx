@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
+import { toast, ToastContainer } from "react-toastify";
+import NecessaryQuestions from "./NecessaryQuestions";
+import "react-toastify/dist/ReactToastify.css";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -9,7 +12,6 @@ function Register() {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [verified, setVerified] = useState(false);
-  const [signUpStage, setSignUpStage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,18 +34,13 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== verifyPassword) {
-      alert("Passwords do not match");
+      // alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
-
     // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
-
-    // Reset form fields
-    setEmail("");
-    setPassword("");
-    setVerifyPassword("");
     setVerified(true);
   };
 
@@ -147,14 +144,17 @@ function Register() {
                 Register
               </button>
               {/* Google Sign-In Button */}
-              <GoogleLogin
-                className="hover:bg-gray-100"
-                clientId="YOUR_CLIENT_ID"
-                buttonText="Sign in with Google"
-                onSuccess={responseGoogle}
-                onFailure={responseGoogle}
-                cookiePolicy={"single_host_origin"}
-              />
+              <div className="hover:bg-gray-100">
+                <GoogleLogin
+                  className="hover:bg-gray-200 w-full"
+                  clientId="YOUR_CLIENT_ID"
+                  buttonText="Sign in with Google"
+                  onSuccess={responseGoogle}
+                  onFailure={responseGoogle}
+                  cookiePolicy={"single_host_origin"}
+                />
+              </div>
+              <ToastContainer />
             </form>
           </div>
         </div>
