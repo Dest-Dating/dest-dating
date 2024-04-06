@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-import DateOfBirthPicker from "./RegisterQuestions/DateOfBirthPicker";
-import NameQuestion from "./RegisterQuestions/NameQuestion";
-import GenderPicker from "./RegisterQuestions/GenderPicker";
-import NecessaryQuestions from "./NecessaryQuestions";
-import "react-datepicker/dist/react-datepicker.css";
+// import { GoogleLogin } from "react-google-login";
+import { GoogleLogin, googleLogout } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { googleAuthInitiator } from "../utils/googleOAuth";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [verified, setVerified] = useState(true);
+  const [verified, setVerified] = useState(false);
   const [signUpStage, setSignUpStage] = useState(1);
   const navigate = useNavigate();
 
@@ -28,14 +28,31 @@ function Register() {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleVerifyPasswordChange = (e) => {
+    setVerifyPassword(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
+    if (password !== verifyPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
+
     // Reset form fields
     setEmail("");
     setPassword("");
+    setVerifyPassword("");
+    setVerified(true);
+  };
+
+  const responseGoogle = (response) => {
+    console.log(response);
+    // Handle Google Sign-In logic here
   };
 
   return (
@@ -59,7 +76,7 @@ function Register() {
               />
             </div>
 
-            {/* Right side: Login form */}
+            {/* Right side: Registration form */}
             <form
               onSubmit={handleSubmit}
               className="bg-white p-10 rounded-lg shadow-md w-full lg:w-4/5"
@@ -103,18 +120,18 @@ function Register() {
               </div>
               <div className="mb-6">
                 <label
-                  htmlFor="password"
+                  htmlFor="verifyPassword"
                   className="block text-gray-700 font-bold mb-2"
                 >
                   Confirm Password
                 </label>
                 <input
                   type="password"
-                  id="password"
-                  value={password}
-                  onChange={handlePasswordChange}
+                  id="verifyPassword"
+                  value={verifyPassword}
+                  onChange={handleVerifyPasswordChange}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                  placeholder="Enter your password"
+                  placeholder="Confirm your password"
                   required
                 />
               </div>
@@ -122,20 +139,49 @@ function Register() {
                 onClick={() => {
                   navigate("/");
                 }}
+                className="mb-2 text-center cursor-pointer text-blue-500"
               >
-                already registered? click here
+                Already registered? Click here to sign in
               </div>
               <button
                 type="submit"
-                className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
               >
                 Register
               </button>
+              {/* Custom oAuth */}
+
+              {/* Google Sign-In Button */}
+              {/* <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  console.log(jwtDecode(credentialResponse.credential));
+                }}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
+              <button
+                onClick={(e) => {
+                  e.preventDefault;
+                  googleLogout();
+                }}
+              >
+                logout
+              </button> */}
             </form>
+            <button
+              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+              onClick={(e) => {
+                googleAuthInitiator(e);
+              }}
+            >
+              Google Sign in
+            </button>
           </div>
         </div>
       )}
-      {verified && <NecessaryQuestions />}
+      {/* Render component after registration */}
+      {/* {verified && <NecessaryQuestions />} */}
     </div>
   );
 }

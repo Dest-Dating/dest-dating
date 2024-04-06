@@ -23,9 +23,9 @@ const GenderPicker = ({ currentStage, setCurrentStage }) => {
 
   return (
     <div
-      className={`fixed top-0 right-0 bottom-0 z-50 bg-black bg-opacity-50 ${
-        isOpen ? "w-full" : "w-0"
-      } overflow-hidden transition-all duration-500`}
+      className={`fixed top-0 right-0 bottom-0 left-0 z-50 bg-black bg-opacity-50 transition-opacity duration-500 ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
     >
       <div className="flex justify-center min-h-screen bg-pink-50">
         <div
