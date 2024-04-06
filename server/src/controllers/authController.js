@@ -6,6 +6,38 @@ const {promisify} = require('util');
 const crypto = require("crypto");
 const User = require("../models/user.model");
 
+const querystring = require("querystring");
+
+
+function getGoogleAuthURL() {
+
+    const SERVER_ROOT_URI = process.env.SERVER_ROOT_URI;
+    const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+
+    const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const options = {
+        redirect_uri: `${SERVER_ROOT_URI}/${SERVER_ROOT_URI}`,
+        client_id: GOOGLE_CLIENT_ID,
+        access_type: "offline",
+        response_type: "code",
+        prompt: "consent",
+        scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",].join(" "),
+    };
+
+    return `${rootUrl}?${querystring.stringify(options)}`;
+}
+
+// Getting login URL
+exports.getGoogleUrl = (req, res, next) => {
+    return res.status(200).json({
+        url: getGoogleAuthURL()
+    });
+}
+
+
+//todo: check for changes as we halting oauth from frontend
+//todo: check for security measures when using oauth
+
 //returns a jwt token created using given id
 const signToken = (id) => {
     return jwt.sign({id: id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
@@ -34,34 +66,11 @@ const createSendToken = (user, status, res) => {
     });
 }
 
-exports.signupDummy = catchAsync(async (req, res, next) => {
-    const newUser = await User.create({
-        email: req.body.email,
-        name: req.body.name,
-        // dob: req.body.dob,
-        height: req.body.height,
-        phoneNumber: req.body.phoneNumber,
-        password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm, // emailVerificationOtp: otp,
-        gender: req.body.gender,
-        interestedInGender: req.body.interestedInGender,
-        rank: req.body.rank
-    });
-
-
-    // await User.updateOne({email: req.body.email}, {isEmailVerified: true, emailVerificationOtp: null}, {new: true});
-    let updatedUser = await User.findOne({email: req.body.email});
-    updatedUser = {...updatedUser}._doc;
-    createSendToken(updatedUser, 201, res);
-});
-
 //to sing up the user
-//checked
+//checked normal, checked oauth
 exports.signup = catchAsync(async (req, res, next) => {
 
-    //todo: add more fields
     if (!req.body.email) return next(new AppError("Email id not provided", 400));
-
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     // check if the user already exists
@@ -74,16 +83,28 @@ exports.signup = catchAsync(async (req, res, next) => {
         });
     }
 
-    //not simply using req.body due to security reasons
-    const newUser = await User.create({
+    const isOAuth = req.body.isOAuth;
+
+    //a user with dummy required credentials will be created if it is isOAuth
+    //the document created will be updated to delete those fields if it is isOAuth
+    let newUser = await User.create({
         email: req.body.email,
-        name: req.body.name,
-        password: req.body.password,
-        passwordConfirm: req.body.passwordConfirm,
-        emailVerificationOtp: otp,
-        phone: req.body.phone,
-        rank: req.body.rank
+        isOAuth: isOAuth,
+
+        phoneNumber: isOAuth ? "0000000000" : req.body.phoneNumber,
+        password: isOAuth ? "duck123!@#" : req.body.password,
+        passwordConfirm: isOAuth ? "duck123!@#" : req.body.passwordConfirm,
+        emailVerificationOtp: !isOAuth ? otp : undefined,
     });
+
+    //if isOAuth, update fields and then send token
+    if (isOAuth) {
+        newUser = await User.findOneAndUpdate(newUser, {
+            phoneNumber: null, password: null, passwordConfirm: null, isEmailVerified: true
+        }, {new: true, runValidators: false});
+
+        return createSendToken(newUser, 200, res);
+    }
 
     console.log(otp);
 
@@ -95,28 +116,31 @@ exports.signup = catchAsync(async (req, res, next) => {
     // });
 
     res.status(200).json({
-        status: "successes", data: {phone: newUser.phone, email: newUser.email, name: newUser.name}
+        status: "success", data: {phoneNumber: newUser.phoneNumber, email: newUser.email, isOAuth: !!isOAuth}
     })
 });
 
-//checked
+//checked normal, no need for oauth
 exports.verifyEmail = catchAsync(async (req, res, next) => {
-    const {email, emailVerificationOtp} = req.body;
+    const {email, emailVerificationOtp, isAOth} = req.body;
 
-    if (!email || !emailVerificationOtp) return res.status(400).json({
-        status: "fail", message: "Please enter OTP"
-    });
+    let user = null;
 
-    const user = await User.findOne({email}).select("+emailVerificationOtp");
-    if (!user) return res.status(406).json({
-        status: "fail", message: "No user with this email id"
-    });
+    if (!isAOth) {
+        if (!email || !emailVerificationOtp) return res.status(400).json({
+            status: "fail", message: "Please enter OTP"
+        });
 
-    if (user.isEmailVerified) return res.status(200).json({
-        status: "success", message: "user already verified"
-    });
+        user = await User.findOne({email}).select("+emailVerificationOtp");
+        if (!user) return res.status(406).json({
+            status: "fail", message: "No user with this email id"
+        });
+        if (user.isEmailVerified) return res.status(200).json({
+            status: "success", message: "user already verified"
+        });
+    }
 
-    if (user.emailVerificationOtp === emailVerificationOtp) {
+    if (isAOth || user.emailVerificationOtp === emailVerificationOtp) {
         await User.updateOne({email}, {isEmailVerified: true, emailVerificationOtp: null}, {new: true});
         let updatedUser = await User.findOne({email});
         updatedUser = {...updatedUser}._doc;
@@ -129,6 +153,8 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     });
 })
 
+
+//todo: check for bugs
 exports.login = catchAsync(async (req, res, next) => {
     let {loginField, password} = req.body;
 
@@ -139,9 +165,14 @@ exports.login = catchAsync(async (req, res, next) => {
 
     //check if user exists and password is correct
     //we have restricted the default selection of password, so we explicitly select password
-    const filter = loginField.includes("@") ? {email: loginField} : {phone: loginField};
-    console.log(filter);
+    const filter = loginField.includes("@") ? {email: loginField} : {phoneNumber: loginField};
     let user = await User.findOne(filter).select('+password');
+
+    //todo: i was here
+    //check if user is oauth
+    //if yes then check if he has password
+    //if has, then try to login
+    //if no,
 
     if (!user || !(await user.correctPassword(password, user.password))) return next(new AppError("Incorrect phone number/email or password!", 401));
 
@@ -155,8 +186,7 @@ exports.logout = catchAsync(async (req, res, next) => {
         httpOnly: true, expires: new Date(0)
     }).json({
         status: "success", message: "cookie deleted"
-    })
-
+    });
 });
 
 
@@ -277,7 +307,6 @@ exports.addUserToRequest = async (req, res, next) => {
 //makes sure that user is logged in == has a valid bearer token
 //if all is good, that user is added to the req
 exports.protect = catchAsync(async (req, res, next) => {
-    console.log(req);
     let token = req.cookies.jwt;
 
     // check if there is a token
