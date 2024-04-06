@@ -4,26 +4,24 @@ const authController = require("./../controllers/authController");
 const router = express.Router();
 
 // get basic details about a user
-router.get("/test", (req, res, next) => {
-  res.status(200).json({
-    status: "success",
-    message: "user test successful",
-  });
+router.get('/test', (req, res, next) => {
+    res.status(200).json({
+        status: "success", message: "user test successful"
+    });
 });
 
-router.post("/signup", authController.signup); //ok
 
-router.get("/auth/google/url", authController.getGoogleUrl);
-router.get("/auth/google/", authController.authGoogle);
+router.post('/signup', authController.signup); //ok
 
-router.post("/verifyEmail", authController.verifyEmail); //ok
-router.post(
-  "/updateDetails",
-  authController.protect,
-  userController.updateUserDetails
-);
+router.get('/auth/google/url', authController.getGoogleUrl);
+router.get('/auth/google/', authController.authGoogle);
 
-router.post("/login", authController.login); //ok
+
+router.post('/verifyEmail', authController.verifyEmail); //ok
+router.post("/updateDetails", authController.protect, userController.updateUserDetails);
+
+router.post('/login', authController.login); //ok
+
 
 const { getRecommendations } = require("../controllers/recommendationAlgo");
 const { likeUser, rejectUser } = require("../controllers/matchController");
