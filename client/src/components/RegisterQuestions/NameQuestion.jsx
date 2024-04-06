@@ -19,17 +19,17 @@ const UserInfoForm = ({ currentStage, setCurrentStage }) => {
 
   return (
     <div
-      className={`fixed top-0 right-0 bottom-0 z-50 bg-black bg-opacity-50 ${
-        isOpen ? "w-full" : "w-0"
-      } overflow-hidden transition-all duration-500`}
+      className={`fixed top-0 right-0 bottom-0 left-0 z-50 bg-black bg-opacity-50 transition-opacity duration-500 ${
+        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+      }`}
     >
       <div className="flex justify-center min-h-screen bg-pink-50">
         <div
-          className={`p-4 bg-white mt-10 rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center h-1/3 ${
-            isOpen ? "ml-0" : "ml-full"
+          className={`p-4 bg-white mt-10 rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center h-1/3 transition-transform duration-500 ${
+            isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <h2 className="text-lg font-bold mb-4">User Information</h2>
+          <h2 className="text-lg font-bold mb-4">What should I call you?</h2>
           <input
             type="text"
             value={name}
