@@ -14,6 +14,7 @@ router.get('/test', (req, res, next) => {
 router.post('/signup', authController.signup); //ok
 
 router.get('/auth/google/url', authController.getGoogleUrl);
+router.get('/auth/google/', authController.authGoogle);
 
 
 router.post('/verifyEmail', authController.verifyEmail); //ok
@@ -22,7 +23,7 @@ router.post("/updateDetails", authController.protect, userController.updateUserD
 router.post('/login', authController.login); //ok
 
 
-const { getRecommendations } = require("../controllers/recommendationAlgo");
+const {getRecommendations} = require("../controllers/recommendationAlgo");
 router.get("/getRecommendations", getRecommendations);
 
 module.exports = router;
