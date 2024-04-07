@@ -42,6 +42,8 @@ const createSendToken = (user, status, res, redirect) => {
 }
 
 //to sing up the user
+//this is not for oauth user. oauth user are signed up using functions defined in aouthController.google.js
+//checked normal. not meant for oauth
 exports.signup = catchAsync(async (req, res, next) => {
 
     if (!req.body.email) return next(new AppError("Email id not provided", 400));
@@ -57,28 +59,15 @@ exports.signup = catchAsync(async (req, res, next) => {
         });
     }
 
-    const isOAuth = req.body.isOAuth;
-
     //a user with dummy required credentials will be created if it is isOAuth
     //the document created will be updated to delete those fields if it is isOAuth
     let newUser = await User.create({
         email: req.body.email,
-        isOAuth: isOAuth,
-
-        phoneNumber: isOAuth ? "0000000000" : req.body.phoneNumber,
-        password: isOAuth ? "duck123!@#" : req.body.password,
-        passwordConfirm: isOAuth ? "duck123!@#" : req.body.passwordConfirm,
-        emailVerificationOtp: !isOAuth ? otp : undefined,
+        phoneNumber: req.body.phoneNumber,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm,
+        emailVerificationOtp: otp
     });
-
-    //if isOAuth, update fields and then send token
-    if (isOAuth) {
-        newUser = await User.findOneAndUpdate(newUser, {
-            phoneNumber: null, password: null, passwordConfirm: null, isEmailVerified: true
-        }, {new: true, runValidators: false});
-
-        return createSendToken(newUser, 200, res);
-    }
 
     console.log(otp);
 
@@ -94,27 +83,26 @@ exports.signup = catchAsync(async (req, res, next) => {
     });
 });
 
-//checked normal, no need for oauth
+//checked normal, not meant for oauth
 exports.verifyEmail = catchAsync(async (req, res, next) => {
-    const {email, emailVerificationOtp, isAOth} = req.body;
+    const {email, emailVerificationOtp} = req.body;
 
     let user = null;
 
-    if (!isAOth) {
-        if (!email || !emailVerificationOtp) return res.status(400).json({
-            status: "fail", message: "Please enter OTP"
-        });
+    if (!email || !emailVerificationOtp) return res.status(400).json({
+        status: "fail", message: "Please enter OTP"
+    });
 
-        user = await User.findOne({email}).select("+emailVerificationOtp");
-        if (!user) return res.status(406).json({
-            status: "fail", message: "No user with this email id"
-        });
-        if (user.isEmailVerified) return res.status(200).json({
-            status: "success", message: "user already verified"
-        });
-    }
+    user = await User.findOne({email}).select("+emailVerificationOtp");
+    if (!user) return res.status(406).json({
+        status: "fail", message: "No user with this email id"
+    });
+    if (user.isEmailVerified) return res.status(200).json({
+        status: "success", message: "user already verified"
+    });
 
-    if (isAOth || user.emailVerificationOtp === emailVerificationOtp) {
+
+    if (user.emailVerificationOtp === emailVerificationOtp) {
         await User.updateOne({email}, {isEmailVerified: true, emailVerificationOtp: null}, {new: true});
         let updatedUser = await User.findOne({email});
         updatedUser = {...updatedUser}._doc;
