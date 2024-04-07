@@ -50,9 +50,9 @@ const Home = () => {
         <Conversations />
       </div>
 
-      <button onClick={() => dispatch(logOut())}>logout</button>
       {/* Center Section */}
       <div className="lg:col-span-6">
+        <button onClick={() => dispatch(logOut())}>logout</button>
         <Routes>
           <Route path="/" element={<Center />} />
           <Route path="/chats" element={<ChatSection />} />

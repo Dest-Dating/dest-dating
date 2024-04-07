@@ -159,15 +159,16 @@ export const deleteUser = async (dispatch, password) => {
 };
 
 // function to log into the website
-export const oAuthLogin = async (dispatch) => {
+export const oAuthLogin = async (dispatch, navigate) => {
   // start fetching
   dispatch(userStart());
   try {
     // api call
-    const res = await publicRequest.post("/user/getMe");
+    const res = await publicRequest.get("/user/getMe");
     // update state if login successfull
     dispatch(loginSuccess(res.data));
     toast("Logged In Successfully!");
+    navigate("/questions");
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
