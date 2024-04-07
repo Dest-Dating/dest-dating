@@ -5,7 +5,6 @@ const bcryptjs = require("bcryptjs");
 
 //todo: select only if user if verified
 
-
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
