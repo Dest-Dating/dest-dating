@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
-import { useSelector } from "react-redux";
 
 function Register() {
   const [email, setEmail] = useState("");
