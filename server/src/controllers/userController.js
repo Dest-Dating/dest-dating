@@ -27,9 +27,7 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     height: req.body.height || user.height,
     gender: req.body.gender || user.gender,
     interestedInGender: req.body.interestedInGender || user.interestedInGender, //todo: location ?,
-    mainProfilePhotoLink:
-      req.body.mainProfilePhotoLink || user.mainProfilePhotoLink,
-    photosLink: req.body.photosLink || user.photosLink,
+    isSignupCompleted: req.body.isSignupCompleted || false,
   };
 
   const updatedUser = await User.findOneAndUpdate(user, updates, { new: true });
