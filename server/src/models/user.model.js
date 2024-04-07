@@ -68,6 +68,9 @@ const userSchema = new mongoose.Schema({
     }, isOAuth: {
         type: Boolean,
         default: false //todo: checks for possible bugs caused due to this
+    } , isSignupCompleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true,
