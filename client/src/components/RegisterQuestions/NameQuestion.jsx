@@ -1,7 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
-const UserInfoForm = ({ currentStage, setCurrentStage }) => {
+const UserInfoForm = ({
+  currentStage,
+  setCurrentStage,
+  userData,
+  setUserData,
+}) => {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -13,7 +19,7 @@ const UserInfoForm = ({ currentStage, setCurrentStage }) => {
     return () => clearTimeout(timer);
   }, []); // Run only once on component mount
 
-  const nextHandler = () => {
+  const nextHandler = (e) => {
     setCurrentStage(currentStage + 1);
   };
 
@@ -29,11 +35,13 @@ const UserInfoForm = ({ currentStage, setCurrentStage }) => {
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <h2 className="text-lg font-bold mb-4">What should I call you?</h2>
+          <h2 className="text-lg font-bold mb-4">What should we call you?</h2>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            onChange={(e) =>
+              setUserData({ ...userData, [e.target.name]: e.target.value })
+            }
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500 mb-4"
             placeholder="Enter your name"
           />

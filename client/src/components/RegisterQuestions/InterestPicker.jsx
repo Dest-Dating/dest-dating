@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-const GenderPicker = ({
+const InterestPicker = ({
   currentStage,
   setCurrentStage,
   userData,
   setUserData,
 }) => {
-  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedInterest, setSelectedInterest] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -18,11 +18,11 @@ const GenderPicker = ({
   }, []); // Run only once on component mount
 
   const handleGenderSelect = (gender) => {
-    setSelectedGender(gender);
+    setSelectedInterest(gender);
   };
 
   const nextHandler = () => {
-    setUserData({ ...userData, gender: selectedGender });
+    setUserData({ ...userData, interestedIn: selectedInterest });
     setCurrentStage(currentStage + 1);
     // also, add to the object here
   };
@@ -39,11 +39,11 @@ const GenderPicker = ({
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <h2 className="text-lg font-bold mb-4">Select Gender</h2>
+          <h2 className="text-lg font-bold mb-4">Pick Your Interest</h2>
           <div className="flex flex-col justify-around w-full mb-4 md:flex-row md:justify-around">
             <button
               className={`px-4 py-2 rounded-lg border mb-2 md:mb-0 ${
-                selectedGender === "Male"
+                selectedInterest === "Male"
                   ? "bg-pink-500 text-white"
                   : "border-gray-300"
               }`}
@@ -53,7 +53,7 @@ const GenderPicker = ({
             </button>
             <button
               className={`px-4 py-2 rounded-lg border mb-2 md:mb-0 ${
-                selectedGender === "Female"
+                selectedInterest === "Female"
                   ? "bg-pink-500 text-white"
                   : "border-gray-300"
               }`}
@@ -63,7 +63,7 @@ const GenderPicker = ({
             </button>
             <button
               className={`px-4 py-2 rounded-lg border ${
-                selectedGender === "Non Binary"
+                selectedInterest === "Non Binary"
                   ? "bg-pink-500 text-white"
                   : "border-gray-300"
               }`}
@@ -118,4 +118,4 @@ const GenderPicker = ({
   );
 };
 
-export default GenderPicker;
+export default InterestPicker;

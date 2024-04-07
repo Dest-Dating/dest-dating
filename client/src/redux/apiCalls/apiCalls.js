@@ -2,6 +2,7 @@ import { toast } from "react-toastify";
 import { publicRequest, userRequest } from "../../requestMethods";
 import {
   deleteUserSuccess,
+  errorReset,
   loginSuccess,
   updateSuccess,
   userFailure,
@@ -26,17 +27,34 @@ export const login = async (dispatch, user) => {
 };
 
 // function to register the user
-export const signup = async (dispatch, user) => {
+export const signup = async (dispatch, setRegistered, user) => {
   dispatch(userStart());
   try {
     const res = await publicRequest.post("/user/signup", user);
-    toast("User Registered!");
-    login(dispatch, { username: user.username, password: user.password });
+    console.log(res.data);
+    setRegistered(true);
+    dispatch(errorReset());
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
   }
 };
+
+// function to verify otp
+export const verifyOtp = async (dispatch, user) => {
+  dispatch(userStart());
+  try {
+    const res = await publicRequest.post("/user/verifyEmail", user);
+    console.log(res.data);
+    toast("Registation Successful!");
+    dispatch(loginSuccess(res.data));
+    toast("You have been logged In");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
 // function to update password
 export const updatePassword = async (dispatch, passwords) => {
   dispatch(userStart());
