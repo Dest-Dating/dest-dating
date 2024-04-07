@@ -1,5 +1,5 @@
 import "./App.css";
-import { userRequest } from "./requestMethods";
+import { publicRequest, userRequest } from "./requestMethods";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -17,9 +17,9 @@ function App() {
   const currentUser = useSelector((state) => state?.user?.currentUser);
 
   // Setting authorization header for user request
-  // userRequest.defaults.headers.common[
-  //   "Authorization"
-  // ] = `Bearer ${currentUser?.token}`;
+  publicRequest.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${currentUser?.token}`;
 
   return (
     <>

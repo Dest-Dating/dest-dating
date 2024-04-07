@@ -4,6 +4,7 @@ import {
   deleteUserSuccess,
   errorReset,
   loginSuccess,
+  photoUploadSuccess,
   updateSuccess,
   userFailure,
   userStart,
@@ -55,14 +56,25 @@ export const verifyOtp = async (dispatch, user) => {
   }
 };
 // function to add a Single Photo
-export const addSinglePhoto = async (dispatch, link) => {
+export const addSinglePhoto = async (
+  dispatch,
+  link,
+  currentInd,
+  completeUser
+) => {
   dispatch(userStart());
   try {
     const res = await publicRequest.post("/user/addPhotoLink", {
       photoLink: link,
+      index: currentInd,
     });
-    toast("Registation Successful!");
-    dispatch(loginSuccess(res.data));
+    console.log(res?.data?.data?.user);
+    dispatch(
+      photoUploadSuccess({
+        ...completeUser,
+        data: { user: res?.data?.data?.user },
+      })
+    );
     toast("Photo Uploaded");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));

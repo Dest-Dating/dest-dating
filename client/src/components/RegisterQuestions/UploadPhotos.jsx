@@ -7,11 +7,13 @@ import { addSinglePhoto } from "../../redux/apiCalls/apiCalls";
 const UploadPhotos = () => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
   const [currentImg, setCurrentImg] = useState("");
+  const [currentInd, setCurrentInd] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,15 +34,26 @@ const UploadPhotos = () => {
         `profile/${currentUser?.email}`,
         setCurrentImg
       );
-      newPhotos[index] = selectedPhoto;
+      setCurrentInd(index);
+      newPhotos[index] = currentImg;
       console.log(index);
       setPhotos(newPhotos);
     } else return;
   };
 
   useEffect(() => {
-    currentImg && addSinglePhoto(dispatch, currentImg);
+    currentImg &&
+      addSinglePhoto(dispatch, currentImg, currentInd + 1, completeUser);
   }, [currentImg, dispatch]);
+
+  useEffect(() => {
+    console.log(currentUser?.photosLink);
+    currentUser?.photosLink.forEach((photo) => {
+      const newPhotos = [...photos];
+      newPhotos[photo.index - 1] = photo.photoLink;
+      setPhotos(newPhotos);
+    });
+  }, [currentUser?.photosLink]);
 
   const handleDeletePhoto = async (index) => {
     const newPhotos = [...photos];
@@ -85,7 +98,7 @@ const UploadPhotos = () => {
               {photos[0] && (
                 <>
                   <img
-                    src={URL.createObjectURL(photos[0])}
+                    src={photos[0]}
                     alt={`Uploaded Photo 1`}
                     className="object-cover w-full h-full rounded-lg"
                   />
@@ -120,7 +133,7 @@ const UploadPhotos = () => {
                 {photo && (
                   <>
                     <img
-                      src={URL.createObjectURL(photo)}
+                      src={photo}
                       alt={`Uploaded Photo ${index + 2}`}
                       className="object-cover w-full h-full rounded-lg"
                     />
