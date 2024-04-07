@@ -1,9 +1,13 @@
 import { useEffect } from "react";
-import { publicRequest } from "../requestMethods";
+import { useDispatch } from "react-redux";
+import { oAuthLogin } from "../redux/apiCalls/apiCalls";
+import { useNavigate } from "react-router-dom";
 
 const AuthCompletePage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   useEffect(() => {
-    publicRequest("/user/getMe");
+    oAuthLogin(dispatch, navigate);
   }, []);
 
   return <div>Authentication Complete </div>;

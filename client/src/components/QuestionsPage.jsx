@@ -14,6 +14,7 @@ function QuestionsPage() {
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
     if (!currentUser) navigate("/");
+    if (currentUser?.isSignupCompleted) navigate("/home");
   }, [currentUser, navigate]);
 
   return (

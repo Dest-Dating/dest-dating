@@ -117,11 +117,11 @@ export const profileComplete = async (
     dispatch(
       photoUploadSuccess({
         ...completeUser,
-        data: { user: res?.data?.data?.user },
+        data: { user: res?.data?.user },
       })
     );
     toast("Profile Updated Successfully!");
-    // navigate("/home");
+    navigate("/home");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
@@ -153,6 +153,24 @@ export const deleteUser = async (dispatch, password) => {
     toast("Your account has been deleted");
     dispatch(deleteUserSuccess());
   } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
+// function to log into the website
+export const oAuthLogin = async (dispatch, navigate) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.get("/user/getMe");
+    // update state if login successfull
+    dispatch(loginSuccess(res.data));
+    toast("Logged In Successfully!");
+    navigate("/questions");
+  } catch (error) {
+    // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
   }

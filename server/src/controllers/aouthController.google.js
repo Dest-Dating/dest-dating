@@ -8,7 +8,7 @@ const SERVER_ROOT_URI = process.env.SERVER_ROOT_URI;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const UI_ROOT_URI = process.env.UI_ROOT_URI;
-
+const AppError = require("../utils/appError");
 //todo:
 //add /user/questions to redirections
 
@@ -42,7 +42,6 @@ const createSendToken = (user, status, res, redirect) => {
 };
 
 function getGoogleAuthURLSignup() {
-
   const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
   const options = {
     redirect_uri: `${SERVER_ROOT_URI}/user/${redirectURI}`,
@@ -52,33 +51,14 @@ function getGoogleAuthURLSignup() {
     prompt: "consent",
     scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"].join(" "),
   };
-
   return `${rootUrl}?${querystring.stringify(options)}`;
 }
 
-
-//todo: make changes to return login
-function getGoogleAuthURLLogin() {
-
-  const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-  const options = {
-    redirect_uri: `${SERVER_ROOT_URI}/user/${redirectURI}`,
-    client_id: GOOGLE_CLIENT_ID,
-    access_type: "offline",
-    response_type: "code",
-    prompt: "consent",
-    scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"].join(" "),
-  };
-
-  return `${rootUrl}?${querystring.stringify(options)}`;
-}
 
 // Getting login URL
 exports.getGoogleUrl = (req, res, next) => {
-  const type = req.body.type || "signup";
-
   return res.status(200).json({
-    url: type === "login" ? getGoogleAuthURLLogin() : getGoogleAuthURLSignup(),
+    url: getGoogleAuthURLSignup(),
   });
 };
 
@@ -130,21 +110,29 @@ exports.authGoogle = catchAsync(async (req, res, next) => {
     return res.redirect(UI_ROOT_URI / " ");
   }
 
-  //check if user exists
-
   const email = googleUser.data.email;
+  //if there is such a user, return its jwt
+  let newUser = await User.findOne({ email });
 
-  let newUser = await User.create({
-    email: email,
-    isOAuth: true,
-    phoneNumber: Math.floor(new Date().getTime()),
-    password: "duck123!@#",
-    passwordConfirm: "duck123!@#",
-  });
+  if (!newUser) {
+    console.log("Creating new user by oAuth");
+    newUser = await User.create({
+      email: email,
+      isOAuth: true,
+      phoneNumber: Math.floor(new Date().getTime()),
+      password: "duck123!@#",
+      passwordConfirm: "duck123!@#",
+    });
 
-  newUser = await User.findOneAndUpdate(newUser, {
-    $unset: { password: "", passwordConfirm: "" }, isEmailVerified: true,
-  }, { new: true, runValidators: false });
+
+    newUser = await User.findOneAndUpdate(newUser, {
+      $unset: { password: "", passwordConfirm: "" }, isEmailVerified: true,
+    }, { new: true, runValidators: false });
+
+  }else{
+    console.log("OAuth user found in DB");
+  }
 
   return createSendToken(newUser, 200, res, UI_ROOT_URI);
 });
+

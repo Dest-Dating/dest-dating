@@ -274,7 +274,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     status: "success",
     token,
     data: {
-      freshUser,
+      user: freshUser,
     },
   });
 });
