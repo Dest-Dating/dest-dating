@@ -57,7 +57,7 @@ export const uploadFile = async (e, file, location, setFileUrl) => {
   }
 };
 
-export const deleteFile = (e, url) => {
+export const deleteFile = async (e, url) => {
   e.preventDefault();
 
   try {
@@ -74,7 +74,7 @@ export const deleteFile = (e, url) => {
     const desertRef = ref(storage, sRef);
 
     // Delete the file
-    deleteObject(desertRef)
+    await deleteObject(desertRef)
       .then(() => {
         // File deleted successfully
         console.log("File deleted successfully");

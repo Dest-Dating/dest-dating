@@ -62,7 +62,7 @@ exports.addPhotoLink = catchAsync(async (req, res, next) => {
   const photoLink = req.body.photoLink;
   const index = req.body.index;
 
-  if (!photoLink || !index)
+  if (!photoLink || typeof index != "number")
     return next(new AppError("Photo Link not provided.", 400));
 
   user.photosLink = user.photosLink.filter((obj) => obj.index !== index);
@@ -83,7 +83,9 @@ exports.deletePhotoLink = catchAsync(async (req, res, next) => {
 
   if (!photoLink) return next(new AppError("Photo Link not provided.", 400));
 
-  user.photosLink = user.photosLink.filter((link) => link !== photoLink);
+  user.photosLink = user.photosLink.filter(
+    (link) => link.photoLink !== photoLink
+  );
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({

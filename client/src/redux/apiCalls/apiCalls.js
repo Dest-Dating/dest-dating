@@ -82,6 +82,27 @@ export const addSinglePhoto = async (
   }
 };
 
+// function to delete a Single Photo
+export const deleteSinglePhoto = async (dispatch, link, completeUser) => {
+  dispatch(userStart());
+  try {
+    const res = await publicRequest.post("/user/deletePhotoLink", {
+      photoLink: link,
+    });
+    console.log(res?.data?.data?.user);
+    dispatch(
+      photoUploadSuccess({
+        ...completeUser,
+        data: { user: res?.data?.data?.user },
+      })
+    );
+    toast("Photo Deleted");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
 // function to update password
 export const updatePassword = async (dispatch, passwords) => {
   dispatch(userStart());

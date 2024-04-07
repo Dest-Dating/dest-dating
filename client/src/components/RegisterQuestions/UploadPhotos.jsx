@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { uploadFile } from "../../utils/mediaHandlers";
+import { deleteFile, uploadFile } from "../../utils/mediaHandlers";
 import { useDispatch, useSelector } from "react-redux";
-import { addSinglePhoto } from "../../redux/apiCalls/apiCalls";
+import {
+  addSinglePhoto,
+  deleteSinglePhoto,
+} from "../../redux/apiCalls/apiCalls";
 
 const UploadPhotos = () => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
   const [currentImg, setCurrentImg] = useState("");
   const [currentInd, setCurrentInd] = useState("");
+  const [photoToDelete, setPhotoToDelete] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const currentUser = useSelector(
@@ -42,24 +46,34 @@ const UploadPhotos = () => {
   };
 
   useEffect(() => {
-    currentImg &&
-      addSinglePhoto(dispatch, currentImg, currentInd + 1, completeUser);
+    currentImg != "" &&
+      addSinglePhoto(dispatch, currentImg, currentInd, completeUser);
+    setCurrentImg("");
   }, [currentImg, dispatch]);
 
   useEffect(() => {
-    console.log(currentUser?.photosLink);
+    const newPhotos = [...photos];
     currentUser?.photosLink.forEach((photo) => {
-      const newPhotos = [...photos];
-      newPhotos[photo.index - 1] = photo.photoLink;
+      console.log(photo);
+      newPhotos[photo.index] = photo.photoLink;
       setPhotos(newPhotos);
     });
   }, [currentUser?.photosLink]);
 
-  const handleDeletePhoto = async (index) => {
+  const handleDeletePhoto = async (e, index) => {
     const newPhotos = [...photos];
-    newPhotos[index] = null;
-    setPhotos(newPhotos);
+    setPhotoToDelete(newPhotos[index]);
+    if (currentUser?.email && photos[index] != null) {
+      await deleteFile(e, photoToDelete);
+      newPhotos[index] = null;
+      setPhotos(newPhotos);
+    }
   };
+
+  useEffect(() => {
+    photoToDelete !== "" &&
+      deleteSinglePhoto(dispatch, photoToDelete, completeUser);
+  }, [photoToDelete]);
 
   const handleSubmit = () => {
     // Handle form submission logic here
@@ -104,7 +118,7 @@ const UploadPhotos = () => {
                   />
                   <button
                     className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
-                    onClick={() => handleDeletePhoto(0)}
+                    onClick={(e) => handleDeletePhoto(e, 0)}
                   >
                     X
                   </button>
@@ -138,8 +152,8 @@ const UploadPhotos = () => {
                       className="object-cover w-full h-full rounded-lg"
                     />
                     <button
-                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
-                      onClick={() => handleDeletePhoto(index + 1)}
+                      className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full z-10"
+                      onClick={(e) => handleDeletePhoto(e, index + 1)}
                     >
                       X
                     </button>
