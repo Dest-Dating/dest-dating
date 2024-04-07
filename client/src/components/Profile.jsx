@@ -12,7 +12,7 @@ const Profile = () => {
 
   const fileUpload = (e) => {
     e.preventDefault();
-    file && uploadFile(e, file, "asdasd werwer tt", setImageUrl);
+    file && uploadFile(e, file, "enlightasp@gmail.com", setImageUrl);
   };
 
   return (

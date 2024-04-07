@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BACKEND_URL } from "../../config";
+import { uploadFile } from "../../utils/mediaHandlers";
+import { useDispatch, useSelector } from "react-redux";
+import { addSinglePhoto } from "../../redux/apiCalls/apiCalls";
 
 const UploadPhotos = () => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
+  const [currentImg, setCurrentImg] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user
+  );
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -15,14 +22,27 @@ const UploadPhotos = () => {
     return () => clearTimeout(timer);
   }, []); // Run only once on component mount
 
-  const handlePhotoUpload = (e, index) => {
+  const handlePhotoUpload = async (e, index) => {
     const selectedPhoto = e.target.files[0];
     const newPhotos = [...photos];
-    newPhotos[index] = selectedPhoto;
-    setPhotos(newPhotos);
+    if (currentUser?.email && photos[index] == null) {
+      await uploadFile(
+        e,
+        selectedPhoto,
+        `profile/${currentUser?.email}`,
+        setCurrentImg
+      );
+      newPhotos[index] = selectedPhoto;
+      console.log(index);
+      setPhotos(newPhotos);
+    } else return;
   };
 
-  const handleDeletePhoto = (index) => {
+  useEffect(() => {
+    currentImg && addSinglePhoto(dispatch, currentImg);
+  }, [currentImg, dispatch]);
+
+  const handleDeletePhoto = async (index) => {
     const newPhotos = [...photos];
     newPhotos[index] = null;
     setPhotos(newPhotos);
@@ -33,6 +53,9 @@ const UploadPhotos = () => {
     navigate("/home");
     console.log("Submitted!");
   };
+  useEffect(() => {
+    console.log(photos);
+  }, [photos]);
 
   return (
     <div
@@ -42,7 +65,7 @@ const UploadPhotos = () => {
     >
       <div className="max-w-xl w-full p-4 bg-white mt-10 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">
-          Don't be shy, upload some photos
+          Don&apos;t be shy, upload some photos
         </h2>
         <div className="grid grid-cols-3 gap-4">
           {/* Big box */}

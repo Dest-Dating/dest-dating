@@ -68,6 +68,7 @@ export const deleteFile = (e, url) => {
       .split("/o/")[1]
       .split("?")[0]
       .replaceAll("%2F", "/")
+      .replaceAll("%40", "@")
       .replaceAll("%20", " ");
     // reference to file location in storage - to organise into folders
     const desertRef = ref(storage, sRef);

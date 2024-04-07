@@ -54,6 +54,21 @@ export const verifyOtp = async (dispatch, user) => {
     toast(error?.response?.data?.message);
   }
 };
+// function to add a Single Photo
+export const addSinglePhoto = async (dispatch, link) => {
+  dispatch(userStart());
+  try {
+    const res = await publicRequest.post("/user/addPhotoLink", {
+      photoLink: link,
+    });
+    toast("Registation Successful!");
+    dispatch(loginSuccess(res.data));
+    toast("Photo Uploaded");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
 
 // function to update password
 export const updatePassword = async (dispatch, passwords) => {
