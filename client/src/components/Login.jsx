@@ -12,13 +12,12 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
 
   useEffect(() => {
     if (currentUser) {
-      if (currentUser?.isSignupCompleted) navigate("/home");
-      else navigate("/questions");
+      if (currentUser?.isSignupCompleted) navigate("/home"); else navigate("/questions");
     }
   }, [currentUser, navigate]);
 
