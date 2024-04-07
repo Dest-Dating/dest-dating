@@ -7,7 +7,7 @@ import "./App.css";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
-import Profile from "./components/Profile";
+import Profile from "./components/Profile2";
 
 function App() {
   // user data of currently logged in user from redux state
@@ -26,6 +26,7 @@ function App() {
         <Route path="/home/*" element={<Home />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
       </Routes>
+
     </>
   );
 }

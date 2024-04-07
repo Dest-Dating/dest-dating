@@ -55,7 +55,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.get("/", (req, res, next) => {
     res.status(200).json({
         status: "success",
-        message: "Welcome to Duck server!",
+        message: "Welcome to Dest server!",
     });
 });
 
@@ -83,7 +83,7 @@ app.use("/user", userRouter);
 const AppError = require("./utils/appError");
 app.all("*", (req, res, next) => {
     next(
-        new AppError(`Can't find ${req.originalUrl} on Duck server!`, 404)
+        new AppError(`Can't find ${req.originalUrl} on Dest server!`, 404)
     );
 });
 

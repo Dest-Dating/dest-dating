@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-// import { GoogleLogin } from "react-google-login";
-import { GoogleLogin, googleLogout } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+
+import { toast, ToastContainer } from "react-toastify";
+import NecessaryQuestions from "./NecessaryQuestions";
+import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 
 function Register() {
@@ -12,7 +13,6 @@ function Register() {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [verified, setVerified] = useState(false);
-  const [signUpStage, setSignUpStage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,18 +35,13 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== verifyPassword) {
-      alert("Passwords do not match");
+      // alert("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
-
     // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
-
-    // Reset form fields
-    setEmail("");
-    setPassword("");
-    setVerifyPassword("");
     setVerified(true);
   };
 
@@ -77,106 +72,93 @@ function Register() {
             </div>
 
             {/* Right side: Registration form */}
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white p-10 rounded-lg shadow-md w-full lg:w-4/5"
-            >
-              <h2 className="text-3xl mb-4 text-center font-bold">
-                Hey there👋
-              </h2>
-              <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-gray-700 font-bold mb-2"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={handleEmailChange}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <label
-                  htmlFor="password"
-                  className="block text-gray-700 font-bold mb-2"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  id="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                  placeholder="Enter your password"
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <label
-                  htmlFor="verifyPassword"
-                  className="block text-gray-700 font-bold mb-2"
-                >
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  id="verifyPassword"
-                  value={verifyPassword}
-                  onChange={handleVerifyPasswordChange}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                  placeholder="Confirm your password"
-                  required
-                />
-              </div>
-              <div
-                onClick={() => {
-                  navigate("/");
-                }}
-                className="mb-2 text-center cursor-pointer text-blue-500"
+            <div className="bg-white  rounded-lg shadow-md w-full lg:w-4/5">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white p-10 rounded-lg w-full lg:w-full"
               >
-                Already registered? Click here to sign in
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-              >
-                Register
-              </button>
-              {/* Custom oAuth */}
+                <h2 className="text-3xl mb-4 text-center font-bold">
+                  Hey there👋
+                </h2>
+                <div className="mb-4">
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={handleEmailChange}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <label
+                    htmlFor="password"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    placeholder="Enter your password"
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <label
+                    htmlFor="verifyPassword"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    id="verifyPassword"
+                    value={verifyPassword}
+                    onChange={handleVerifyPasswordChange}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
+                <div
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                  className="mb-2 text-center cursor-pointer text-blue-500"
+                >
+                  Already registered? Click here to sign in
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                >
+                  Register
+                </button>
+                {/* Custom oAuth */}
 
-              {/* Google Sign-In Button */}
-              {/* <GoogleLogin
-                onSuccess={(credentialResponse) => {
-                  console.log(jwtDecode(credentialResponse.credential));
-                }}
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-              />
+                {/* Google Sign-In Button */}
+                <ToastContainer />
+              </form>
               <button
+                className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
                 onClick={(e) => {
-                  e.preventDefault;
-                  googleLogout();
+                  googleAuthInitiator(e);
                 }}
               >
-                logout
-              </button> */}
-            </form>
-            <button
-              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-              onClick={(e) => {
-                googleAuthInitiator(e);
-              }}
-            >
-              Google Sign in
-            </button>
+                Google Sign in
+              </button>
+            </div>
           </div>
         </div>
       )}
