@@ -79,7 +79,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     // });
 
     res.status(200).json({
-        status: "success", data: {phoneNumber: newUser.phoneNumber, email: newUser.email, isOAuth: !!isOAuth, otp}
+        status: "success", data: {phoneNumber: newUser.phoneNumber, email: newUser.email, isOAuth: false, otp}
     });
 });
 
