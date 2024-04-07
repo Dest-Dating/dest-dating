@@ -2,23 +2,71 @@ const querystring = require("querystring");
 const axios = require("axios");
 const catchAsync = require("../utils/catchAsync");
 const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
 const redirectURI = "auth/google";
 const SERVER_ROOT_URI = process.env.SERVER_ROOT_URI;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const UI_ROOT_URI = process.env.UI_ROOT_URI;
-const {createSendToken} = require("./authController");
 
-function getGoogleAuthURL(type) {
+//todo:
+//add /user/questions to redirections
+
+const signToken = (id) => {
+    return jwt.sign({id: id}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN});
+}
+
+const createSendToken = (user, status, res, redirect) => {
+    const token = signToken(user._id);
+
+    //hide password as we are not 'selecting' user == password is still in user object
+    user.password = undefined;
+    user.emailVerificationOtp = undefined
+
+    //set cookies
+    const options = {
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), httpOnly: true, secure: true,
+    };
+    res.cookie("jwt", token, options);
+
+    if (redirect) {
+        res.redirect(redirect);
+    }
+
+    res.status(status).json({
+        status: 'success', token, data: {
+            user
+        }
+    });
+}
+
+function getGoogleAuthURLSignup() {
 
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-        redirect_uri: `${SERVER_ROOT_URI}/user/${type === "login" ? "/questions/" : ""}${redirectURI}`,
+        redirect_uri: `${SERVER_ROOT_URI}/user/questions/${redirectURI}`,
         client_id: GOOGLE_CLIENT_ID,
         access_type: "offline",
         response_type: "code",
         prompt: "consent",
-        scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",].join(" "),
+        scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",].join(" ")
+    };
+
+    return `${rootUrl}?${querystring.stringify(options)}`;
+}
+
+
+//todo: make changes to return login
+function getGoogleAuthURLLogin() {
+
+    const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+    const options = {
+        redirect_uri: `${SERVER_ROOT_URI}/user//${redirectURI}`,
+        client_id: GOOGLE_CLIENT_ID,
+        access_type: "offline",
+        response_type: "code",
+        prompt: "consent",
+        scope: ["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",].join(" ")
     };
 
     return `${rootUrl}?${querystring.stringify(options)}`;
@@ -26,10 +74,10 @@ function getGoogleAuthURL(type) {
 
 // Getting login URL
 exports.getGoogleUrl = (req, res, next) => {
-    const type = req.body.type || "login";
+    const type = req.body.type || "signup";
 
     return res.status(200).json({
-        url: getGoogleAuthURL(type)
+        url: type === "login" ? getGoogleAuthURLLogin() : getGoogleAuthURLSignup()
     });
 }
 

@@ -5,8 +5,7 @@ const AppError = require("../utils/appError");
 
 exports.test = (req, res, next) => {
   res.status(200).json({
-    status: "success",
-    message: "test completed",
+    status: "success", message: "test completed",
   });
 };
 
@@ -27,14 +26,14 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     height: req.body.height || user.height,
     gender: req.body.gender || user.gender,
     interestedInGender: req.body.interestedInGender || user.interestedInGender, //todo: location ?,
-    isSignupCompleted: req.body.isSignupCompleted || false,
+    //todo: automate this
+    isSignupCompleted: req.body.isSignupCompleted || true,
   };
 
   const updatedUser = await User.findOneAndUpdate(user, updates, { new: true });
 
   res.status(200).json({
-    status: "success",
-    user: updatedUser,
+    status: "success", user: updatedUser,
   });
 });
 
@@ -49,14 +48,14 @@ exports.updateProfilePick = catchAsync(async (req, res, next) => {
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
 });
 
 exports.addPhotoLink = catchAsync(async (req, res, next) => {
+
   let user = req.user;
   const photoLink = req.body.photoLink;
 
@@ -66,14 +65,14 @@ exports.addPhotoLink = catchAsync(async (req, res, next) => {
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
 });
 
 exports.deletePhotoLink = catchAsync(async (req, res, next) => {
+
   let user = req.user;
   const photoLink = req.body.photoLink;
 
@@ -83,42 +82,38 @@ exports.deletePhotoLink = catchAsync(async (req, res, next) => {
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
 });
 
 // Controller to set user preferences
-exports.setUserPreferences = async (req, res) => {
-  try {
-    const { minAge, maxAge, minHeight, maxHeight } = req.body;
-
-    // Check if the user exists
-    const user = req.user;
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
-    }
-
-    // Update user preferences
-    if (minAge) user.preferences.minAge = minAge; // add for age in recommendation Algo
-    if (maxAge) user.preferences.maxAge = maxAge;
-    if (minHeight) user.preferences.minHeight = minHeight;
-    if (maxHeight) user.preferences.maxHeight = maxHeight;
-
-    // Save updated preferences
-    await user.save({ validateBeforeSave: false });
-
-    res.status(200).json({
-      success: true,
-      message: "User preferences updated successfully",
-      user,
-    });
-  } catch (error) {
-    console.error("Error setting user preferences:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
-};
+// exports.setUserPreferences = async (req, res) => {
+//   try {
+//     const { minAge, maxAge, minHeight, maxHeight } = req.body;
+//
+//     // Check if the user exists
+//     const user = req.user;
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found" });
+//     }
+//
+//     // Update user preferences
+//     if (minAge) user.preferences.minAge = minAge; // add for age in recommendation Algo
+//     if (maxAge) user.preferences.maxAge = maxAge;
+//     if (minHeight) user.preferences.minHeight = minHeight;
+//     if (maxHeight) user.preferences.maxHeight = maxHeight;
+//
+//     // Save updated preferences
+//     await user.save({ validateBeforeSave: false });
+//
+//     res.status(200).json({
+//         status: "success", data: {
+//             user
+//         }
+//     })
+//
+// });

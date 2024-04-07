@@ -333,5 +333,3 @@ exports.addUserToRequest = async (req, res, next) => {
     req.user = freshUser;
     next();
 }
-
-module.export = createSendToken;

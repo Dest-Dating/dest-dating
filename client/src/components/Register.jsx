@@ -10,10 +10,10 @@ import { signup } from "../redux/apiCalls/apiCalls";
 import { useSelector } from "react-redux";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("jigyashusa7@gmail.com");
+  const [password, setPassword] = useState("password");
+  const [verifyPassword, setVerifyPassword] = useState("password");
+  const [phoneNumber, setPhoneNumber] = useState("12334567891");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
