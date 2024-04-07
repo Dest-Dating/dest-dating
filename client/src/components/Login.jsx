@@ -12,7 +12,7 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user,
+    (state) => state?.user?.currentUser?.data?.user
   );
 
   useEffect(() => {
