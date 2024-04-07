@@ -103,6 +103,31 @@ export const deleteSinglePhoto = async (dispatch, link, completeUser) => {
   }
 };
 
+// function to update user
+export const profileComplete = async (
+  dispatch,
+  userData,
+  completeUser,
+  navigate
+) => {
+  dispatch(userStart());
+  try {
+    console.log(userData);
+    const res = await userRequest.post("/user/updateDetails", userData);
+    dispatch(
+      photoUploadSuccess({
+        ...completeUser,
+        data: { user: res?.data?.data?.user },
+      })
+    );
+    toast("Profile Updated Successfully!");
+    // navigate("/home");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
 // function to update password
 export const updatePassword = async (dispatch, passwords) => {
   dispatch(userStart());

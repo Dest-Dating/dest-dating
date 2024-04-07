@@ -31,7 +31,9 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     isSignupCompleted: req.body.isSignupCompleted || true,
   };
 
-  const updatedUser = await User.findOneAndUpdate(user, updates, { new: true });
+  const updatedUser = await User.findOneAndUpdate(user._id, updates, {
+    new: true,
+  });
 
   res.status(200).json({
     status: "success",

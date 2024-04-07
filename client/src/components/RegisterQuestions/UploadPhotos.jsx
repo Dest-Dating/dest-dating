@@ -5,9 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   addSinglePhoto,
   deleteSinglePhoto,
+  profileComplete,
 } from "../../redux/apiCalls/apiCalls";
+import { toast } from "react-toastify";
 
-const UploadPhotos = () => {
+const UploadPhotos = ({
+  currentStage,
+  setCurrentStage,
+  userData,
+  setUserData,
+}) => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
   const [currentImg, setCurrentImg] = useState("");
   const [currentInd, setCurrentInd] = useState("");
@@ -40,7 +47,6 @@ const UploadPhotos = () => {
       );
       setCurrentInd(index);
       newPhotos[index] = currentImg;
-      console.log(index);
       setPhotos(newPhotos);
     } else return;
   };
@@ -54,7 +60,6 @@ const UploadPhotos = () => {
   useEffect(() => {
     const newPhotos = [...photos];
     currentUser?.photosLink.forEach((photo) => {
-      console.log(photo);
       newPhotos[photo.index] = photo.photoLink;
       setPhotos(newPhotos);
     });
@@ -75,14 +80,18 @@ const UploadPhotos = () => {
       deleteSinglePhoto(dispatch, photoToDelete, completeUser);
   }, [photoToDelete]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     // Handle form submission logic here
-    navigate("/home");
-    console.log("Submitted!");
+    if (photos[0] == null) {
+      toast("Add Profile Photo");
+      return;
+    }
+    profileComplete(dispatch, userData, completeUser, navigate);
   };
   useEffect(() => {
-    console.log(photos);
-  }, [photos]);
+    userData;
+  }, [userData]);
 
   return (
     <div
@@ -164,7 +173,27 @@ const UploadPhotos = () => {
           ))}
         </div>
         <button
-          onClick={handleSubmit}
+          onClick={() => setCurrentStage(currentStage - 1)}
+          className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
+        >
+          Back
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 ml-2"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={(e) => handleSubmit(e)}
           className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded mt-4"
         >
           Submit
