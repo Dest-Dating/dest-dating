@@ -9,10 +9,10 @@ import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("j87iuasdf8@gmail.com");
+  const [password, setPassword] = useState("123qwe!@#");
+  const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
+  const [phoneNumber, setPhoneNumber] = useState("1234567891");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();

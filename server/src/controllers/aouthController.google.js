@@ -30,7 +30,8 @@ const createSendToken = (user, status, res, redirect) => {
     res.cookie("jwt", token, options);
 
     if (redirect) {
-        res.redirect(redirect);
+        console.log("sent redirect ", redirect);
+        return res.redirect(redirect);
     }
 
     res.status(status).json({
@@ -44,7 +45,7 @@ function getGoogleAuthURLSignup() {
 
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-        redirect_uri: `${SERVER_ROOT_URI}/user/questions/${redirectURI}`,
+        redirect_uri: `${SERVER_ROOT_URI}/user/${redirectURI}`,
         client_id: GOOGLE_CLIENT_ID,
         access_type: "offline",
         response_type: "code",
@@ -61,7 +62,7 @@ function getGoogleAuthURLLogin() {
 
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-        redirect_uri: `${SERVER_ROOT_URI}/user//${redirectURI}`,
+        redirect_uri: `${SERVER_ROOT_URI}/user/${redirectURI}`,
         client_id: GOOGLE_CLIENT_ID,
         access_type: "offline",
         response_type: "code",
@@ -128,6 +129,8 @@ exports.authGoogle = catchAsync(async (req, res, next) => {
             },
         });
     } catch (e) {
+        console.log("Google API ERRORED! 😐😐😐😐😐");
+        console.log(e);
         return res.redirect(UI_ROOT_URI / " ");
     }
 

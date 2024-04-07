@@ -17,9 +17,9 @@ function App() {
   const currentUser = useSelector((state) => state?.user?.currentUser);
 
   // Setting authorization header for user request
-  publicRequest.defaults.headers.common[
-    "Authorization"
-  ] = `Bearer ${currentUser?.token}`;
+  // publicRequest.defaults.headers.common[
+  //   "Authorization"
+  // ] = `Bearer ${currentUser?.token}`;
 
   return (
     <>
