@@ -4,6 +4,7 @@ import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -14,14 +15,29 @@ const Home = () => {
 
   return (
     <div className="grid grid-cols-12">
-      {/* Left Sidebar */}
+      {/* Hamburger Icon for Sidebar */}
+      <div className="lg:hidden col-span-1 flex items-center justify-center">
+        <button onClick={toggleSidebar} className="text-2xl">
+          {sidebarOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
-        <div className="lg:hidden col-span-12">
-          {/* Content for the left sidebar */}
-          {/* Replace with your content */}
-          <div className="p-4 bg-gray-200">
-            <h2 className="text-lg font-bold mb-4">Left Sidebar</h2>
-            {/* Your left sidebar content here */}
+        <div className="overflow-auto lg:hidden fixed top-0 left-0 h-full w-full md:w-2/3 bg-gray-200 z-50">
+          <div className="p-4">
+            <button onClick={toggleSidebar} className="text-2xl float-right">
+              <FaTimes />
+            </button>
+
+            <div className="h-screen flex flex-col">
+              <div className="h-1/2 mb-4 overflow-auto">
+                <Conversations />
+              </div>
+              <div className="h-1/2 overflow-auto">
+                <Likes />
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -43,26 +59,6 @@ const Home = () => {
       <div className="lg:col-span-3 hidden lg:block">
         <Likes />
       </div>
-
-      {/* Right Sidebar */}
-      {sidebarOpen && (
-        <div className="lg:hidden col-span-12">
-          {/* Content for the right sidebar */}
-          {/* Replace with your content */}
-          <div className="p-4 bg-gray-200">
-            <h2 className="text-lg font-bold mb-4">Right Sidebar</h2>
-            {/* Your right sidebar content here */}
-          </div>
-        </div>
-      )}
-
-      {/* Button to toggle sidebar */}
-      <button
-        className="fixed bottom-4 right-4 bg-pink-500 text-white px-4 py-2 rounded-full lg:hidden"
-        onClick={toggleSidebar}
-      >
-        {sidebarOpen ? "Close Sidebar" : "Open Sidebar"}
-      </button>
     </div>
   );
 };

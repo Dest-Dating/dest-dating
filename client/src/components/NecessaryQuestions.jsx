@@ -4,7 +4,7 @@ import GenderPicker from "./RegisterQuestions/GenderPicker";
 import DateOfBirthPicker from "./RegisterQuestions/DateOfBirthPicker";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
 
-const necessaryQuestions = () => {
+const NecessaryQuestions = () => {
   const [signUpStage, setSignUpStage] = useState(1);
   return (
     <div>
@@ -31,4 +31,4 @@ const necessaryQuestions = () => {
   );
 };
 
-export default necessaryQuestions;
+export default NecessaryQuestions;
