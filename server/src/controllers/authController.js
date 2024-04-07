@@ -8,7 +8,7 @@ const User = require("../models/user.model");
 
 const querystring = require("querystring");
 
-const redirectURI = "user/auth/google";
+const redirectURI = "auth/google";
 
 function getGoogleAuthURL() {
   const SERVER_ROOT_URI = process.env.SERVER_ROOT_URI;
