@@ -1,12 +1,24 @@
 import React, { useState, useEffect } from "react";
 import loginImage from "../assets/login_page.svg";
 import { useNavigate } from "react-router-dom";
+import { googleAuthInitiator } from "../utils/googleOAuth";
+import { useSelector } from "react-redux";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user
+  );
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.isSignupCompleted) navigate("/home");
+      else navigate("/questions");
+    }
+  }, [currentUser, navigate]);
 
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
@@ -104,15 +116,16 @@ function Login() {
             >
               Log In
             </button>
+            {/* Google auth Button */}
+            <button
+              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+              onClick={(e) => {
+                googleAuthInitiator(e);
+              }}
+            >
+              Google login
+            </button>
           </form>
-          <button
-            className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-            onClick={(e) => {
-              googleAuthInitiator(e);
-            }}
-          >
-            Google login
-          </button>
         </div>
       </div>
     </div>
