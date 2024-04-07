@@ -9,11 +9,11 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const UI_ROOT_URI = process.env.UI_ROOT_URI;
 const {createSendToken} = require("./authController");
 
-function getGoogleAuthURL() {
+function getGoogleAuthURL(type) {
 
     const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
     const options = {
-        redirect_uri: `${SERVER_ROOT_URI}/user/${redirectURI}`,
+        redirect_uri: `${SERVER_ROOT_URI}/user/${type === "login" ? "/questions/" : ""}${redirectURI}`,
         client_id: GOOGLE_CLIENT_ID,
         access_type: "offline",
         response_type: "code",
@@ -26,8 +26,10 @@ function getGoogleAuthURL() {
 
 // Getting login URL
 exports.getGoogleUrl = (req, res, next) => {
+    const type = req.body.type || "login";
+
     return res.status(200).json({
-        url: getGoogleAuthURL()
+        url: getGoogleAuthURL(type)
     });
 }
 
