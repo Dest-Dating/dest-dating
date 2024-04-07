@@ -1,9 +1,11 @@
 import { useEffect } from "react";
-import { publicRequest } from "../requestMethods";
+import { useDispatch } from "react-redux";
+import { oAuthLogin } from "../redux/apiCalls/apiCalls";
 
 const AuthCompletePage = () => {
+  const dispatch = useDispatch();
   useEffect(() => {
-    publicRequest("/user/getMe");
+    oAuthLogin(dispatch);
   }, []);
 
   return <div>Authentication Complete </div>;
