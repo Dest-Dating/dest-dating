@@ -1,6 +1,8 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
+import { useDispatch } from "react-redux";
+import { logOut } from "../../redux/userSlice";
 
 const UserInfoForm = ({
   currentStage,
@@ -10,7 +12,7 @@ const UserInfoForm = ({
 }) => {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
@@ -65,6 +67,8 @@ const UserInfoForm = ({
               />
             </svg>
           </button>
+
+          <button onClick={() => dispatch(logOut())}>Logout</button>
         </div>
       </div>
     </div>

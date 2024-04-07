@@ -22,6 +22,7 @@ const DateOfBirthPicker = ({
   }, []); // Run only once on component mount
 
   const nextHandler = () => {
+    setUserData((p) => ({ ...p, dob: selectedDate }));
     setCurrentStage(currentStage + 1);
   };
 
@@ -38,11 +39,12 @@ const DateOfBirthPicker = ({
           }`}
         >
           <h2 className="text-lg font-bold mb-4">Date of Birth</h2>
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="dd/MM/yyyy"
-            placeholderText="Select Date of Birth"
+          <input
+            onChange={(e) => setSelectedDate(e.target.value)}
+            type="date"
+            name="date"
+            placeholder="YYYY-MM-DD"
+            required
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
           />
           <button

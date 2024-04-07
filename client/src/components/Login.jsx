@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import loginImage from "../assets/login_page.svg";
 import { useNavigate } from "react-router-dom";
 import { googleAuthInitiator } from "../utils/googleOAuth";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/apiCalls/apiCalls";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
 
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.isSignupCompleted) navigate("/home");
+      if (currentUser?.isSignupCompleted) navigate("/home");
       else navigate("/questions");
     }
   }, [currentUser, navigate]);
@@ -39,6 +41,7 @@ function Login() {
     console.log("Email:", email);
     console.log("Password:", password);
     // Reset form fields
+    login(dispatch, { loginField: email, password: password });
     setEmail("");
     setPassword("");
   };

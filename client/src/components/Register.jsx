@@ -1,19 +1,18 @@
 import { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
-import { useSelector } from "react-redux";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("j87iuasdf8@gmail.com");
+  const [password, setPassword] = useState("123qwe!@#");
+  const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
+  const [phoneNumber, setPhoneNumber] = useState("1234567891");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();

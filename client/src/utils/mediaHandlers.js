@@ -57,7 +57,7 @@ export const uploadFile = async (e, file, location, setFileUrl) => {
   }
 };
 
-export const deleteFile = (e, url) => {
+export const deleteFile = async (e, url) => {
   e.preventDefault();
 
   try {
@@ -68,12 +68,13 @@ export const deleteFile = (e, url) => {
       .split("/o/")[1]
       .split("?")[0]
       .replaceAll("%2F", "/")
+      .replaceAll("%40", "@")
       .replaceAll("%20", " ");
     // reference to file location in storage - to organise into folders
     const desertRef = ref(storage, sRef);
 
     // Delete the file
-    deleteObject(desertRef)
+    await deleteObject(desertRef)
       .then(() => {
         // File deleted successfully
         console.log("File deleted successfully");

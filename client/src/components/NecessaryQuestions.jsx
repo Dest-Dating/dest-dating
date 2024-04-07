@@ -46,7 +46,14 @@ const NecessaryQuestions = () => {
           setUserData={setUserData}
         />
       )}
-      {signUpStage == 5 && <UploadPhotos />}
+      {signUpStage == 5 && (
+        <UploadPhotos
+          currentStage={signUpStage}
+          setCurrentStage={setSignUpStage}
+          userData={userData}
+          setUserData={setUserData}
+        />
+      )}
     </div>
   );
 };
