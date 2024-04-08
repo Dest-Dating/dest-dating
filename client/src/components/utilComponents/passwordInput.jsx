@@ -4,10 +4,12 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 const PasswordInput = ({ value, ...rest }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  return (<div className="absolute">
-    <input {...rest} type="text" value={showPassword ? value : "●".repeat(value.length)} />
-    <div className="absolute right-0 top-0" onClick={() => setShowPassword(!showPassword)}>
-      {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+  return (<div className="relative">
+    <input {...rest} type={showPassword ? "text" : "password"} value={value}
+           onPasteCapture={(e) => e.preventDefault()} />
+    <div className="text-stone-400 absolute right-2 top-1/2 -translate-y-1/2"
+         onClick={() => setShowPassword(!showPassword)}>
+      {showPassword ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
     </div>
   </div>);
 };
