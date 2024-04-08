@@ -23,6 +23,7 @@ router.get("/auth/google/", oauthGoogleController.authGoogle);
 
 //for subscription
 router.post("/buySubscription", authController.protect, userController.buySubscription);
+router.post("/validateSubscription", authController.protect, userController.validateSubscription);
 
 //change user details
 router.post(
