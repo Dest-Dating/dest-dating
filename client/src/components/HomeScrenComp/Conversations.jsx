@@ -1,6 +1,22 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { getConversations } from "../../redux/apiCalls/convoApiCalls";
+import { useDispatch, useSelector } from "react-redux";
 
 const Conversations = () => {
+  const [conversationss, setConversationss] = useState([]);
+  const dispatch = useDispatch();
+  const { _id: userId } = useSelector(
+    (state) => state.user.currentUser?.data?.user
+  );
+
+  // const getConvo = () => {
+  //   getConversations(dispatch, userId);
+  // };
+
+  // useEffect(() => {
+  //   getConvo();
+
+  // }, []);
   // Dummy conversation data
   const conversations = [
     {
