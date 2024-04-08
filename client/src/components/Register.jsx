@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
+import PasswordInput from "./utilComponents/passwordInput.jsx";
 
 function Register() {
   const [email, setEmail] = useState("j87iuasdf8@gmail.com");
@@ -18,7 +19,7 @@ function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
@@ -142,7 +143,7 @@ function Register() {
                   >
                     Password
                   </label>
-                  <input
+                  <PasswordInput
                     type="password"
                     id="password"
                     value={password}
@@ -159,7 +160,7 @@ function Register() {
                   >
                     Confirm Password
                   </label>
-                  <input
+                  <PasswordInput
                     type="password"
                     id="verifyPassword"
                     value={verifyPassword}
