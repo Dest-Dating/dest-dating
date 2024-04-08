@@ -21,6 +21,9 @@ router.post("/verifyEmail", authController.verifyEmail); //ok
 router.get("/auth/google/url", oauthGoogleController.getGoogleUrl);
 router.get("/auth/google/", oauthGoogleController.authGoogle);
 
+//for subscription
+router.post("/buySubscription", authController.protect, userController.buySubscription);
+
 //change user details
 router.post(
   "/updateDetails",
