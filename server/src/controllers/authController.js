@@ -2,45 +2,15 @@ const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken"); //token token token babe '>'
 const AppError = require("../utils/appError");
 const { promisify } = require("util");
-// const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const User = require("../models/user.model");
 
-const querystring = require("querystring");
-
-const redirectURI = "user/auth/google";
-
-function getGoogleAuthURL() {
-  const SERVER_ROOT_URI = process.env.SERVER_ROOT_URI;
-  const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-
-  const rootUrl = "https://accounts.google.com/o/oauth2/v2/auth";
-  const options = {
-    redirect_uri: `${SERVER_ROOT_URI}/${redirectURI}`,
-    client_id: GOOGLE_CLIENT_ID,
-    access_type: "offline",
-    response_type: "code",
-    prompt: "consent",
-    scope: [
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/userinfo.email",
-    ].join(" "),
-  };
-
-  return `${rootUrl}?${querystring.stringify(options)}`;
-}
-
-// Getting login URL
-exports.getGoogleUrl = (req, res, next) => {
-  return res.status(200).json({
-    url: getGoogleAuthURL(),
-  });
-};
-
+//todo: login using oauth
 //todo: check for changes as we halting oauth from frontend
 //todo: check for security measures when using oauth
 
 //returns a jwt token created using given id
+//checked normal, checked oauth
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
@@ -48,8 +18,8 @@ const signToken = (id) => {
 };
 
 //creates a jwt token using user's _id, put it into a cookie and send it as response
-//ok
-const createSendToken = (user, status, res) => {
+//checked normal, checked oauth
+const createSendToken = (user, status, res, redirect) => {
   const token = signToken(user._id);
 
   //hide password as we are not 'selecting' user == password is still in user object
@@ -64,6 +34,10 @@ const createSendToken = (user, status, res) => {
   };
   res.cookie("jwt", token, options);
 
+  if (redirect) {
+    res.redirect(redirect);
+  }
+
   res.status(status).json({
     status: "success",
     token,
@@ -74,7 +48,8 @@ const createSendToken = (user, status, res) => {
 };
 
 //to sing up the user
-//checked normal, checked oauth
+//this is not for oauth user. oauth user are signed up using functions defined in aouthController.google.js
+//checked normal. not meant for oauth
 exports.signup = catchAsync(async (req, res, next) => {
   if (!req.body.email) return next(new AppError("Email id not provided", 400));
   const otp = Math.floor(100000 + Math.random() * 900000);
@@ -91,35 +66,15 @@ exports.signup = catchAsync(async (req, res, next) => {
       });
   }
 
-  const isOAuth = req.body.isOAuth;
-
   //a user with dummy required credentials will be created if it is isOAuth
   //the document created will be updated to delete those fields if it is isOAuth
   let newUser = await User.create({
     email: req.body.email,
-    isOAuth: isOAuth,
-
-    phoneNumber: isOAuth ? "0000000000" : req.body.phoneNumber,
-    password: isOAuth ? "duck123!@#" : req.body.password,
-    passwordConfirm: isOAuth ? "duck123!@#" : req.body.passwordConfirm,
-    emailVerificationOtp: !isOAuth ? otp : undefined,
+    phoneNumber: req.body.phoneNumber,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+    emailVerificationOtp: otp,
   });
-
-  //if isOAuth, update fields and then send token
-  if (isOAuth) {
-    newUser = await User.findOneAndUpdate(
-      newUser,
-      {
-        phoneNumber: null,
-        password: null,
-        passwordConfirm: null,
-        isEmailVerified: true,
-      },
-      { new: true, runValidators: false }
-    );
-
-    return createSendToken(newUser, 200, res);
-  }
 
   console.log(otp);
 
@@ -135,38 +90,37 @@ exports.signup = catchAsync(async (req, res, next) => {
     data: {
       phoneNumber: newUser.phoneNumber,
       email: newUser.email,
-      isOAuth: !!isOAuth,
+      isOAuth: false,
+      otp,
     },
   });
 });
 
-//checked normal, no need for oauth
+//checked normal, not meant for oauth
 exports.verifyEmail = catchAsync(async (req, res, next) => {
-  const { email, emailVerificationOtp, isAOth } = req.body;
+  const { email, emailVerificationOtp } = req.body;
 
   let user = null;
 
-  if (!isAOth) {
-    if (!email || !emailVerificationOtp)
-      return res.status(400).json({
-        status: "fail",
-        message: "Please enter OTP",
-      });
+  if (!email || !emailVerificationOtp)
+    return res.status(400).json({
+      status: "fail",
+      message: "Please enter OTP",
+    });
 
-    user = await User.findOne({ email }).select("+emailVerificationOtp");
-    if (!user)
-      return res.status(406).json({
-        status: "fail",
-        message: "No user with this email id",
-      });
-    if (user.isEmailVerified)
-      return res.status(200).json({
-        status: "success",
-        message: "user already verified",
-      });
-  }
+  user = await User.findOne({ email }).select("+emailVerificationOtp");
+  if (!user)
+    return res.status(406).json({
+      status: "fail",
+      message: "No user with this email id",
+    });
+  if (user.isEmailVerified)
+    return res.status(200).json({
+      status: "success",
+      message: "user already verified",
+    });
 
-  if (isAOth || user.emailVerificationOtp === emailVerificationOtp) {
+  if (user.emailVerificationOtp === emailVerificationOtp) {
     await User.updateOne(
       { email },
       { isEmailVerified: true, emailVerificationOtp: null },
@@ -184,7 +138,10 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
   });
 });
 
-//todo: check for bugs
+//todo: do oauth login
+
+//to login the user
+//for normal login
 exports.login = catchAsync(async (req, res, next) => {
   let { loginField, password } = req.body;
 
@@ -202,12 +159,6 @@ exports.login = catchAsync(async (req, res, next) => {
     : { phoneNumber: loginField };
   let user = await User.findOne(filter).select("+password");
 
-  //todo: i was here
-  //check if user is oauth
-  //if yes then check if he has password
-  //if has, then try to login
-  //if no,
-
   if (!user || !(await user.correctPassword(password, user.password)))
     return next(new AppError("Incorrect phone number/email or password!", 401));
 
@@ -216,6 +167,7 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+//checked normal
 exports.logout = catchAsync(async (req, res, next) => {
   res
     .cookie("jwt", "", {
@@ -228,10 +180,108 @@ exports.logout = catchAsync(async (req, res, next) => {
     });
 });
 
+//checked
+//makes sure that user is logged in == has a valid bearer token
+//if all is good, that user is added to the req
+exports.protect = catchAsync(async (req, res, next) => {
+  let token = req.cookies.jwt;
+
+  // check if there is a token
+  if (
+    !token &&
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError("You are not logged in! Please log in again.", 401)
+    );
+  }
+
+  // verify the token
+  //verify also accepts a callback function, but we will make it return a promise
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // check if user still exists => to check the case if user has jwt token but the user was deleted!
+  const freshUser = await User.findOne({ _id: decoded.id });
+  if (!freshUser) {
+    return next(
+      new AppError("The user belonging to this token does not exist.", 401)
+    );
+  }
+
+  // check if user changed password after jwt was issued
+  if (freshUser.changePasswordAfter(decoded.iat)) {
+    return next(
+      new AppError(
+        "User recently changed their password! Please login again.",
+        401
+      )
+    );
+  }
+
+  //grant access to the protected rout
+  //also add this user to the request object
+  req.user = freshUser;
+  next();
+});
+
+//return user if logged in, relevant error messages otherwise
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  let token = req.cookies.jwt;
+
+  // check if there is a token
+  if (
+    !token &&
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return next(
+      new AppError("You are not logged in! Please log in again.", 401)
+    );
+  }
+
+  // verify the token
+  //verify also accepts a callback function, but we will make it return a promise
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  // check if user still exists => to check the case if user has jwt token but the user was deleted!
+  const freshUser = await User.findOne({ _id: decoded.id });
+  if (!freshUser) {
+    return next(
+      new AppError("The user belonging to this token does not exist.", 401)
+    );
+  }
+
+  // check if user changed password after jwt was issued
+  if (freshUser.changePasswordAfter(decoded.iat)) {
+    return next(
+      new AppError(
+        "User recently changed their password! Please login again.",
+        401
+      )
+    );
+  }
+
+  res.status(200).json({
+    status: "success",
+    token,
+    data: {
+      user: freshUser,
+    },
+  });
+});
+
+//todo: below functions are not checked on postman yet
 //to send an email to user when he forget the password
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  //protected function will be called before this, so req is supposed to have user
-  //get user based on posted email
   const user = await User.findOne({ email: req.body.email });
   //link is the link of client page
   const link = req.body.link;
@@ -338,8 +388,8 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-//todo: below are unchecked functions
-//if there is a bearer token, try to add user to the req. return otherwise
+//todo: might be deleted if not used in feature
+//if there is a bearer token, try to add user to the req. do nothing otherwise
 exports.addUserToRequest = async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   console.log(token);
@@ -361,100 +411,3 @@ exports.addUserToRequest = async (req, res, next) => {
   req.user = freshUser;
   next();
 };
-
-//makes sure that user is logged in == has a valid bearer token
-//if all is good, that user is added to the req
-exports.protect = catchAsync(async (req, res, next) => {
-  let token = req.cookies.jwt;
-
-  // check if there is a token
-  if (
-    !token &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-
-  if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in again.", 401)
-    );
-  }
-
-  // verify the token
-  //verify also accepts a callback function, but we will make it return a promise
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-  // check if user still exists => to check the case if user has jwt token but the user was deleted!
-  const freshUser = await User.findOne({ _id: decoded.id });
-  if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token does not exist.", 401)
-    );
-  }
-
-  // check if user changed password after jwt was issued
-  if (freshUser.changePasswordAfter(decoded.iat)) {
-    return next(
-      new AppError(
-        "User recently changed their password! Please login again.",
-        401
-      )
-    );
-  }
-
-  //grant access to the protected rout
-  //also add this user to the request object
-  req.user = freshUser;
-  next();
-});
-
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
-  let token = req.cookies.jwt;
-
-  // check if there is a token
-  if (
-    !token &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-
-  if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in again.", 401)
-    );
-  }
-
-  // verify the token
-  //verify also accepts a callback function, but we will make it return a promise
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-  // check if user still exists => to check the case if user has jwt token but the user was deleted!
-  const freshUser = await User.findOne({ _id: decoded.id });
-  if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token does not exist.", 401)
-    );
-  }
-
-  // check if user changed password after jwt was issued
-  if (freshUser.changePasswordAfter(decoded.iat)) {
-    return next(
-      new AppError(
-        "User recently changed their password! Please login again.",
-        401
-      )
-    );
-  }
-
-  res.status(200).json({
-    status: "success",
-    token,
-    data: {
-      freshUser,
-    },
-  });
-});

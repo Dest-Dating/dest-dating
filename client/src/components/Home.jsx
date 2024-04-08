@@ -4,12 +4,18 @@ import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
+
 import { FaBars, FaTimes, FaHome } from "react-icons/fa";
+
+import { useDispatch } from "react-redux";
+import { logOut } from "../redux/userSlice";
+
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -61,7 +67,10 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
+
       <div className="col-span-12 lg:col-span-6">
+        <button onClick={() => dispatch(logOut())}>logout</button>
+
         <Routes>
           <Route path="/" element={<Center />} />
           <Route path="/chats" element={<ChatSection />} />

@@ -13,16 +13,34 @@ const getRecommendations = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
+    // Adjusted height preferences
+    const minHeight =
+      user.preferences.minHeight !== null
+        ? user.preferences.minHeight
+        : user.height - 5;
+    const maxHeight =
+      user.preferences.maxHeight !== null
+        ? user.preferences.maxHeight
+        : user.height + 5;
+
     // Fetch potential matches based on criteria
     const potentialMatches = await User.find({
       _id: { $ne: user._id },
-      //   gender: user.interestedInGender,
-      //   interestedInGender: user.gender,
-      height: { $gte: user.height - 5, $lte: user.height + 5 }, // Adjusted for height
+      gender: user.interestedInGender,
+      interestedInGender: user.gender,
+      height: { $gte: minHeight, $lte: maxHeight },
+    });
+
+    // Filter potential matches based on user preferences
+    const filteredMatches = potentialMatches.filter((match) => {
+      return (
+        match.gender === user.interestedInGender &&
+        match.interestedInGender === user.gender
+      );
     });
 
     // Calculate similarity score for each potential match using cosine similarity
-    const recommendations = potentialMatches.map((match) => {
+    const recommendations = filteredMatches.map((match) => {
       const similarityScore = calculateCosineSimilarity(user, match);
       return { user: match, similarityScore };
     });
