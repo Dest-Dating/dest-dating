@@ -2,11 +2,11 @@ const User = require("../models/user.model");
 const catchAsync = require("../utils/catchAsync");
 const axios = require("axios");
 const AppError = require("../utils/appError");
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 exports.test = (req, res, next) => {
   res.status(200).json({
-    status: "success",
-    message: "test completed",
+    status: "success", message: "test completed",
   });
 };
 
@@ -34,8 +34,7 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
   const updatedUser = await User.findOneAndUpdate(user._id, updates, { new: true });
 
   res.status(200).json({
-    status: "success",
-    user: updatedUser,
+    status: "success", user: updatedUser,
   });
 });
 
@@ -50,8 +49,7 @@ exports.updateProfilePick = catchAsync(async (req, res, next) => {
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
@@ -62,16 +60,14 @@ exports.addPhotoLink = catchAsync(async (req, res, next) => {
   const photoLink = req.body.photoLink;
   const index = req.body.index;
 
-  if (!photoLink || typeof index != "number")
-    return next(new AppError("Photo Link not provided.", 400));
+  if (!photoLink || typeof index != "number") return next(new AppError("Photo Link not provided.", 400));
 
   user.photosLink = user.photosLink.filter((obj) => obj.index !== index);
   user.photosLink = user.photosLink.push({ photoLink, index });
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
@@ -83,18 +79,48 @@ exports.deletePhotoLink = catchAsync(async (req, res, next) => {
 
   if (!photoLink) return next(new AppError("Photo Link not provided.", 400));
 
-  user.photosLink = user.photosLink.filter(
-    (link) => link.photoLink !== photoLink
-  );
+  user.photosLink = user.photosLink.filter((link) => link.photoLink !== photoLink);
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success",
-    data: {
+    status: "success", data: {
       user,
     },
   });
 });
+
+exports.buySubscription = catchAsync(async (req, res, next) => {
+  const user = req.user;
+
+  const lineItems = [{
+    price_data: {
+      currency: "inr", product_data: {
+        name: "Dest Premium Membership",
+      }, unit_amount: 599 * 100,
+    }, quantity: 1,
+  }];
+  //
+  // const lineItems = products.map((product) => ({
+  //   price_data: {
+  //     currency: "inr", product_data: {
+  //       name: product.dish, images: [product.imgdata],
+  //     }, unit_amount: product.price * 100,
+  //   }, quantity: product.qnty,
+  // }));
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    line_items: lineItems,
+    mode: "payment",
+    success_url: "http://localhost:3000/paymentSuccess",
+    cancel_url: "http://localhost:3000/paymentFailed",
+  });
+
+
+  console.log(session.id);
+  res.json({ id: session.id });
+});
+
 
 // Controller to set user preferences
 // exports.setUserPreferences = async (req, res) => {
