@@ -32,7 +32,18 @@ function BuyPremium() {
         "pk_test_51KadArSGLjUHhsp5qbEsOBlbvclSV0Pv8G8wtYqbI9BEG2wf0bTT543DDZI2UMrfX6YNqNW12wD0t83SX30W0gMF00J3vGjze8"
       );
 
-      const response = await publicRequest.post("/user/buySubscription");
+      // const response = await publicRequest.post("/user/buySubscription");
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response = await fetch(
+        "http://localhost:8000/user/buySubscription",
+        {
+          method: "POST",
+          headers: headers,
+          credentials: "include",
+        }
+      );
 
       const session = await response.json();
 
