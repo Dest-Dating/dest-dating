@@ -17,7 +17,8 @@ function Login() {
 
   useEffect(() => {
     if (currentUser) {
-      if (currentUser?.isSignupCompleted) navigate("/home"); else navigate("/questions");
+      if (currentUser?.isSignupCompleted) navigate("/home");
+      else navigate("/questions");
     }
   }, [currentUser, navigate]);
 
