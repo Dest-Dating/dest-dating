@@ -6,18 +6,18 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    conversationId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Conversation",
+    conversationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Conversation",
     },
-    message:{
-        type: String,
+    message: {
+      type: String,
     },
-    type:{
-        type: String,
-        enum: ["audio", "video", "image", "info", "text"],
-        required: true,
-      },
+    type: {
+      type: String,
+      enum: ["audio", "video", "image", "info", "text"],
+      required: true,
+    },
   },
   {
     timestamps: true,
