@@ -17,6 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.3",
+    "@stripe/stripe-js": "^3.2.0",
     "axios": "^1.6.8",
     "datepicker": "^0.0.0",
     "firebase": "^10.10.0",

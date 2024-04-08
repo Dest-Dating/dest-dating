@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
-import { loadStripe } from "@stripe/stripe-js";
-import { publicRequest } from "../requestMethods";
 
-function BuyPremium() {
+function PaymentSucess() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
@@ -26,38 +24,6 @@ function BuyPremium() {
   }, [currentUser, navigate]);
 
   // checkout function to initiate payment
-  const checkout = async () => {
-    try {
-      const stripe = await loadStripe(
-        "pk_test_51KadArSGLjUHhsp5qbEsOBlbvclSV0Pv8G8wtYqbI9BEG2wf0bTT543DDZI2UMrfX6YNqNW12wD0t83SX30W0gMF00J3vGjze8"
-      );
-
-      // const response = await publicRequest.post("/user/buySubscription");
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const response = await fetch(
-        "http://localhost:8000/user/buySubscription",
-        {
-          method: "POST",
-          headers: headers,
-          credentials: "include",
-        }
-      );
-
-      const session = await response.json();
-
-      const result = stripe.redirectToCheckout({
-        sessionId: session.id,
-      });
-
-      if (result.error) {
-        console.log(result.error);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <div
@@ -71,7 +37,7 @@ function BuyPremium() {
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <h1 className="text-2xl mb-4 font-semibold">Buy Premium</h1>
+          <h1 className="text-2xl mb-4 font-semibold">Payment Successful</h1>
           <p className="mb-5">
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis,
             minus nemo nisi inventore quas esse ratione ea impedit est aut
@@ -85,14 +51,8 @@ function BuyPremium() {
             dicta neque accusantium eligendi illum impedit eveniet sint at
             assumenda.
           </p>
-          <button
-            className="mt-4 bg-red-300 px-4 py-2 rounded-md"
-            onClick={(e) => {
-              e.preventDefault;
-              checkout();
-            }}
-          >
-            Buy Now!
+          <button className="mt-4 bg-pink-300 px-4 py-2 rounded-md">
+            Find Me a Match!
           </button>
         </div>
       </div>
@@ -100,4 +60,4 @@ function BuyPremium() {
   );
 }
 
-export default BuyPremium;
+export default PaymentSucess;
