@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import NecessaryQuestions from "./NecessaryQuestions";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
+import OTPInput from "./RegisterQuestions/OTPInput";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ function Register() {
   const [verifyPassword, setVerifyPassword] = useState("");
   const [imageLoaded, setImageLoaded] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [OTPEntered, setOTPEntered] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,7 +44,8 @@ function Register() {
     // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
-    setVerified(true);
+    setOTPEntered(true);
+    // setVerified(true);
   };
 
   const responseGoogle = (response) => {
@@ -52,7 +55,7 @@ function Register() {
 
   return (
     <div>
-      {!verified && (
+      {!verified && !OTPEntered && (
         <div className="flex h-screen justify-center items-center bg-pink-100">
           <div className="max-w-xl w-full flex justify-between items-center">
             {/* Left side: Image */}
@@ -163,7 +166,10 @@ function Register() {
         </div>
       )}
       {/* Render component after registration */}
-      {/* {verified && <NecessaryQuestions />} */}
+      {!verified && OTPEntered && (
+        <OTPInput verified={verified} setVerified={setVerified} />
+      )}
+      {verified && <NecessaryQuestions />}
     </div>
   );
 }

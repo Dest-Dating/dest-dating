@@ -1,25 +1,38 @@
 import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaHome } from "react-icons/fa";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleHomeClick = () => {
+    navigate("/home");
+  };
+
   return (
     <div className="grid grid-cols-12">
-      {/* Hamburger Icon for Sidebar */}
-      <div className="lg:hidden col-span-1 flex items-center justify-center">
-        <button onClick={toggleSidebar} className="text-2xl">
-          {sidebarOpen ? <FaTimes /> : <FaBars />}
+      {/* Top Bar */}
+      <div className="col-span-12 bg-gray-200 p-4 flex justify-between items-center">
+        {/* Home Icon */}
+        <button onClick={handleHomeClick} className="text-2xl">
+          <FaHome />
         </button>
+
+        {/* Hamburger Icon for Sidebar (only visible on smaller screens) */}
+        <div className="lg:hidden">
+          <button onClick={toggleSidebar} className="text-2xl">
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar for Smaller Screens */}
@@ -48,7 +61,7 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
-      <div className="lg:col-span-6">
+      <div className="col-span-12 lg:col-span-6">
         <Routes>
           <Route path="/" element={<Center />} />
           <Route path="/chats" element={<ChatSection />} />
