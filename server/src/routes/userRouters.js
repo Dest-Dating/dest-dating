@@ -25,22 +25,22 @@ router.get("/auth/google/", oauthGoogleController.authGoogle);
 router.post(
   "/updateDetails",
   authController.protect,
-  userController.updateUserDetails,
+  userController.updateUserDetails
 ); //check what fields this updates in definition
 router.post(
   "/updateProfilePick",
   authController.protect,
-  userController.updateProfilePick,
+  userController.updateProfilePick
 );
 router.post(
   "/addPhotoLink",
   authController.protect,
-  userController.addPhotoLink,
+  userController.addPhotoLink
 );
 router.post(
   "/deletePhotoLink",
   authController.protect,
-  userController.deletePhotoLink,
+  userController.deletePhotoLink
 );
 
 const { getRecommendations } = require("../controllers/recommendationAlgo");

@@ -12,6 +12,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import conversationSlice from "./conversationSlice";
 // Configuration for Redux persist
 const persistConfig = {
   key: "root",
@@ -22,6 +23,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer,
   profile: profileReducer,
+  conversations: conversationSlice,
 });
 
 // Create persisted reducer using persistReducer from redux-persist
