@@ -36,6 +36,15 @@ export const userSlice = createSlice({
       state.currentUser = null;
       state.errorMsg = null;
     },
+
+    // Reducer for uploading photo
+    photoUploadSuccess: (state, action) => {
+      state.isFetching = false;
+      state.error = false;
+      state.errorMsg = null;
+      state.currentUser = action.payload;
+    },
+
     // Reducer for resetting error state
     errorReset: (state) => {
       state.isFetching = false;
@@ -61,7 +70,7 @@ export const userSlice = createSlice({
       state.currentUser = null;
       state.errorMsg = null;
     },
-     // Reducer for changing user theme
+    // Reducer for changing user theme
     changeUserTheme: (state, action) => {
       state.isFetching = false;
       state.dark = action.payload;
@@ -80,5 +89,6 @@ export const {
   errorReset,
   logOut,
   changeUserTheme,
+  photoUploadSuccess,
 } = userSlice.actions;
 export default userSlice.reducer;

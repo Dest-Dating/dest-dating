@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
-
-import { toast, ToastContainer } from "react-toastify";
-import NecessaryQuestions from "./NecessaryQuestions";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
+import OtpSection from "./OtpSection";
+import { signup } from "../redux/apiCalls/apiCalls";
+import PasswordInput from "./utilComponents/passwordInput.jsx";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [verifyPassword, setVerifyPassword] = useState("");
+  const [email, setEmail] = useState("j87iuasdf8@gmail.com");
+  const [password, setPassword] = useState("123qwe!@#");
+  const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
+  const [phoneNumber, setPhoneNumber] = useState("1234567891");
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user,
+  );
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
     setImageLoaded(true);
@@ -22,6 +28,9 @@ function Register() {
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
+  };
+  const handlePhoneChnage = (e) => {
+    setPhoneNumber(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
@@ -42,17 +51,30 @@ function Register() {
     // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
-    setVerified(true);
+    signup(dispatch, setRegistered, {
+      email: email,
+      password: password,
+      passwordConfirm: verifyPassword,
+      phoneNumber: phoneNumber,
+    });
+    // setRegistered(true);
   };
 
-  const responseGoogle = (response) => {
-    console.log(response);
-    // Handle Google Sign-In logic here
-  };
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.isSignupCompleted) {
+        console.log("./home");
+        navigate("/home");
+      } else {
+        console.log("./questions");
+        navigate("/questions");
+      }
+    }
+  }, [currentUser, navigate]);
 
   return (
     <div>
-      {!verified && (
+      {!registered && (
         <div className="flex h-screen justify-center items-center bg-pink-100">
           <div className="max-w-xl w-full flex justify-between items-center">
             {/* Left side: Image */}
@@ -97,6 +119,23 @@ function Register() {
                     required
                   />
                 </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="phone"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="number"
+                    id="phone"
+                    value={phoneNumber}
+                    onChange={handlePhoneChnage}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                </div>
                 <div className="mb-6">
                   <label
                     htmlFor="password"
@@ -104,7 +143,7 @@ function Register() {
                   >
                     Password
                   </label>
-                  <input
+                  <PasswordInput
                     type="password"
                     id="password"
                     value={password}
@@ -121,7 +160,7 @@ function Register() {
                   >
                     Confirm Password
                   </label>
-                  <input
+                  <PasswordInput
                     type="password"
                     id="verifyPassword"
                     value={verifyPassword}
@@ -145,25 +184,28 @@ function Register() {
                 >
                   Register
                 </button>
-                {/* Custom oAuth */}
-
-                {/* Google Sign-In Button */}
-                <ToastContainer />
+                <button
+                  className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                  onClick={(e) => {
+                    googleAuthInitiator(e);
+                  }}
+                >
+                  Google Sign in
+                </button>
               </form>
-              <button
-                className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-                onClick={(e) => {
-                  googleAuthInitiator(e);
-                }}
-              >
-                Google Sign in
-              </button>
+              {/* Google Sign-In Button */}
             </div>
           </div>
         </div>
       )}
       {/* Render component after registration */}
-      {/* {verified && <NecessaryQuestions />} */}
+      {registered && (
+        <OtpSection
+          user={{
+            email: email,
+          }}
+        />
+      )}
     </div>
   );
 }

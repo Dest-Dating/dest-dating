@@ -23,16 +23,14 @@ app.use(helmet());
 //     credentials: true,
 // }));
 app.use(
-    cors({
-        origin: process.env.CORS_ORIGIN,
-        credentials: true,
-    })
+  cors({
+    origin: ["http://localhost:3000"],
+    credentials: true,
+  })
 );
 
-
-
 // read data from the body into req.body, max is 10kb.
-app.use(express.json({limit: "10kb"})); //data from body shall be added to req
+app.use(express.json({ limit: "10kb" })); //data from body shall be added to req
 
 //sanitize against non SQL code injection
 app.use(mongoSanitize());
@@ -43,48 +41,47 @@ app.use(xss());
 
 //adding the request time to req object
 app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    next();
+  req.requestTime = new Date().toISOString();
+  next();
 });
 
-app.use(cookieParser())
+app.use(cookieParser());
 
 //development dependency, logs the recent request in the console
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.get("/", (req, res, next) => {
-    res.status(200).json({
-        status: "success",
-        message: "Welcome to Dest server!",
-    });
+  res.status(200).json({
+    status: "success",
+    message: "Welcome to Dest server!",
+  });
 });
 
 app.get("/test", async (req, res, next) => {
-    res.status(200).json({
-        status: "success",
-        message: "this is for testing functions",
-    })
+  res.status(200).json({
+    status: "success",
+    message: "this is for testing functions",
+  });
 });
-
 
 // configuration to parse JSON and URL-encoded data.
 app.use(express.json());
 app.use(express.urlencoded());
 require("./config/cloudinary").cloudinaryConnect();
 
-
 //defining routers
 // todo: routes here
 const userRouter = require("./routes/userRouters");
+const conversationRouter = require("./routes/conversationRouter");
+const messageRouter = require("./routes/messageRouter");
 app.use("/user", userRouter);
-
+app.use("/conversations", conversationRouter);
+app.use("/messages", messageRouter);
 
 //for undefined routs
 const AppError = require("./utils/appError");
 app.all("*", (req, res, next) => {
-    next(
-        new AppError(`Can't find ${req.originalUrl} on Dest server!`, 404)
-    );
+  next(new AppError(`Can't find ${req.originalUrl} on Dest server!`, 404));
 });
 
 //in case of operational error this middleware function will be called to return relevant error message
