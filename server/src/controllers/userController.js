@@ -37,3 +37,54 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     });
 });
 
+exports.updateProfilePick = catchAsync(async (req, res, next) => {
+    let user = req.user;
+    const profileImage = req.body.profileImage;
+
+    if (!profileImage) return next(new AppError("Image url not provided!", 400));
+
+    user.mainProfilePhotoLink = profileImage;
+
+    user = await user.save({new: true, validateBeforeSave: false});
+
+    res.status(200).json({
+        status: "success", data: {
+            user
+        }
+    });
+});
+
+exports.addPhotoLink = catchAsync(async (req, res, next) => {
+
+    let user = req.user;
+    const photoLink = req.body.photoLink;
+
+    if (!photoLink) return next(new AppError("Photo Link not provided.", 400));
+
+    user.photosLink.push(photoLink);
+    user = await user.save({new: true, validateBeforeSave: false});
+
+    res.status(200).json({
+        status: "success", data: {
+            user
+        }
+    })
+});
+
+exports.deletePhotoLink = catchAsync(async (req, res, next) => {
+
+    let user = req.user;
+    const photoLink = req.body.photoLink;
+
+    if (!photoLink) return next(new AppError("Photo Link not provided.", 400));
+
+    user.photosLink = user.photosLink.filter((link) => link !== photoLink);
+    user = await user.save({new: true, validateBeforeSave: false});
+
+    res.status(200).json({
+        status: "success", data: {
+            user
+        }
+    })
+
+});
