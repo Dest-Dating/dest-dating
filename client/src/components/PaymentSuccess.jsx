@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 
-function PaymentSucess() {
+function PaymentSuccess() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
@@ -23,8 +23,6 @@ function PaymentSucess() {
     if (!currentUser) navigate("/");
   }, [currentUser, navigate]);
 
-  // checkout function to initiate payment
-
   return (
     <div
       className={`fixed top-0 right-0 bottom-0 left-0 z-50 bg-black bg-opacity-50 transition-opacity duration-500 ${
@@ -39,20 +37,22 @@ function PaymentSucess() {
         >
           <h1 className="text-2xl mb-4 font-semibold">Payment Successful</h1>
           <p className="mb-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis,
-            minus nemo nisi inventore quas esse ratione ea impedit est aut
-            similique necessitatibus in animi, quae minima? Alias unde officiis
-            fugit, molestias ipsam veritatis deleniti magni maiores in autem
-            porro sunt nihil tempora nam asperiores magnam iusto. Explicabo
-            eaque quasi quod?
+            Congratulations! Your payment was successful. Enjoy your premium
+            membership benefits!
           </p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos velit
-            dicta neque accusantium eligendi illum impedit eveniet sint at
-            assumenda.
+            As a premium member, you'll get:
+            <ul className="list-disc ml-8">
+              <li>Access to exclusive content</li>
+              <li>Priority support</li>
+              <li>And much more!</li>
+            </ul>
           </p>
-          <button className="mt-4 bg-pink-300 px-4 py-2 rounded-md">
-            Find Me a Match!
+          <button
+            className="mt-4 bg-pink-300 px-4 py-2 rounded-md text-white hover:bg-pink-400 transition-colors duration-300"
+            onClick={() => navigate("/home")}
+          >
+            Back to Home
           </button>
         </div>
       </div>
@@ -60,4 +60,4 @@ function PaymentSucess() {
   );
 }
 
-export default PaymentSucess;
+export default PaymentSuccess;

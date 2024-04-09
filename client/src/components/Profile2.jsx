@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaEdit, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import UploadPhotos from "./RegisterQuestions/UploadPhotos";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -12,6 +13,7 @@ const ProfilePage = () => {
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
   const [location, setLocation] = useState("New York, USA");
+  const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState(
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   );
@@ -29,6 +31,10 @@ const ProfilePage = () => {
 
   const handleBack = () => {
     navigate("/home");
+  };
+
+  const handleUploadPhotos = () => {
+    setOpenUploadPhotos(!openUploadPhotos);
   };
 
   return (
@@ -66,6 +72,20 @@ const ProfilePage = () => {
           <h1 className="text-3xl font-bold mb-2">{username}</h1>
           <p className="text-gray-600 mb-2">{email}</p>
         </div>
+      </div>
+      <div>
+        <button
+          className="p-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white"
+          onClick={handleUploadPhotos}
+        >
+          Upload Photos
+        </button>
+        {openUploadPhotos && (
+          <UploadPhotos
+            openUploadPhotos={openUploadPhotos}
+            setOpenUploadPhotos={setOpenUploadPhotos}
+          />
+        )}
       </div>
       <div className="flex flex-col lg:flex-row">
         <div className="lg:w-2/3 pr-8">
