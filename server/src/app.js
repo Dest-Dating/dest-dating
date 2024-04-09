@@ -76,7 +76,7 @@ const conversationRouter = require("./routes/conversationRouter");
 const messageRouter = require("./routes/messageRouter");
 app.use("/user", userRouter);
 app.use("/conversations", conversationRouter);
-app.use("/messages", messageRouter);
+app.use("/message", messageRouter);
 
 //for undefined routs
 const AppError = require("./utils/appError");

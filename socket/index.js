@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 const { Server } = require("socket.io");
 
 const io = new Server(4080, {
   cors: true,
+=======
+const io = require("socket.io")(process.env.PORT || 4000, {
+  cors: {
+    origin: ["https://localhost:3000"],
+  },
+>>>>>>> 80a9964b608cba1788f53e36607278536e3ab013
 });
 
 const emailToSocketIdMap = new Map();
@@ -18,8 +25,18 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("room:join", data);
   });
 
+<<<<<<< HEAD
   socket.on("user:call", ({ to, offer }) => {
     io.to(to).emit("incomming:call", { from: socket.id, offer });
+=======
+  //Message Section
+  //Sending message to user
+  socket.on("sendMessage", ({ reciverId, senderId, message }) => {
+    const user = fetchUser(reciverId);
+    console.log(message, senderId, reciverId);
+    //Emiting it to the reciver
+    io.to(user?.socketId).emit("getMessage", { senderId, message });
+>>>>>>> 80a9964b608cba1788f53e36607278536e3ab013
   });
 
   socket.on("call:accepted", ({ to, ans }) => {
