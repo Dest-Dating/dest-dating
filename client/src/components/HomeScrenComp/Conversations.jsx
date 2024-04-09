@@ -1,45 +1,71 @@
 import React, { useEffect, useState } from "react";
-import { getConversations } from "../../redux/apiCalls/convoApiCalls";
+import { getConversations, getUsers } from "../../redux/apiCalls/convoApiCalls";
 import { useDispatch, useSelector } from "react-redux";
 
-const Conversations = () => {
-  const [conversationss, setConversationss] = useState([]);
+const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
   const dispatch = useDispatch();
   const { _id: userId } = useSelector(
     (state) => state.user.currentUser?.data?.user
   );
 
-  // const getConvo = () => {
-  //   getConversations(dispatch, userId);
-  // };
+  const conversations = useSelector(
+    (state) => state.conversations.conversations
+  );
 
-  // useEffect(() => {
-  //   getConvo();
+  const getConvo = () => {
+    getConversations(dispatch, userId);
+  };
 
-  // }, []);
+  useEffect(() => {
+    getConvo();
+  }, []);
   // Dummy conversation data
-  const conversations = [
-    {
-      id: 1,
-      profilePicture: "https://via.placeholder.com/50",
-      name: "John Doe",
-      latestMessage: "Hey there!",
-    },
-    {
-      id: 2,
-      profilePicture: "https://via.placeholder.com/50",
-      name: "Jane Smith",
-      latestMessage: "How are you?",
-    },
-    // Add more conversation data as needed
-  ];
+  // const conversations = [
+  //   {
+  //     id: 1,
+  //     profilePicture: "https://via.placeholder.com/50",
+  //     name: "John Doe",
+  //     latestMessage: "Hey there!",
+  //   },
+  //   {
+  //     id: 2,
+  //     profilePicture: "https://via.placeholder.com/50",
+  //     name: "Jane Smith",
+  //     latestMessage: "How are you?",
+  //   },
+  //   // Add more conversation data as needed
+  // ];
+
+  const getDetails = async (userIds) => {
+    if (userIds.length > 0) {
+      const userDetails = await getUsers(dispatch, userIds);
+      console.log(userDetails);
+      setChatUsers(userDetails);
+    } else setChatUsers([]);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line no-extra-boolean-cast
+    const userIds = !!conversations[0]?._id
+      ? conversations.map((convo) => {
+          if (convo.members[0] === userId) {
+            return convo.members[1];
+          } else {
+            return convo.members[0];
+          }
+        })
+      : [];
+    getDetails(userIds);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversations, userId]);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md h-screen">
       <h2 className="text-lg font-bold mb-4">Conversations</h2>
       {/* Mapping over conversations array to render each conversation */}
       {conversations.map((conversation) => (
-        <div key={conversation.id} className="flex items-center mb-4">
+        <div key={conversation._id} className="flex items-center mb-4">
           {/* Profile Picture */}
           <img
             src={conversation.profilePicture}

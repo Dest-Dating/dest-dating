@@ -3,6 +3,7 @@ import { publicRequest, userRequest } from "../../requestMethods";
 import {
   deleteUserSuccess,
   errorReset,
+  getUsersSuccess,
   loginSuccess,
   photoUploadSuccess,
   updateSuccess,

@@ -10,7 +10,8 @@ import { logOut } from "../redux/userSlice";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [chatUsers, setChatUsers] = useState([]);
+  const [openConvo, setOpenConvo] = useState(null);
   const dispatch = useDispatch();
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -35,7 +36,11 @@ const Home = () => {
 
             <div className="h-screen flex flex-col">
               <div className="h-1/2 mb-4 overflow-auto">
-                <Conversations />
+                <Conversations
+                  chatUsers={chatUsers}
+                  setChatUsers={setChatUsers}
+                  setOpenConvo={setOpenConvo}
+                />
               </div>
               <div className="h-1/2 overflow-auto">
                 <Likes />

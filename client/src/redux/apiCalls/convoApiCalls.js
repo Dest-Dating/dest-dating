@@ -4,6 +4,7 @@ import {
   convoFetchSuccess,
   convoPostSuccess,
   convoStart,
+  convoSuccess,
 } from "../conversationSlice";
 
 // get conversations of the current user
@@ -29,5 +30,19 @@ export const newConversation = async (dispatch, userId, id) => {
     return res.data;
   } catch (error) {
     dispatch(convoFailure());
+  }
+};
+
+export const getUsers = async (dispatch, userList) => {
+  dispatch(convoStart());
+  try {
+    const res = await publicRequest.post("conversations/convoUsers", {
+      data: userList,
+    });
+    dispatch(convoSuccess());
+    return res.data;
+  } catch (error) {
+    dispatch(convoFailure());
+    return error.message;
   }
 };
