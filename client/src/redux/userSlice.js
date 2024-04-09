@@ -58,6 +58,11 @@ export const userSlice = createSlice({
       state.currentUser = null;
       state.errorMsg = null;
     },
+    // successfull fetch
+    getUsersSuccess: (state) => {
+      state.isFetching = false;
+      state.error = false;
+    },
     // Reducer for user-related errors
     userFailure: (state, action) => {
       state.isFetching = false;
@@ -88,6 +93,7 @@ export const {
   userFailure,
   errorReset,
   logOut,
+  getUsersSuccess,
   changeUserTheme,
   photoUploadSuccess,
 } = userSlice.actions;
