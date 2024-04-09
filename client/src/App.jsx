@@ -17,6 +17,7 @@ import PaymentFailure from "./components/PaymentFailure";
 import Lobby from "./screens/Lobby";
 import RoomPage from "./screens/RoomPage";
 import Profile2 from "./components/Profile2";
+import Test from "./components/Test.jsx";
 
 function App() {
   // user data of currently logged in user from redux state
