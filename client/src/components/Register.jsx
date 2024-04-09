@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
-import PasswordInput from "./utilComponents/PasswordInput.jsx";
+import PasswordInput from "./utilComponents/passwordInput";
 
 function Register() {
   const [email, setEmail] = useState("j87iuasdf8@gmail.com");
