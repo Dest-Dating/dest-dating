@@ -37,7 +37,7 @@ const Center = () => {
   };
 
   return (
-    <div className="relative w-full h-full p-10">
+    <div className="relative w-full h-full p-10 flex justify-center items-center">
       {/* Profile Photo */}
       <img
         src={photos[currentPhotoIndex]}
