@@ -1,4 +1,4 @@
-const io = require("socket.io")(process.env.PORT || 4080, {
+const io = require("socket.io")(process.env.PORT || 4000, {
   cors: {
     origin: ["https://localhost:3000"],
   },
@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
   //Sending message to user
   socket.on("sendMessage", ({ reciverId, senderId, message }) => {
     const user = fetchUser(reciverId);
-
+    console.log(message, senderId, reciverId);
     //Emiting it to the reciver
     io.to(user?.socketId).emit("getMessage", { senderId, message });
   });
