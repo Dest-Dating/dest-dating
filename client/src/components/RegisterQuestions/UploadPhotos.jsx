@@ -13,12 +13,13 @@ import {
 } from "../../redux/apiCalls/apiCalls";
 import { toast } from "react-toastify";
 
-
 const UploadPhotos = ({
   currentStage,
   setCurrentStage,
   userData,
   setUserData,
+  openUploadPhotos,
+  setOpenUploadPhotos,
 }) => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
 
@@ -193,7 +194,10 @@ const UploadPhotos = ({
           ))}
         </div>
         <button
-          onClick={() => setCurrentStage(currentStage - 1)}
+          onClick={() => {
+            if (!openUploadPhotos) setCurrentStage(currentStage - 1);
+            else setOpenUploadPhotos(false);
+          }}
           className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
         >
           Back

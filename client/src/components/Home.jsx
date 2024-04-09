@@ -5,11 +5,10 @@ import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
 
-import { FaBars, FaTimes, FaHome } from "react-icons/fa";
+import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
 import { logOut } from "../redux/userSlice";
-
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +23,14 @@ const Home = () => {
     navigate("/home");
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleLogout = () => {
+    dispatch(logOut());
+  };
+
   return (
     <div className="grid grid-cols-12">
       {/* Top Bar */}
@@ -31,6 +38,19 @@ const Home = () => {
         {/* Home Icon */}
         <button onClick={handleHomeClick} className="text-2xl">
           <FaHome />
+        </button>
+
+        {/* Profile Icon */}
+        <button onClick={handleProfileClick} className="text-2xl mx-4">
+          <FaUser />
+        </button>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-3 py-1 rounded-full"
+        >
+          <FaSignOutAlt />
         </button>
 
         {/* Hamburger Icon for Sidebar (only visible on smaller screens) */}
@@ -67,10 +87,7 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
-
       <div className="col-span-12 lg:col-span-6">
-        <button onClick={() => dispatch(logOut())}>logout</button>
-
         <Routes>
           <Route path="/" element={<Center />} />
           <Route path="/chats" element={<ChatSection />} />

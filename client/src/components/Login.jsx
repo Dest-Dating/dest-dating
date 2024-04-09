@@ -107,6 +107,14 @@ function Login() {
                 onChange={handlePasswordChange}
               />
             </div>
+            <div
+              onClick={() => {
+                navigate("/register");
+              }}
+              className="text-blue"
+            >
+              Not registered? click here
+            </div>
 
             <button
               type="submit"

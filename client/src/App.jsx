@@ -12,6 +12,9 @@ import QuestionsPage from "./components/QuestionsPage";
 import { ToastContainer } from "react-toastify";
 import AuthCompletePage from "./components/AuthCompletePage";
 import BuyPremium from "./components/BuyPreium";
+import PaymentSucess from "./components/PaymentSuccess";
+import PaymentFailure from "./components/PaymentFailure";
+import Profile2 from "./components/Profile2";
 
 function App() {
   // user data of currently logged in user from redux state
@@ -30,8 +33,10 @@ function App() {
         <Route path="/register" element={<Register />}></Route>
         <Route path="/questions" element={<QuestionsPage />}></Route>
         <Route path="/home/*" element={<Home />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/profile" element={<Profile2 />}></Route>
         <Route path="/getPremium" element={<BuyPremium />}></Route>
+        <Route path="/paymentSuccess" element={<PaymentSucess />}></Route>
+        <Route path="/paymentFailed" element={<PaymentFailure />}></Route>
         <Route path="/authComplete" element={<AuthCompletePage />}></Route>
       </Routes>
     </>

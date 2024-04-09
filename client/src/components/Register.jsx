@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
-import PasswordInput from "./utilComponents/PasswordInput";
+import OtpSection from "./OtpSection";
+import { signup } from "../redux/apiCalls/apiCalls";
+import PasswordInput from "./utilComponents/PasswordInput.jsx";
 
 function Register() {
   const [email, setEmail] = useState("j87iuasdf8@gmail.com");
@@ -13,7 +15,7 @@ function Register() {
   const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
   const [phoneNumber, setPhoneNumber] = useState("1234567891");
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
@@ -49,7 +51,13 @@ function Register() {
     // Handle registration logic here
     console.log("Email:", email);
     console.log("Password:", password);
-    setVerified(true);
+    signup(dispatch, setRegistered, {
+      email: email,
+      password: password,
+      passwordConfirm: verifyPassword,
+      phoneNumber: phoneNumber,
+    });
+    setRegistered(true);
   };
 
   useEffect(() => {
@@ -66,7 +74,7 @@ function Register() {
 
   return (
     <div>
-      {!verified && (
+      {!registered && (
         <div className="flex h-screen justify-center items-center bg-pink-100">
           <div className="max-w-xl w-full flex justify-between items-center">
             {/* Left side: Image */}
@@ -191,7 +199,13 @@ function Register() {
         </div>
       )}
       {/* Render component after registration */}
-      {/* {verified && <NecessaryQuestions />} */}
+      {registered && (
+        <OtpSection
+          user={{
+            email: email,
+          }}
+        />
+      )}
     </div>
   );
 }
