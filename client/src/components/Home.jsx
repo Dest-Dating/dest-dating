@@ -1,19 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
+import { io } from "socket.io-client";
 
 import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
 import { logOut } from "../redux/userSlice";
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user
+  );
+
+  //messages code
   const [chatUsers, setChatUsers] = useState([]);
   const [openConvo, setOpenConvo] = useState(null);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("http://localhost:4000", {
+      transports: ["websocket"],
+    });
+
+    socket.current.on("getMessage", (data) =>
+      setArrivalMessage({
+        senderId: data.senderId,
+        message: data.message,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", currentUser._id);
+    socket.current.on("getUsers", (users) => console.log(users));
+  }, [currentUser]);
+
+  // -----------------------------
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -89,14 +120,29 @@ const Home = () => {
 
       {/* Conversations Section */}
       <div className="lg:col-span-3 hidden lg:block">
-        <Conversations />
+        <Conversations
+          chatUsers={chatUsers}
+          setChatUsers={setChatUsers}
+          setOpenConvo={setOpenConvo}
+        />
       </div>
 
       {/* Center Section */}
       <div className="col-span-12 lg:col-span-6">
         <Routes>
           <Route path="/" element={<Center />} />
-          <Route path="/chats" element={<ChatSection />} />
+          <Route
+            path="/chats"
+            element={
+              <ChatSection
+                chatUsers={chatUsers}
+                arrivalMessage={arrivalMessage}
+                socket={socket}
+                openConvo={openConvo}
+                setOpenConvo={setOpenConvo}
+              />
+            }
+          />
         </Routes>
       </div>
 
