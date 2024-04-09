@@ -14,6 +14,9 @@ import AuthCompletePage from "./components/AuthCompletePage";
 import BuyPremium from "./components/BuyPreium";
 import PaymentSucess from "./components/PaymentSuccess";
 import PaymentFailure from "./components/PaymentFailure";
+import Lobby from "./screens/Lobby";
+import RoomPage from "./screens/RoomPage";
+// import RoomPage from "./screens/RoomPage";
 
 function App() {
   // user data of currently logged in user from redux state
@@ -37,6 +40,8 @@ function App() {
         <Route path="/paymentSuccess" element={<PaymentSucess />}></Route>
         <Route path="/paymentFailed" element={<PaymentFailure />}></Route>
         <Route path="/authComplete" element={<AuthCompletePage />}></Route>
+        <Route path="/lobby" element={<Lobby />}></Route>
+        <Route path="/room/:roomId" element={<RoomPage />}></Route>
       </Routes>
     </>
   );
