@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-const PasswordInput = ({ value, ...rest }) => {
+function PasswordInput({ value, ...rest }) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (<div className="relative">

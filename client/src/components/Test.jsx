@@ -6,8 +6,8 @@ import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 
 
-const Center = () => {
-  //yha p user ko prop ke jese pass krdena etc etc
+function Test() {
+
   const user = useSelector((state) => state?.user?.currentUser?.data?.user);
   const imageDivs = useRef([]);
   const [view, setView] = useState(0);
@@ -103,6 +103,7 @@ const Center = () => {
     </div>
 
 
-  </div>);};
+  </div>);
+}
 
-export default Center;
+export default Test;

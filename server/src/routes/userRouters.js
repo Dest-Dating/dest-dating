@@ -13,6 +13,7 @@ router.get("/test", (req, res, next) => {
 });
 
 router.post("/login", authController.login); //ok
+router.post("/logout", authController.logout); //ok
 router.get("/getMe", authController.isLoggedIn); //ok
 router.post("/signup", authController.signup); //ok
 router.post("/verifyEmail", authController.verifyEmail); //ok
@@ -23,6 +24,7 @@ router.get("/auth/google/", oauthGoogleController.authGoogle);
 
 //for subscription
 router.post("/buySubscription", authController.protect, userController.buySubscription);
+router.post("/validateSubscription", authController.protect, userController.validateSubscription);
 
 //change user details
 router.post(

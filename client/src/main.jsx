@@ -8,6 +8,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux"; //redux state provider
 import { store, persistor } from "./redux/store.js"; //persistor to keep data in local storage
 import { PersistGate } from "redux-persist/integration/react"; //persistgate to implement persistor
+import { SocketProvider } from "./context/SocketProvider.jsx";
 
 // provider for google oAuth
 // import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -19,7 +20,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <App />
+          <SocketProvider>
+            <App />
+          </SocketProvider>
         </BrowserRouter>
       </PersistGate>
     </Provider>
