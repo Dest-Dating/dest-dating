@@ -13,6 +13,7 @@ router.get("/test", (req, res, next) => {
 });
 
 router.post("/login", authController.login); //ok
+router.post("/logout", authController.logout); //ok
 router.get("/getMe", authController.isLoggedIn); //ok
 router.post("/signup", authController.signup); //ok
 router.post("/verifyEmail", authController.verifyEmail); //ok
