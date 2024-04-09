@@ -1,4 +1,5 @@
 const Conversations = require("../models/conversation.model");
+const User = require("../models/user.model");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
@@ -36,3 +37,25 @@ exports.getConversation = catchAsync(async (req, res, next) => {
     res.status(500).json(error);
   }
 });
+
+//Get conversation users details
+exports.getConvoUsers = async (req, res, next) => {
+  try {
+    const userList = req.body.data.filter((user) => user !== null);
+    const detailedUserList = await Promise.all(
+      userList.map(async (userId) => {
+        const user = await User.findById(userId);
+        return {
+          userId: user._id,
+          name: user.name,
+          profilePicture: user.photosLink[0],
+        };
+      })
+    ).then((value) => value);
+    //Sending back the response
+    res.status(200).json(detailedUserList);
+  } catch (error) {
+    //Error Handling
+    res.status(500).json(error.message);
+  }
+};

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { BACKEND_URL } from "../../config";
+import ImageCropperModal from "../Modals/ImageCropperModal";
+
 import { deleteFile, uploadFile } from "../../utils/mediaHandlers";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,11 +18,18 @@ const UploadPhotos = ({
   setCurrentStage,
   userData,
   setUserData,
+  openUploadPhotos,
+  setOpenUploadPhotos,
 }) => {
   const [photos, setPhotos] = useState(Array(6).fill(null));
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPhoto, setCurrentPhoto] = useState(null);
+
   const [currentImg, setCurrentImg] = useState("");
   const [currentInd, setCurrentInd] = useState("");
   const [photoToDelete, setPhotoToDelete] = useState("");
+
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const currentUser = useSelector(
@@ -37,6 +48,8 @@ const UploadPhotos = ({
 
   const handlePhotoUpload = async (e, index) => {
     const selectedPhoto = e.target.files[0];
+    setCurrentPhoto(selectedPhoto);
+    setIsModalOpen(true);
     const newPhotos = [...photos];
     if (currentUser?.email && photos[index] == null) {
       await uploadFile(
@@ -99,6 +112,14 @@ const UploadPhotos = ({
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       } flex justify-center items-center transition-opacity duration-500`}
     >
+      <ImageCropperModal
+        isOpen={isModalOpen}
+        onRequestClose={() => {
+          setIsModalOpen(false);
+        }}
+        imageSrc={currentPhoto}
+        setImageSrc={setCurrentPhoto}
+      />
       <div className="max-w-xl w-full p-4 bg-white mt-10 rounded-lg shadow-md">
         <h2 className="text-lg font-bold mb-4">
           Don&apos;t be shy, upload some photos
@@ -173,7 +194,10 @@ const UploadPhotos = ({
           ))}
         </div>
         <button
-          onClick={() => setCurrentStage(currentStage - 1)}
+          onClick={() => {
+            if (!openUploadPhotos) setCurrentStage(currentStage - 1);
+            else setOpenUploadPhotos(false);
+          }}
           className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
         >
           Back

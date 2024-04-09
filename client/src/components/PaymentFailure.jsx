@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import { FiXCircle } from "react-icons/fi"; // Import the cross icon from react-icons library
 
 function PaymentFailure() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
@@ -23,8 +24,6 @@ function PaymentFailure() {
     if (!currentUser) navigate("/");
   }, [currentUser, navigate]);
 
-  // checkout function to initiate payment
-
   return (
     <div
       className={`fixed top-0 right-0 bottom-0 left-0 z-50 bg-black bg-opacity-50 transition-opacity duration-500 ${
@@ -37,24 +36,20 @@ function PaymentFailure() {
             isOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          <h1 className="text-2xl mb-4 font-semibold">Payment Unsuccessful</h1>
+          <div className="flex items-center justify-center mb-6 text-red-500">
+            <FiXCircle className="text-4xl mr-2 animate-pulse" />{" "}
+            {/* Red cross icon */}
+            <h1 className="text-2xl font-semibold">Payment Unsuccessful</h1>
+          </div>
           <p className="mb-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis,
-            minus nemo nisi inventore quas esse ratione ea impedit est aut
-            similique necessitatibus in animi, quae minima? Alias unde officiis
-            fugit, molestias ipsam veritatis deleniti magni maiores in autem
-            porro sunt nihil tempora nam asperiores magnam iusto. Explicabo
-            eaque quasi quod?
+            We're sorry, but it seems your payment was unsuccessful. Please try
+            again or explore other payment options.
           </p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos velit
-            dicta neque accusantium eligendi illum impedit eveniet sint at
-            assumenda.
-          </p>
-          <button className="mt-4 bg-pink-300 px-4 py-2 rounded-md">
+
+          <button className="mt-4 bg-pink-300 text-white hover:bg-pink-400 px-4 py-2 rounded-md">
             Try Again
           </button>
-          <button className="mt-4 bg-pink-300 px-4 py-2 rounded-md">
+          <button className="mt-4 bg-pink-300 text-white hover:bg-pink-400 px-4 py-2 rounded-md">
             Find Me a Match!
           </button>
         </div>
