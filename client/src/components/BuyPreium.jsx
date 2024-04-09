@@ -65,34 +65,27 @@ function BuyPremium() {
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="flex justify-center min-h-screen bg-pink-50">
-        <div
-          className={`p-4 bg-white mt-10 rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center h-1/3 transition-transform duration-500 ${
-            isOpen ? "translate-x-0" : "translate-x-full"
-          }`}
-        >
-          <h1 className="text-2xl mb-4 font-semibold">Buy Premium</h1>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="p-4 bg-white rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center">
+          <h1 className="text-3xl font-semibold mb-4">Upgrade to Premium</h1>
           <p className="mb-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis,
-            minus nemo nisi inventore quas esse ratione ea impedit est aut
-            similique necessitatibus in animi, quae minima? Alias unde officiis
-            fugit, molestias ipsam veritatis deleniti magni maiores in autem
-            porro sunt nihil tempora nam asperiores magnam iusto. Explicabo
-            eaque quasi quod?
+            Enjoy exclusive features and content as a premium member! Unlock
+            access to high-quality courses, personalized learning paths, and
+            priority support.
           </p>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos velit
-            dicta neque accusantium eligendi illum impedit eveniet sint at
-            assumenda.
+            As a premium member, you'll get:
+            <ul className="list-disc ml-8">
+              <li>Unlimited access to premium courses</li>
+              <li>Personalized learning recommendations</li>
+              <li>Priority customer support</li>
+            </ul>
           </p>
           <button
-            className="mt-4 bg-red-300 px-4 py-2 rounded-md"
-            onClick={(e) => {
-              e.preventDefault;
-              checkout();
-            }}
+            className="mt-6 px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition-colors duration-300"
+            onClick={checkout}
           >
-            Buy Now!
+            Upgrade Now
           </button>
         </div>
       </div>
