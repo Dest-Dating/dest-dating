@@ -61,7 +61,7 @@ const Home = () => {
   };
 
   const handleLogout = () => {
-    logoutUser(dispatch);
+    logoutUser(dispatch, navigate);
   };
 
   return (
