@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Bill = require("../models/bill.model");
 const catchAsync = require("../utils/catchAsync");
 const axios = require("axios");
 const AppError = require("../utils/appError");
@@ -116,11 +117,55 @@ exports.buySubscription = catchAsync(async (req, res, next) => {
     cancel_url: "http://localhost:3000/paymentFailed",
   });
 
+  //adding this session id to user
+  user.sessionIds.push(session.id);
+  await user.save({ validateBeforeSave: false });
 
-  console.log(session.id);
   res.json({ id: session.id });
 });
 
+exports.validateSubscription = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const lastId = user.sessionIds.slice(-1)[0];
+
+  if (!lastId) return next(new AppError("No session id found.", 404));
+
+  const session = await stripe.checkout.sessions.retrieve(lastId);
+
+  console.log(session);
+
+  if (session.payment_status === "paid") {
+    const lastSubscription = await Bill.findById(user.subscriptions.slice(-1)[0]);
+    //todo: extract to a function
+    //add subscription upon success
+    let startDate = new Date();
+    if (lastSubscription?.endDate && lastSubscription.endDate >= startDate) {
+      startDate = new Date(lastSubscription.endDate);
+      startDate.setDate(startDate.getDate() + 1);
+    }
+    let endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 29);
+    endDate.setHours(23);
+    endDate.setMinutes(59);
+    endDate.setSeconds(59);
+
+
+    const bill = await Bill.create({
+      subscriber: user._id, startDate, endDate, amount: 599, //todo get it from session status!
+      transactionId: "_dummy_transaction_id_", billingAddress: "_dummy_billing_address_",
+    });
+
+    user.subscriptions.push(bill);
+    user.sessionIds.pop(); //remove the last session id
+    await user.save({ validateBeforeSave: false });
+  }
+
+  res.send({
+    status: "success", data: {
+      paymentStatus: session.payment_status, user,
+    },
+  });
+});
 
 // Controller to set user preferences
 // exports.setUserPreferences = async (req, res) => {

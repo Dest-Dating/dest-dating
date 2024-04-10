@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const validator = require("validator"); //provides various schema validators
 const bcryptjs = require("bcryptjs");
 const { type } = require("os");
+const { Mongoose } = require("mongoose");
 
 //todo: select only if user if verified
 
@@ -50,8 +51,7 @@ const userSchema = new mongoose.Schema({
   }], mainProfilePhotoLink: {
     type: String, required: [this.isEmailVerified, "User must have a profile image"],
   }, photosLink: [{
-    index: Number,
-    photoLink: String
+    index: Number, photoLink: String,
   }], passwordConfirm: {
     type: String, required: [!this.isOAuth, "Please confirm the password!"], validate: {
       validator: function(el) {
@@ -81,7 +81,13 @@ const userSchema = new mongoose.Schema({
     },
   }, isSignupCompleted: {
     type: Boolean, default: false,
-  },
+  }, sessionIds: [{
+    type: String,
+  }], subscriptions: [
+    {
+      type: mongoose.Schema.Types.ObjectId, ref: "Bill",
+    }
+  ]
 }, {
   timestamps: true,
 });

@@ -9,8 +9,6 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const UI_ROOT_URI = process.env.UI_ROOT_URI;
 const AppError = require("../utils/appError");
-//todo:
-//add /user/questions to redirections
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -129,10 +127,10 @@ exports.authGoogle = catchAsync(async (req, res, next) => {
       $unset: { password: "", passwordConfirm: "" }, isEmailVerified: true,
     }, { new: true, runValidators: false });
 
-  }else{
+  } else {
     console.log("OAuth user found in DB");
   }
 
-  return createSendToken(newUser, 200, res, UI_ROOT_URI);
+  return createSendToken(newUser, 200, res, UI_ROOT_URI + "/authComplete");
 });
 

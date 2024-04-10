@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/apiCalls/apiCalls";
-import PasswordInput from "./utilComponents/passwordInput";
+import PasswordInput from "./utilComponents/passwordInput.jsx";
 
 function Login() {
   const [email, setEmail] = useState("");
