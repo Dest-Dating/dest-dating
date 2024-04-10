@@ -166,33 +166,3 @@ exports.validateSubscription = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-// Controller to set user preferences
-// exports.setUserPreferences = async (req, res) => {
-//   try {
-//     const { minAge, maxAge, minHeight, maxHeight } = req.body;
-//
-//     // Check if the user exists
-//     const user = req.user;
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "User not found" });
-//     }
-//
-//     // Update user preferences
-//     if (minAge) user.preferences.minAge = minAge; // add for age in recommendation Algo
-//     if (maxAge) user.preferences.maxAge = maxAge;
-//     if (minHeight) user.preferences.minHeight = minHeight;
-//     if (maxHeight) user.preferences.maxHeight = maxHeight;
-//
-//     // Save updated preferences
-//     await user.save({ validateBeforeSave: false });
-//
-//     res.status(200).json({
-//         status: "success", data: {
-//             user
-//         }
-//     })
-//
-// });
