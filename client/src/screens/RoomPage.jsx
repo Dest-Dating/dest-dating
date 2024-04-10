@@ -2,12 +2,18 @@ import React, { useEffect, useCallback, useState } from "react";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import { useSocket } from "../context/SocketProvider";
+import { useNavigate } from "react-router-dom";
 
 const RoomPage = () => {
   const socket = useSocket();
+  const navigate = useNavigate();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+
+  const handleEndButtonClick = () => {
+    navigate("/");
+  };
 
   const handleUserJoined = useCallback(({ email, id }) => {
     console.log(`Email ${email} joined room`);
@@ -110,35 +116,74 @@ const RoomPage = () => {
   ]);
 
   return (
-    <div>
-      <h1>Room Page</h1>
-      <h4>{remoteSocketId ? "Connected" : "No one in room"}</h4>
-      {myStream && <button onClick={sendStreams}>Send Stream</button>}
-      {remoteSocketId && <button onClick={handleCallUser}>CALL</button>}
-      {myStream && (
-        <>
-          <h1>My Stream</h1>
-          <ReactPlayer
-            playing
-            muted
-            height="100px"
-            width="200px"
-            url={myStream}
-          />
-        </>
-      )}
-      {remoteStream && (
-        <>
-          <h1>Remote Stream</h1>
-          <ReactPlayer
-            playing
-            muted
-            height="100px"
-            width="200px"
-            url={remoteStream}
-          />
-        </>
-      )}
+    <div className="flex flex-col h-full overflow-x-hidden overflow-y-hidden">
+      <div className="flex-grow flex flex-col items-center justify-center bg-white">
+        <h1 className="text-3xl font-bold mb-4">Room Page</h1>
+        <h4 className="mb-4">
+          {remoteSocketId ? "Connected" : "No one in room"}
+        </h4>
+
+        <div className="flex flex-wrap justify-center items-center gap-4">
+          {myStream && (
+            <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
+              <h1 className="text-xl font-bold mb-2">My Stream</h1>
+              <div className="rounded-lg overflow-hidden">
+                <ReactPlayer
+                  playing
+                  muted
+                  className="w-full"
+                  style={{ aspectRatio: "16/9", borderRadius: "10px" }}
+                  url={myStream}
+                />
+              </div>
+            </div>
+          )}
+
+          {remoteStream && (
+            <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
+              <h1 className="text-xl font-bold mb-2">Remote Stream</h1>
+              <div className="rounded-lg overflow-hidden">
+                <ReactPlayer
+                  playing
+                  muted
+                  className="w-full"
+                  style={{ aspectRatio: "16/9", borderRadius: "10px" }}
+                  url={remoteStream}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-center items-center bg-white">
+        <div className="fixed bottom-0 left-0 right-0 bg-white flex justify-around p-4 border-t border-gray-300">
+          {myStream && (
+            <button
+              onClick={sendStreams}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              Send Stream
+            </button>
+          )}
+
+          {remoteSocketId && (
+            <button
+              onClick={handleCallUser}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+            >
+              CALL
+            </button>
+          )}
+
+          <button
+            onClick={handleEndButtonClick}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+          >
+            End
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
