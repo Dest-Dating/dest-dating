@@ -53,11 +53,11 @@ const Home = () => {
 
   const [preferredUsers, setPreferredUsers] = useState([]);
   const handleLike = async () => {
-    await likeUser(dispatch, preferredUsers[0]?.email);
+    await likeUser(dispatch, preferredUsers[0]?.email, currentUser);
     getPreferredUsers();
   };
   const handleReject = async () => {
-    await rejectUser(dispatch, preferredUsers[0]?.email);
+    await rejectUser(dispatch, preferredUsers[0]?.email, currentUser);
     getPreferredUsers();
   };
 

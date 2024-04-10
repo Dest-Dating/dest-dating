@@ -254,13 +254,19 @@ export const oAuthLogin = async (dispatch, navigate) => {
 // match comntrolls
 
 // like
-export const likeUser = async (dispatch, email) => {
+export const likeUser = async (dispatch, email, completeUser) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {
       email,
     });
-    dispatch(updateSuccess(res.data));
+    console.log(res.data);
+    dispatch(
+      updateSuccess({
+        ...completeUser,
+        data: { user: res?.data?.user },
+      })
+    );
     toast("<3");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
@@ -269,13 +275,20 @@ export const likeUser = async (dispatch, email) => {
 };
 
 // Reject
-export const rejectUser = async (dispatch, email) => {
+export const rejectUser = async (dispatch, email, completeUser) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/rejectUser", {
       email,
     });
-    dispatch(updateSuccess(res.data));
+
+    console.log(res.data);
+    dispatch(
+      updateSuccess({
+        ...completeUser,
+        data: { user: res?.data?.user },
+      })
+    );
     toast("</3");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
