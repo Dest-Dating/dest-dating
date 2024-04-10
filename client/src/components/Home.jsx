@@ -53,18 +53,18 @@ const Home = () => {
 
   const [preferredUsers, setPreferredUsers] = useState([]);
   const handleLike = async () => {
-    await likeUser(dispatch, currentUser?.email);
+    await likeUser(dispatch, preferredUsers[0]?.email);
     getPreferredUsers();
   };
   const handleReject = async () => {
-    await rejectUser(dispatch, currentUser?.email);
+    await rejectUser(dispatch, preferredUsers[0]?.email);
     getPreferredUsers();
   };
 
   const getPreferredUsers = async () => {
     const res = await publicRequest.post("/user/getRecommendations");
-    setPreferredUsers(res);
-    console.log(preferredUsers);
+    setPreferredUsers(res?.data?.recommendations);
+    // console.log(res?.data?.recommendations[0]);
   };
   useEffect(() => {
     getPreferredUsers();
@@ -154,7 +154,20 @@ const Home = () => {
       {/* Center Section */}
       <div className="col-span-12 lg:col-span-6">
         <Routes>
-          <Route path="/" element={<Center />} />
+          <Route
+            path="/"
+            element={
+              preferredUsers.length > 0 ? (
+                <Center
+                  user={preferredUsers[0]}
+                  handleLike={handleLike}
+                  handleReject={handleReject}
+                />
+              ) : (
+                <>No Recommendations</>
+              )
+            }
+          />
           <Route
             path="/chats"
             element={
