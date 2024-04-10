@@ -37,12 +37,6 @@ const ChatSection = ({
       setError("Please fill in all fields.");
       return;
     }
-    console.log(
-      "Room: ",
-      currentUser?._id < reciver.userId
-        ? `${currentUser?._id}${reciver.userId}`
-        : `${reciver.userId}${currentUser._id}`
-    );
     // Emit an event to join a room with email and room data.
     socketForVideo.emit("room:join", {
       email: currentUser?._id,
@@ -56,7 +50,6 @@ const ChatSection = ({
   // Function to handle joining a room
   const handleJoinRoom = useCallback(
     (data) => {
-      console.log(data);
       const { room: roomId } = data;
       // Navigate to the specified room
       navigate(`/room/${roomId}`);
@@ -73,6 +66,7 @@ const ChatSection = ({
     };
   }, [socketForVideo, handleJoinRoom]);
 
+  // send message
   const sendMessage = async (e) => {
     e.preventDefault();
 
@@ -108,7 +102,6 @@ const ChatSection = ({
   const fetchMessages = async () => {
     try {
       const { data } = await publicRequest.get(`message/${openConvo._id}`);
-      console.log(data);
       setMessages(data);
       setNewMessage("");
     } catch (error) {
