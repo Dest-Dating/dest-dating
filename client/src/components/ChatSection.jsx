@@ -20,7 +20,6 @@ const ChatSection = ({
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [inputText, setInputText] = useState("");
   const chatEndRef = useRef(null);
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");

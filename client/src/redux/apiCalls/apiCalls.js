@@ -3,7 +3,6 @@ import { publicRequest, userRequest } from "../../requestMethods";
 import {
   deleteUserSuccess,
   errorReset,
-  getUsersSuccess,
   loginSuccess,
   logoutSuccess,
   photoUploadSuccess,
@@ -23,11 +22,21 @@ export const login = async (dispatch, user) => {
     const res = await publicRequest.post("/user/login", user);
     // update state if login successfull
     dispatch(loginSuccess(res.data));
-    toast.update(id, {render: "Login success!", type: "success", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: "Login success!",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
-    toast.update(id, {render: error?.response?.data?.message, type: "error", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: error?.response?.data?.message,
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
   }
 };
 
@@ -40,10 +49,20 @@ export const signup = async (dispatch, setRegistered, user) => {
     console.log(res.data);
     setRegistered(true);
     dispatch(errorReset());
-    toast.update(id, {render: "Signed up successfully!", type: "success", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: "Signed up successfully!",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
-    toast.update(id, {render: error?.response?.data?.message, type: "error", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: error?.response?.data?.message,
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
   }
 };
 
@@ -54,13 +73,23 @@ export const verifyOtp = async (dispatch, user) => {
   try {
     const res = await publicRequest.post("/user/verifyEmail", user);
     console.log(res.data);
-    toast.update(id, {render: "Registered Successfully!", type: "success", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: "Registered Successfully!",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
     dispatch(loginSuccess(res.data));
     // toast("You have been logged In");
     return true;
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
-    toast.update(id, {render: error?.response?.data?.message, type: "error", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: error?.response?.data?.message,
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
     return false;
   }
 };
@@ -85,10 +114,20 @@ export const addSinglePhoto = async (
         data: { user: res?.data?.data?.user },
       })
     );
-    toast.update(id, {render: "Image uploaded.", type: "success", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: "Image uploaded.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
-    toast.update(id, {render: error?.response?.data?.message, type: "error", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: error?.response?.data?.message,
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
   }
 };
 
@@ -107,10 +146,20 @@ export const deleteSinglePhoto = async (dispatch, link, completeUser) => {
         data: { user: res?.data?.data?.user },
       })
     );
-    toast.update(id, {render: "Image Deleted.", type: "success", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: "Image Deleted.",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
-    toast.update(id, {render: error?.response?.data?.message, type: "error", isLoading: false, autoClose: 2000});
+    toast.update(id, {
+      render: error?.response?.data?.message,
+      type: "error",
+      isLoading: false,
+      autoClose: 2000,
+    });
   }
 };
 
@@ -153,6 +202,7 @@ export const updatePassword = async (dispatch, passwords) => {
     toast(error?.response?.data?.message);
   }
 };
+
 // function to logout user
 export const logoutUser = async (dispatch, navigate) => {
   dispatch(userStart());
@@ -183,7 +233,7 @@ export const deleteUser = async (dispatch, password) => {
   }
 };
 
-// function to log into the website
+// function to login using google oAuth
 export const oAuthLogin = async (dispatch, navigate) => {
   // start fetching
   dispatch(userStart());
@@ -196,6 +246,38 @@ export const oAuthLogin = async (dispatch, navigate) => {
     navigate("/questions");
   } catch (error) {
     // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
+// match comntrolls
+
+// like
+export const likeUser = async (dispatch, email) => {
+  dispatch(userStart());
+  try {
+    const res = await userRequest.put("/user/likeUser", {
+      email,
+    });
+    dispatch(updateSuccess(res.data));
+    toast("<3");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
+// Reject
+export const rejectUser = async (dispatch, email) => {
+  dispatch(userStart());
+  try {
+    const res = await userRequest.put("/user/rejectUser", {
+      email,
+    });
+    dispatch(updateSuccess(res.data));
+    toast("</3");
+  } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
   }
