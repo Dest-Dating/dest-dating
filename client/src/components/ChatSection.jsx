@@ -15,7 +15,6 @@ const ChatSection = ({
   const reciver = chatUsers.find((user) =>
     openConvo?.members?.find((id) => id === user.userId)
   );
-  console.log(reciver);
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");

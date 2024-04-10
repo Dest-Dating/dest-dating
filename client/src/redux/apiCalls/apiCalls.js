@@ -145,12 +145,13 @@ export const updatePassword = async (dispatch, passwords) => {
   }
 };
 // function to logout user
-export const logoutUser = async (dispatch) => {
+export const logoutUser = async (dispatch, navigate) => {
   dispatch(userStart());
   try {
-    // const res = await userRequest.post("/user/logout");
+    await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
-    toast("Password updated Successfully!");
+    toast("Logged out Successfully!");
+    navigate("/");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
