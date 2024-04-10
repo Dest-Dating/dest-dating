@@ -18,7 +18,6 @@ const ChatSection = ({
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [inputText, setInputText] = useState("");
   const chatEndRef = useRef(null);
 
   const scrollRef = useRef(null);
