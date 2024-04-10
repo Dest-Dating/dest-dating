@@ -1,45 +1,47 @@
 const User = require("../models/user.model");
+const AppError = require("../utils/appError");
 
 // Controller function to like a user
-exports.likeUser = async (req, res) => {
+exports.likeUser = async (req, res, next) => {
   try {
     const userEmailToLike = req.body.email;
-    const currentUser = req.user;
+    let currentUser = req.user;
 
     console.log("currentUser", currentUser);
 
     // Check if the user exists and is not the current user
-    const userToLike = await User.findOne({ email: userEmailToLike });
+    let userToLike = await User.findOne({ email: userEmailToLike });
     if (!userToLike || userToLike._id.equals(currentUser._id)) {
       return res
-        .status(404)
-        .json({ message: "User not found or cannot like yourself" });
+        .status(400)
+        .json({ status: "fail", message: "User not found or cannot like yourself" });
     }
 
     // Check if the user is already liked
     if (currentUser.likedArray.includes(userToLike._id)) {
-      return res.status(400).json({ message: "User already liked" });
+      return res.status(400).json({ status: "fail", message: "Profile already liked" });
     }
 
     // Add the liked user to the current user's likedArray
     currentUser.likedArray.push(userToLike._id);
     await currentUser.save({ validateBeforeSave: false });
 
+    let wasAMatch = false;
     // Check if the liked user also likes the current user (matched)
     if (userToLike.likedArray.includes(currentUser._id)) {
       // If matched, update both users' matchedArray
       currentUser.matchedArray.push(userToLike._id);
       userToLike.matchedArray.push(currentUser._id);
-      await Promise.all([currentUser.save(), userToLike.save()]);
+      currentUser = currentUser.save({ validateBeforeSave: false, new: true });
+      userToLike = userToLike.save({ validateBeforeSave: false });
+      wasAMatch = true;
     }
 
-    res.status(200).json({ message: "User liked successfully" });
-  } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: "Unable to like the user",
-      error,
+    res.status(200).json({
+      status: "success", wasAMatch, currentUser: currentUser, likedUser: userToLike
     });
+  } catch (error) {
+    return next(new AppError("Some error occurred.", 500));
   }
 };
 
@@ -69,9 +71,7 @@ exports.rejectUser = async (req, res) => {
     res.status(200).json({ message: "User rejected successfully" });
   } catch (error) {
     return res.status(400).json({
-      success: false,
-      message: "Unable to reject the user",
-      error,
+      success: false, message: "Unable to reject the user", error,
     });
   }
 };
