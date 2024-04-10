@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
+import { useSocket } from "../context/SocketProvider";
 
 const ChatSection = ({
   chatUsers,
@@ -18,11 +20,53 @@ const ChatSection = ({
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [inputText, setInputText] = useState("");
   const chatEndRef = useRef(null);
+  const [email, setEmail] = useState("");
+  const [room, setRoom] = useState("");
+  const [error, setError] = useState("");
 
+  const socketForVideo = useSocket(); // Get the socket object from context
+  const navigate = useNavigate();
   const scrollRef = useRef(null);
 
+  // Function to handle form submission
+  const handleSubmitForm = useCallback(() => {
+    // setRoom(currentUser?._id);
+    // e.preventDefault();
+    if (!currentUser?._id) {
+      setError("Please fill in all fields.");
+      return;
+    }
+    // Emit an event to join a room with email and room data.
+    socketForVideo.emit("room:join", {
+      email: currentUser?._id,
+      room:
+        currentUser?._id < reciver.userId
+          ? `${currentUser?._id}${reciver.userId}`
+          : `${reciver.userId}${currentUser._id}`,
+    });
+  }, [currentUser._id, reciver.userId, socketForVideo]);
+
+  // Function to handle joining a room
+  const handleJoinRoom = useCallback(
+    (data) => {
+      const { room: roomId } = data;
+      // Navigate to the specified room
+      navigate(`/room/${roomId}`);
+    },
+    [navigate]
+  );
+
+  // Effect to listen for room join event
+  useEffect(() => {
+    socketForVideo.on("room:join", handleJoinRoom);
+    // Cleanup
+    return () => {
+      socketForVideo.off("room:join", handleJoinRoom);
+    };
+  }, [socketForVideo, handleJoinRoom]);
+
+  // send message
   const sendMessage = async (e) => {
     e.preventDefault();
 
@@ -58,7 +102,6 @@ const ChatSection = ({
   const fetchMessages = async () => {
     try {
       const { data } = await publicRequest.get(`message/${openConvo._id}`);
-      console.log(data);
       setMessages(data);
       setNewMessage("");
     } catch (error) {
@@ -87,6 +130,13 @@ const ChatSection = ({
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
         </div>
+        <button
+          onClick={() => {
+            handleSubmitForm();
+          }}
+        >
+          Join
+        </button>
       </div>
 
       {/* Chat Messages */}

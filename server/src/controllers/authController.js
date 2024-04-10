@@ -28,9 +28,7 @@ const createSendToken = (user, status, res, redirect) => {
 
   //set cookies
   const options = {
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    secure: true,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), httpOnly: true, secure: true,
   };
   res.cookie("jwt", token, options);
 
@@ -39,9 +37,7 @@ const createSendToken = (user, status, res, redirect) => {
   }
 
   res.status(status).json({
-    status: "success",
-    token,
-    data: {
+    status: "success", token, data: {
       user,
     },
   });
@@ -59,11 +55,9 @@ exports.signup = catchAsync(async (req, res, next) => {
   if (existingUser) {
     if (existingUser.isEmailVerified === false) {
       await User.findByIdAndDelete({ _id: existingUser.id });
-    } else
-      return res.status(401).json({
-        status: "fail",
-        message: "email id already registered",
-      });
+    } else return res.status(401).json({
+      status: "fail", message: "email id already registered",
+    });
   }
 
   //a user with dummy required credentials will be created if it is isOAuth
@@ -86,12 +80,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   // });
 
   res.status(200).json({
-    status: "success",
-    data: {
-      phoneNumber: newUser.phoneNumber,
-      email: newUser.email,
-      isOAuth: false,
-      otp,
+    status: "success", data: {
+      phoneNumber: newUser.phoneNumber, email: newUser.email, isOAuth: false, otp,
     },
   });
 });
@@ -102,30 +92,20 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
 
   let user = null;
 
-  if (!email || !emailVerificationOtp)
-    return res.status(400).json({
-      status: "fail",
-      message: "Please enter OTP",
-    });
+  if (!email || !emailVerificationOtp) return res.status(400).json({
+    status: "fail", message: "Please enter OTP",
+  });
 
   user = await User.findOne({ email }).select("+emailVerificationOtp");
-  if (!user)
-    return res.status(406).json({
-      status: "fail",
-      message: "No user with this email id",
-    });
-  if (user.isEmailVerified)
-    return res.status(200).json({
-      status: "success",
-      message: "user already verified",
-    });
+  if (!user) return res.status(406).json({
+    status: "fail", message: "No user with this email id",
+  });
+  if (user.isEmailVerified) return res.status(200).json({
+    status: "success", message: "user already verified",
+  });
 
   if (user.emailVerificationOtp === emailVerificationOtp) {
-    await User.updateOne(
-      { email },
-      { isEmailVerified: true, emailVerificationOtp: null },
-      { new: true }
-    );
+    await User.updateOne({ email }, { isEmailVerified: true, emailVerificationOtp: null }, { new: true });
     let updatedUser = await User.findOne({ email });
     updatedUser = { ...updatedUser }._doc;
     createSendToken(updatedUser, 201, res);
@@ -133,8 +113,7 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
   }
 
   res.status(401).json({
-    status: "fail",
-    message: "OTP mismatch",
+    status: "fail", message: "OTP mismatch",
   });
 });
 
@@ -145,22 +124,23 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
 exports.login = catchAsync(async (req, res, next) => {
   let { loginField, password } = req.body;
 
-  //check if email and password exists => user entered these fields
-  if (!loginField || !password) {
-    return next(
-      new AppError("Please provide phone number/email and password", 400)
-    );
-  }
+  if (!loginField) return next(new AppError("Please provide phone number/email and password", 400));
+
+  const filter = loginField.includes("@") ? { email: loginField } : { phoneNumber: loginField };
 
   //check if user exists and password is correct
   //we have restricted the default selection of password, so we explicitly select password
-  const filter = loginField.includes("@")
-    ? { email: loginField }
-    : { phoneNumber: loginField };
   let user = await User.findOne(filter).select("+password");
+  if (!user) return next(new AppError("Incorrect phone number/email or password!", 401));
 
-  if (!user || !(await user.correctPassword(password, user.password)))
-    return next(new AppError("Incorrect phone number/email or password!", 401));
+  if (user.isOAuth && !user.password)
+    return next(new AppError("Please login using OAuth.", 403));
+
+  if (!password) {
+    return next(new AppError("Please provide phone number/email and password", 400));
+  }
+
+  if (!user || !(await user.correctPassword(password, user.password))) return next(new AppError("Incorrect phone number/email or password!", 401));
 
   user = { ...user }._doc;
 
@@ -171,12 +151,10 @@ exports.login = catchAsync(async (req, res, next) => {
 exports.logout = catchAsync(async (req, res, next) => {
   res
     .cookie("jwt", "", {
-      httpOnly: true,
-      expires: new Date(0),
+      httpOnly: true, expires: new Date(0),
     })
     .json({
-      status: "success",
-      message: "cookie deleted",
+      status: "success", message: "cookie deleted",
     });
 });
 
@@ -187,18 +165,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token = req.cookies.jwt;
 
   // check if there is a token
-  if (
-    !token &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
 
   if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in again.", 401)
-    );
+    return next(new AppError("You are not logged in! Please log in again.", 401));
   }
 
   // verify the token
@@ -208,19 +180,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   // check if user still exists => to check the case if user has jwt token but the user was deleted!
   const freshUser = await User.findOne({ _id: decoded.id });
   if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token does not exist.", 401)
-    );
+    return next(new AppError("The user belonging to this token does not exist.", 401));
   }
 
   // check if user changed password after jwt was issued
   if (freshUser.changePasswordAfter(decoded.iat)) {
-    return next(
-      new AppError(
-        "User recently changed their password! Please login again.",
-        401
-      )
-    );
+    return next(new AppError("User recently changed their password! Please login again.", 401));
   }
 
   //grant access to the protected rout
@@ -234,18 +199,12 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   let token = req.cookies.jwt;
 
   // check if there is a token
-  if (
-    !token &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
+  if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
 
   if (!token) {
-    return next(
-      new AppError("You are not logged in! Please log in again.", 401)
-    );
+    return next(new AppError("You are not logged in! Please log in again.", 401));
   }
 
   // verify the token
@@ -255,25 +214,16 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   // check if user still exists => to check the case if user has jwt token but the user was deleted!
   const freshUser = await User.findOne({ _id: decoded.id });
   if (!freshUser) {
-    return next(
-      new AppError("The user belonging to this token does not exist.", 401)
-    );
+    return next(new AppError("The user belonging to this token does not exist.", 401));
   }
 
   // check if user changed password after jwt was issued
   if (freshUser.changePasswordAfter(decoded.iat)) {
-    return next(
-      new AppError(
-        "User recently changed their password! Please login again.",
-        401
-      )
-    );
+    return next(new AppError("User recently changed their password! Please login again.", 401));
   }
 
   res.status(200).json({
-    status: "success",
-    token,
-    data: {
+    status: "success", token, data: {
       user: freshUser,
     },
   });
@@ -307,26 +257,18 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   try {
     await sendEmail({
-      email: user.email,
-      subject: "Reset password token. Valid for 10 min only!",
-      message: message,
+      email: user.email, subject: "Reset password token. Valid for 10 min only!", message: message,
     });
 
     res.status(200).json({
-      status: "success",
-      message: "Link to change password sent to your email!",
+      status: "success", message: "Link to change password sent to your email!",
     });
   } catch (err) {
     //if failed to send the email, set these fields to undefined
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    return next(
-      new AppError(
-        "There was an error sending you email! Please try again later!",
-        500
-      )
-    );
+    return next(new AppError("There was an error sending you email! Please try again later!", 500));
   }
 });
 
@@ -340,18 +282,11 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .digest("hex");
   //get user based on the resetToken and also make sure that token is not expired yet
   const user = await User.findOne({
-    passwordResetToken: hashedToken,
-    passwordResetExpires: { $gt: Date.now() },
+    passwordResetToken: hashedToken, passwordResetExpires: { $gt: Date.now() },
   });
 
   //2. if token is not expired and there is a user then set new password
-  if (!user)
-    return next(
-      new AppError(
-        "Token is invalid or has expired. Please request a new one!",
-        400
-      )
-    );
+  if (!user) return next(new AppError("Token is invalid or has expired. Please request a new one!", 400));
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   user.passwordResetToken = undefined;
@@ -372,10 +307,7 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).select("+password");
 
   //2. check if posted password is correct
-  if (
-    !user ||
-    !(await user.correctPassword(req.body.password || "", user.password))
-  ) {
+  if (!user || !(await user.correctPassword(req.body.password || "", user.password))) {
     return next(new AppError("Incorrect Incorrect!", 401));
   }
 

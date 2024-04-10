@@ -24,8 +24,6 @@ const fetchUser = (reciverId) =>
 
 //Connection Established
 io.on("connection", (socket) => {
-  console.log(`ID: ${socket.id} connected `);
-
   //Adding a userId and socketId
   socket.on("addUser", (userId) => {
     addUser(userId, socket.id);

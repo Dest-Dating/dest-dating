@@ -10,7 +10,8 @@ import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { logoutUser } from "../redux/apiCalls/apiCalls";
+import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
+import { publicRequest } from "../requestMethods";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,10 +19,12 @@ const Home = () => {
     (state) => state?.user?.currentUser?.data?.user
   );
 
-  //messages code
+  //chat messages code
   const [chatUsers, setChatUsers] = useState([]);
   const [openConvo, setOpenConvo] = useState(null);
   const [arrivalMessage, setArrivalMessage] = useState(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const socket = useRef();
 
@@ -44,10 +47,31 @@ const Home = () => {
     socket.current.on("getUsers", (users) => console.log(users));
   }, [currentUser]);
 
-  // -----------------------------
-  const navigate = useNavigate();
+  // chat mssages end-------------
 
-  const dispatch = useDispatch();
+  // match controls
+
+  const [preferredUsers, setPreferredUsers] = useState([]);
+  const handleLike = async () => {
+    await likeUser(dispatch, preferredUsers[0]?.email, currentUser);
+    getPreferredUsers();
+  };
+  const handleReject = async () => {
+    await rejectUser(dispatch, preferredUsers[0]?.email, currentUser);
+    getPreferredUsers();
+  };
+
+  const getPreferredUsers = async () => {
+    const res = await publicRequest.post("/user/getRecommendations");
+    setPreferredUsers(res?.data?.recommendations);
+    // console.log(res?.data?.recommendations[0]);
+  };
+  useEffect(() => {
+    getPreferredUsers();
+  }, []);
+
+  // match controls end-----------
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -130,7 +154,20 @@ const Home = () => {
       {/* Center Section */}
       <div className="col-span-12 lg:col-span-6">
         <Routes>
-          <Route path="/" element={<Center />} />
+          <Route
+            path="/"
+            element={
+              preferredUsers.length > 0 ? (
+                <Center
+                  user={preferredUsers[0]}
+                  handleLike={handleLike}
+                  handleReject={handleReject}
+                />
+              ) : (
+                <>No Recommendations</>
+              )
+            }
+          />
           <Route
             path="/chats"
             element={
