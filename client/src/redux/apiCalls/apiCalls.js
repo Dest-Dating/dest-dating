@@ -5,6 +5,7 @@ import {
   errorReset,
   getUsersSuccess,
   loginSuccess,
+  logoutSuccess,
   photoUploadSuccess,
   updateSuccess,
   userFailure,
@@ -138,6 +139,19 @@ export const updatePassword = async (dispatch, passwords) => {
     });
     dispatch(updateSuccess(res.data));
     toast("Password updated Successfully!");
+  } catch (error) {
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+// function to logout user
+export const logoutUser = async (dispatch, navigate) => {
+  dispatch(userStart());
+  try {
+    await userRequest.post("/user/logout");
+    dispatch(logoutSuccess());
+    toast("Logged out Successfully!");
+    navigate("/");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);

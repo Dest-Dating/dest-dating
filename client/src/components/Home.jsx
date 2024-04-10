@@ -9,8 +9,8 @@ import { io } from "socket.io-client";
 import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 import { useDispatch } from "react-redux";
-import { logOut } from "../redux/userSlice";
 import { useSelector } from "react-redux";
+import { logoutUser } from "../redux/apiCalls/apiCalls";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,7 +61,7 @@ const Home = () => {
   };
 
   const handleLogout = () => {
-    dispatch(logOut());
+    logoutUser(dispatch, navigate);
   };
 
   return (
