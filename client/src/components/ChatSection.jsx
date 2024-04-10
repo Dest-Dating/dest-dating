@@ -44,8 +44,7 @@ const ChatSection = ({
         ? `${currentUser?._id}${reciver.userId}`
         : `${reciver.userId}${currentUser._id}`
     );
-    // setRoom(currentUser?._id);
-    // Emit an event to join a room with email and room data
+    // Emit an event to join a room with email and room data.
     socketForVideo.emit("room:join", {
       email: currentUser?._id,
       room:
@@ -53,7 +52,7 @@ const ChatSection = ({
           ? `${currentUser?._id}${reciver.userId}`
           : `${reciver.userId}${currentUser._id}`,
     });
-  }, [currentUser._id, reciver.userId, room, socketForVideo]);
+  }, [currentUser._id, reciver.userId, socketForVideo]);
 
   // Function to handle joining a room
   const handleJoinRoom = useCallback(
