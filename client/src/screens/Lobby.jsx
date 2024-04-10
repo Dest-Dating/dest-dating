@@ -45,56 +45,50 @@ const LobbyScreen = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Lobby
-          </h1>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmitForm}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email ID
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email ID"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="room" className="sr-only">
-                Room Number
-              </label>
-              <input
-                id="room"
-                name="room"
-                type="text"
-                autoComplete="room"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Room Number"
-                value={room}
-                onChange={(e) => setRoom(e.target.value)}
-              />
-            </div>
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-extrabold text-gray-900 text-center mb-8">
+          Lobby
+        </h1>
+        <form onSubmit={handleSubmitForm} className="space-y-4">
+          <div className="flex flex-col">
+            <label htmlFor="email" className="sr-only">
+              Email ID
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              placeholder="Email ID"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field"
+            />
           </div>
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Join
-            </button>
+          <div className="flex flex-col">
+            <label htmlFor="room" className="sr-only">
+              Room Number
+            </label>
+            <input
+              id="room"
+              name="room"
+              type="text"
+              autoComplete="room"
+              required
+              placeholder="Room Number"
+              value={room}
+              onChange={(e) => setRoom(e.target.value)}
+              className="input-field"
+            />
           </div>
-          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          <button
+            type="submit"
+            className="w-full py-3 px-6 bg-black hover:bg-gray-800 text-white font-bold rounded-md transition duration-300 ease-in-out"
+          >
+            Join
+          </button>
+          {error && <p className="text-sm text-red-600">{error}</p>}
         </form>
       </div>
     </div>
