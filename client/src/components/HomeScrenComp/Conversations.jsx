@@ -8,24 +8,28 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id: userId } = useSelector(
-    (state) => state.user.currentUser?.data?.user
+    (state) => state.user.currentUser?.data?.user,
   );
 
   const conversations = useSelector(
-    (state) => state.conversations.conversations
+    (state) => state.conversations.conversations,
   );
 
   const getConvo = () => {
-    getConversations(dispatch, userId);
+    (async () => {
+      await getConversations(dispatch, userId);
+    })();
   };
 
   useEffect(() => {
-    getConvo();
+    (async () => {
+      await getConvo();
+    })();
   }, []);
 
   const setConversation = async (id, userId) => {
     const selectedConvo = conversations.find((convo) =>
-      convo.members.find((userId) => userId === id)
+      convo.members.find((userId) => userId === id),
     );
     setOpenConvo(selectedConvo);
   };
@@ -41,14 +45,16 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
     // eslint-disable-next-line no-extra-boolean-cast
     const userIds = !!conversations[0]?._id
       ? conversations.map((convo) => {
-          if (convo.members[0] === userId) {
-            return convo.members[1];
-          } else {
-            return convo.members[0];
-          }
-        })
+        if (convo.members[0] === userId) {
+          return convo.members[1];
+        } else {
+          return convo.members[0];
+        }
+      })
       : [];
-    getDetails(userIds);
+    (async () => {
+      await getDetails(userIds);
+    })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations, userId]);

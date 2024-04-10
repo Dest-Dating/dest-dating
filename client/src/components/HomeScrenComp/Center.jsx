@@ -7,7 +7,7 @@ import { FaAngleUp } from "react-icons/fa";
 
 
 const Center = () => {
-  //yha p user ko prop ke jese pass krdena etc etc
+  //yha p jo user ko display krna h usko prop ke jese pass krdena etc etc
   const user = useSelector((state) => state?.user?.currentUser?.data?.user);
   const imageDivs = useRef([]);
   const [view, setView] = useState(0);
@@ -20,16 +20,16 @@ const Center = () => {
 
   useEffect(() => {
     if (imageDivs.current.length === 0) return;
-    imageDivs.current[view].scrollIntoView({behavior: "smooth"}); //smooth ni hora
+    imageDivs.current[view].scrollIntoView({ behavior: "smooth" }); //smooth ni hora
   }, [view]);
 
-  return (<div className="flex justify-center items-center min-h-[100vh]">
+  return (<div className="flex justify-center relative h-fit mt-16">
 
     <div className="relative">
       <div>
         <div
-          style={{ backgroundImage: "url(https://images.pexels.com/photos/301673/pexels-photo-301673.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)" }}
-          className="relative shadow-xl rounded-2xl w-[500px] max-h-[500px]  min-h-[500px] border border-rose-200 bg-rose-50 overflow-y-scroll">
+          style={{ backgroundImage: "url(https://images.pexels.com/photos/2088170/pexels-photo-2088170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)" }}
+          className="bg-no-repeat bg-center relative shadow-xl rounded-2xl w-[500px] max-h-[500px]  min-h-[500px] border border-rose-200 bg-rose-50 overflow-y-scroll">
 
           <div className="relative backdrop-blur-sm">
 
@@ -46,7 +46,7 @@ const Center = () => {
 
             <div name="session1" className="border" ref={(ref) => imageDivs.current[0] = ref}>
               <div className="max-h-[500px] flex justify-center items-center w-[100%]">
-                <img className="w-full h-[500px] object-cover" src={user.photosLink[0].photoLink} alt="" />
+                <img className="w-full h-[500px] object-cover object-top" src={user.photosLink[0].photoLink} alt="" />
               </div>
             </div>
 
@@ -103,6 +103,7 @@ const Center = () => {
     </div>
 
 
-  </div>);};
+  </div>);
+};
 
 export default Center;

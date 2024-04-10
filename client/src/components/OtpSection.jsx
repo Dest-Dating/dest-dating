@@ -3,7 +3,7 @@ import { verifyOtp } from "../redux/apiCalls/apiCalls";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const OtpSection = ({ user }) => {
+const OtpSection = ({ user, back }) => {
   const [otp, setOtp] = useState(Array(6).fill(""));
   const [otpDisabled, setOtpDisabled] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,15 +41,16 @@ const OtpSection = ({ user }) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const enteredOtp = otp.join("");
-    verifyOtp(dispatch, { ...user, emailVerificationOtp: enteredOtp });
-    navigate("/questions");
+    if (await verifyOtp(dispatch, { ...user, emailVerificationOtp: enteredOtp })) {
+      navigate("/questions");
+    }
   };
 
   return (
     <div
-      className={`fixed top-0 right-0 bottom-0 left-0 z-50 bg-black bg-opacity-50 transition-opacity duration-500 ${
+      className={`bg-black bg-opacity-50 transition-opacity duration-500 ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
@@ -76,14 +77,19 @@ const OtpSection = ({ user }) => {
               />
             ))}
           </div>
-          <button
-            disabled={otpDisabled}
-            className={`${otpDisabled ? "text-gray-400" : "text-black"} mb-2`}
-            onClick={() => setOtpDisabled(true)}
-          >
-            {/* put timer */}
-            {otpDisabled ? `You can Resend OTP after 90 seconds` : "Resend OTP"}
-          </button>
+          <div className="flex gap-5 mb-4">
+            <button onClick={()=>back()} className="underline text-blue-400">
+              Change email
+            </button>
+            <button
+              disabled={otpDisabled}
+              className={`${otpDisabled ? "text-gray-400" : "text-black"}`}
+              onClick={() => setOtpDisabled(true)}
+            >
+              {/* put timer */}
+              {otpDisabled ? `You can Resend OTP after 90 seconds` : "Resend OTP"}
+            </button>
+          </div>
           <button
             onClick={handleSubmit}
             className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded"
