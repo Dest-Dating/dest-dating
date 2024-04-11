@@ -8,11 +8,11 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id: userId } = useSelector(
-    (state) => state.user.currentUser?.data?.user,
+    (state) => state.user.currentUser?.data?.user
   );
 
   const conversations = useSelector(
-    (state) => state.conversations.conversations,
+    (state) => state.conversations.conversations
   );
 
   const getConvo = () => {
@@ -29,7 +29,7 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
 
   const setConversation = async (id, userId) => {
     const selectedConvo = conversations.find((convo) =>
-      convo.members.find((userId) => userId === id),
+      convo.members.find((userId) => userId === id)
     );
     setOpenConvo(selectedConvo);
   };
@@ -45,12 +45,12 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
     // eslint-disable-next-line no-extra-boolean-cast
     const userIds = !!conversations[0]?._id
       ? conversations.map((convo) => {
-        if (convo.members[0] === userId) {
-          return convo.members[1];
-        } else {
-          return convo.members[0];
-        }
-      })
+          if (convo.members[0] === userId) {
+            return convo.members[1];
+          } else {
+            return convo.members[0];
+          }
+        })
       : [];
     (async () => {
       await getDetails(userIds);
@@ -60,7 +60,7 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
   }, [conversations, userId]);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md h-screen">
+    <div className="p-4 bg-white rounded-lg shadow-md h-screen">
       <h2 className="text-lg font-bold mb-4">Conversations</h2>
       {/* Mapping over conversations array to render each conversation */}
       {chatUsers.map((conversation) => (
@@ -73,15 +73,17 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
           className="flex items-center mb-4"
         >
           {/* Profile Picture */}
-          <img
-            src={conversation.profilePicture.photoLink}
-            alt="Profile"
-            className="w-12 h-12 rounded-full mr-4"
-          />
-          {/* Name and Latest Message */}
-          <div>
-            <h3 className="text-lg font-semibold">{conversation.name}</h3>
-            <p className="text-gray-500">{conversation.latestMessage}</p>
+          <div className="bg-red-300 rounded-md">
+            <img
+              src={conversation.profilePicture.photoLink}
+              alt="Profile"
+              className="w-12 h-12 rounded-full mr-4"
+            />
+            {/* Name and Latest Message */}
+            <div>
+              <h3 className="text-lg font-semibold">{conversation.name}</h3>
+              <p className="text-gray-500">{conversation.latestMessage}</p>
+            </div>
           </div>
         </div>
       ))}

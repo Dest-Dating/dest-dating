@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEdit, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
+import { useSelector } from "react-redux";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -12,11 +13,22 @@ const ProfilePage = () => {
   const [height, setHeight] = useState("180 cm");
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
-  const [location, setLocation] = useState("New York, USA");
+  const [location, setLocation] = useState("New Delhi, India`");
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
-  const [bio, setBio] = useState(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  const [bio, setBio] = useState("Hey there! I am using dest");
+
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user
   );
+
+  useEffect(() => {
+    setUsername(currentUser.name);
+    setName(currentUser.name);
+    setEmail(currentUser.email);
+    setHeight(currentUser.height);
+    setGender(currentUser.gender);
+    setInterestedIn(currentUser.interestedInGender);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -38,15 +50,17 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-pink-50 rounded-lg shadow-md">
+    <div className="w-full h-full p-8 bg-white rounded-lg shadow-md">
       <div className="flex items-center mb-4 flex-col lg:flex-row lg:items-start">
         <button onClick={handleBack} className="mr-4 lg:mr-0">
           <FaArrowLeft className="text-xl" />
         </button>
+        {/* {console.log(currentUser)} */}
         <div className="lg:mr-4">
-          <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden mb-4 lg:mb-0">
+          <div className="w-24 h-24  rounded-full overflow-hidden mb-4 lg:mb-0">
             <img
-              src="https://via.placeholder.com/150"
+              src={currentUser.photosLink[0]?.photoLink}
+              // src=""
               alt="Profile"
               className="w-full h-full object-cover"
             />
