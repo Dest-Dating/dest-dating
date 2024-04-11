@@ -69,7 +69,7 @@ const Conversations = ({
   }, [conversations, userId]);
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md h-screen">
+    <div className="p-4 bg-white rounded-lg shadow-md h-screen">
       <h2 className="text-lg font-bold mb-4">Conversations</h2>
       {/* Mapping over conversations array to render each conversation */}
       {chatUsers.map((conversation) => (
@@ -82,15 +82,17 @@ const Conversations = ({
           className="flex items-center mb-4"
         >
           {/* Profile Picture */}
-          <img
-            src={conversation.profilePicture.photoLink}
-            alt="Profile"
-            className="w-12 h-12 rounded-full mr-4"
-          />
-          {/* Name and Latest Message */}
-          <div>
-            <h3 className="text-lg font-semibold">{conversation.name}</h3>
-            <p className="text-gray-500">{conversation.latestMessage}</p>
+          <div className="bg-red-300 rounded-md">
+            <img
+              src={conversation.profilePicture.photoLink}
+              alt="Profile"
+              className="w-12 h-12 rounded-full mr-4"
+            />
+            {/* Name and Latest Message */}
+            <div>
+              <h3 className="text-lg font-semibold">{conversation.name}</h3>
+              <p className="text-gray-500">{conversation.latestMessage}</p>
+            </div>
           </div>
         </div>
       ))}
