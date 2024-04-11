@@ -214,7 +214,7 @@ export const logoutUser = async (dispatch, navigate) => {
     await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
     dispatch(convoClear());
-    toast("Logged out Successfully!", {type: "success"});
+    toast("Logged out Successfully!", { type: "success" });
     navigate("/");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
@@ -258,7 +258,13 @@ export const oAuthLogin = async (dispatch, navigate) => {
 // match comntrolls
 
 // like
-export const likeUser = async (dispatch, email, completeUser) => {
+export const likeUser = async (
+  dispatch,
+  email,
+  completeUser,
+  setMatchedUser,
+  navigate
+) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {
