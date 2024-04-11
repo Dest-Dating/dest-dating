@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
@@ -55,7 +55,7 @@ const ChatSection = ({
   // send message
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (newMessage==="") return;
+    if (newMessage === "") return;
 
     const messageData = {
       message: newMessage, senderId: currentUser._id, conversationId: openConvo?._id,
@@ -100,15 +100,10 @@ const ChatSection = ({
     scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
-  console.log("R", reciver);
-  console.log(reciver?.profilePicture.photoLink);
-  console.log(currentUser);
-  console.log("PL", currentUser?.photosLink[0].photoLink);
 
-
-  return (<div className="h-screen flex flex-col  bg-pink-100">
+  return (<div className="h-[calc(100vh-50px)] flex flex-col  bg-stone-50">
     {/* Top Bar */}
-    <div className="bg-gray-200 p-4 flex justify-between items-center">
+    <div className="bg-gray-200 p-4 shadow-lg flex justify-between items-center">
       <div className="flex items-center">
         <img
           src={reciver?.profilePicture.photoLink}

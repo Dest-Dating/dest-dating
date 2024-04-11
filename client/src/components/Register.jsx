@@ -192,7 +192,6 @@ function Register() {
     </div>)}
     {/* Render component after registration */}
     {registered && (<div>
-      <div>Back</div>
       <OtpSection
         user={{
           email: email,

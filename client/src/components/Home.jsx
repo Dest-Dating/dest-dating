@@ -1,23 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
-import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
 import { io } from "socket.io-client";
 
-import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
 
+import logo from "../assets/destDating.ico";
+
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
 
   //chat messages code
@@ -38,7 +38,7 @@ const Home = () => {
       setArrivalMessage({
         senderId: data.senderId,
         message: data.message,
-      })
+      }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -60,13 +60,13 @@ const Home = () => {
       preferredUsers[0]?.email,
       currentUser,
       setMatchedUser,
-      navigate
+      navigate,
     );
-    getPreferredUsers();
+    await getPreferredUsers();
   };
   const handleReject = async () => {
     await rejectUser(dispatch, preferredUsers[0]?.email, currentUser);
-    getPreferredUsers();
+    await getPreferredUsers();
   };
 
   const getPreferredUsers = async () => {
@@ -75,7 +75,9 @@ const Home = () => {
     // console.log(res?.data?.recommendations[0]);
   };
   useEffect(() => {
-    getPreferredUsers();
+    (async () => {
+      await getPreferredUsers();
+    })();
   }, []);
 
   // match controls end-----------
@@ -97,26 +99,27 @@ const Home = () => {
   };
 
   return (
-    <div className="grid grid-cols-12 min-h-screen">
+    <div className="grid grid-cols-12">
       {/* Top Bar */}
-      <div className="col-span-12 bg-gray-200 p-4 flex justify-between items-center">
+      <div className="col-span-12 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
         {/* Home Icon */}
-        <button onClick={handleHomeClick} className="text-2xl">
-          <FaHome />
+        <button onClick={handleHomeClick}>
+          <img className="w-12 mix-blend-multiply" src={logo} alt="" />
         </button>
 
-        {/* Profile Icon */}
-        <button onClick={handleProfileClick} className="text-2xl mx-4">
-          <FaUser />
-        </button>
+        <div className="flex gap-5">
+          {/* Profile Icon */}
+          <button onClick={handleProfileClick} className="text-xl">
+            Profile
+          </button>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-3 py-1 rounded-full"
-        >
-          <FaSignOutAlt />
-        </button>
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="text-xl">
+            Logout
+          </button>
+        </div>
 
         {/* Hamburger Icon for Sidebar (only visible on smaller screens) */}
         <div className="lg:hidden">
@@ -125,10 +128,13 @@ const Home = () => {
           </button>
         </div>
       </div>
-      <button onClick={() => navigate("/home/match")}>match</button>
+
+      {/*????????????????? what is this ??????????????????*/}
+      {/*<button onClick={() => navigate("/home/match")}>match</button>*/}
+
       {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
-        <div className="overflow-auto lg:hidden col-span-12 md:col-span-3 bg-gray-200">
+        <div className="overflow-auto absolute top-[49px] z-10 lg:hidden md:col-span-5 bg-gray-200">
           <div className="p-4">
             <button onClick={toggleSidebar} className="text-2xl float-right">
               <FaTimes />
@@ -149,7 +155,7 @@ const Home = () => {
       )}
 
       {/* Conversations Section */}
-      <div className="lg:col-span-3 hidden lg:block">
+      <div className="lg:col-span-2 hidden lg:block">
         <Conversations
           chatUsers={chatUsers}
           setChatUsers={setChatUsers}
@@ -159,7 +165,7 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
-      <div className="col-span-12 lg:col-span-9 bg-white p-4">
+      <div className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] bg-blue-400">
         <Routes>
           <Route
             path="/"
@@ -171,7 +177,12 @@ const Home = () => {
                   handleReject={handleReject}
                 />
               ) : (
-                <>No Recommendations</>
+                <div className="flex justify-center items-center h-full">
+                  <div>
+                    <h3 className="text-white underline mb-2">No Recommendations</h3>
+                    <p className="text-stone-300">Please try again after some time or change preferences!</p>
+                  </div>
+                </div>
               )
             }
           />

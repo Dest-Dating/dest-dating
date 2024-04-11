@@ -214,9 +214,8 @@ export const logoutUser = async (dispatch, navigate) => {
     await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
     dispatch(convoClear());
-    toast("Logged out Successfully!");
+    toast("Logged out Successfully!", {type: "success"});
     navigate("/");
-    toast("Password updated!");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);

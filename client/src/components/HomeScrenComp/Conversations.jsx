@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { getConversations, getUsers } from "../../redux/apiCalls/convoApiCalls";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 const Conversations = ({
-  chatUsers,
-  setChatUsers,
-  setOpenConvo,
-  matchedUser,
-}) => {
+                         chatUsers,
+                         setChatUsers,
+                         setOpenConvo,
+                         matchedUser,
+                       }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const path = useLocation().pathname.split("/")[2];
@@ -60,32 +60,33 @@ const Conversations = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations, userId]);
 
-  return (<div className="p-4 bg-white rounded-lg shadow-md h-screen">
-      <h2 className="text-lg font-bold mb-4">Conversations</h2>
-      {/* Mapping over conversations array to render each conversation */}
-      {chatUsers.map((conversation) => (<div
-          key={conversation.userId}
-          onClick={() => {
-            navigate("/home/chats");
-            setConversation(conversation.userId, userId);
-          }}
-          className="flex items-center mb-4"
-        >
-          {/* Profile Picture */}
-          <div className="bg-red-300 rounded-md">
-            <img
-              src={conversation.profilePicture.photoLink}
-              alt="Profile"
-              className="w-12 h-12 rounded-full mr-4"
-            />
-            {/* Name and Latest Message */}
-            <div>
-              <h3 className="text-lg font-semibold">{conversation.name}</h3>
-              <p className="text-gray-500">{conversation.latestMessage}</p>
-            </div>
-          </div>
-        </div>))}
-    </div>);
+  return (<div className="p-4 bg-red-50 rounded-lg shadow-md h-[calc(100vh-50px)] overflow-y-scroll">
+    <h2 className="text-lg font-bold mb-4">Conversations</h2>
+    {/* Mapping over conversations array to render each conversation */}
+    {chatUsers.map((conversation) => (<div
+      key={conversation.userId}
+      onClick={async () => {
+        // 💥💥💥💥💥💥💥💥navigate was after setConversations, change if there are bugs
+        await setConversation(conversation.userId, userId);
+        navigate("/home/chats");
+      }}
+      className="flex items-center mb-4"
+    >
+      {/* Profile Picture */}
+      <div className="rounded-md w-full flex items-center hover:shadow-md bg-transparent/5 shadow p-2">
+        <img
+          src={conversation.profilePicture.photoLink}
+          alt="Profile"
+          className="w-8 h-8 rounded-full mr-4"
+        />
+        {/* Name and Latest Message */}
+        <div>
+          <h3 className="text-lg font-semibold">{conversation.name}</h3>
+          <p className="text-gray-500">{conversation.latestMessage}</p>
+        </div>
+      </div>
+    </div>))}
+  </div>);
 };
 
 export default Conversations;
