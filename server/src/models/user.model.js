@@ -83,11 +83,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean, default: false,
   }, sessionIds: [{
     type: String,
-  }], subscriptions: [
-    {
-      type: mongoose.Schema.Types.ObjectId, ref: "Bill",
-    }
-  ]
+  }], subscriptions: [{
+    type: mongoose.Schema.Types.ObjectId, ref: "Bill",
+  }], bio: String, fieldsOfInterests: [{ type: String }],
 }, {
   timestamps: true,
 });

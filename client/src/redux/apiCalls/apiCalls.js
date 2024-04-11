@@ -30,6 +30,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return true;
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
@@ -39,6 +40,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return false;
   }
 };
 
@@ -257,13 +259,7 @@ export const oAuthLogin = async (dispatch, navigate) => {
 // match comntrolls
 
 // like
-export const likeUser = async (
-  dispatch,
-  email,
-  completeUser,
-  setMatchedUser,
-  navigate
-) => {
+export const likeUser = async (dispatch, email, completeUser) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {

@@ -67,7 +67,7 @@ const UploadPhotos = ({
   };
 
   useEffect(() => {
-    currentImg != "" &&
+    currentImg !== "" &&
     addSinglePhoto(dispatch, currentImg, currentInd, completeUser);
     setCurrentImg("");
   }, [currentImg, dispatch]);
@@ -110,7 +110,7 @@ const UploadPhotos = ({
 
   return (
     <div
-      className={`bg-pink-100 pb-10 ${
+      className={`bg-pink-100 pb-10 min-h-[100vh] ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       } flex justify-center items-center transition-opacity  duration-500 `}
     >
@@ -123,9 +123,8 @@ const UploadPhotos = ({
         setImageSrc={setCurrentPhoto}
       />
       <div className="max-w-xl w-full border p-4 bg-white mt-10 rounded-lg shadow-xl">
-        <h2 className="text-lg font-bold mb-4">
-          Upload your photos to display on your profile
-        </h2>
+        <h2 className="text-2xl mb-10"> Upload your photos to display on your profile</h2>
+
         <div className="grid grid-cols-3 gap-4 [&>div]:max-h-96 *:object-cover *:object-center">
           {/* Big box */}
           <div className="relative col-span-2 row-span-2 aspect-w-4 aspect-h-5 overflow-hidden rounded-sm">
@@ -201,14 +200,14 @@ const UploadPhotos = ({
             if (!openUploadPhotos) setCurrentStage(currentStage - 1);
             else setOpenUploadPhotos(false);
           }}
-          className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
+          className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-4"
         >
           <IoIosArrowBack />
           Back
         </button>
         <button
           onClick={(e) => handleSubmit(e)}
-          className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded mt-4"
+          className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded my-4"
         >
           Submit
         </button>
