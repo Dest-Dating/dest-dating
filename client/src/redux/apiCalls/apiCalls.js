@@ -11,6 +11,7 @@ import {
   userStart,
 } from "../userSlice";
 import { newConversation } from "./convoApiCalls";
+import { convoClear } from "../conversationSlice";
 
 // function to log into the website
 export const login = async (dispatch, user) => {
@@ -210,6 +211,7 @@ export const logoutUser = async (dispatch, navigate) => {
   try {
     await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
+    dispatch(convoClear());
     toast("Logged out Successfully!");
     navigate("/");
     toast("Password updated!");

@@ -30,6 +30,11 @@ const conversationSlice = createSlice({
       state.isFetching = false;
       state.error = true;
     },
+    convoClear: (state) => {
+      state.isFetching = false;
+      state.error = false;
+      state.conversations = [];
+    },
   },
 });
 
@@ -39,5 +44,6 @@ export const {
   convoFailure,
   convoPostSuccess,
   convoSuccess,
+  convoClear,
 } = conversationSlice.actions;
 export default conversationSlice.reducer;

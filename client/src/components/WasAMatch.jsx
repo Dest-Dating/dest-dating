@@ -12,22 +12,6 @@ const WasAMatch = ({ currentUser, matchedUser, setOpenConvo }) => {
     (state) => state.conversations.conversations
   );
 
-  // const createConvo = () => {
-  //   currentUser &&
-  //     matchedUser &&
-  //     newConversation(dispatch, currentUser._id, matchedUser._id);
-  // };
-
-  // useEffect(() => {
-  //   const convos = conversations.filter(
-  //     (convo) =>
-  //       convo.members.includes(currentUser._id) &&
-  //       convo.members.includes(matchedUser._id)
-  //   );
-
-  //   convos.length == 0 && createConvo();
-  // }, []);
-
   // setting up conversation
   // starting chat with selected user
   const setConversation = async (id) => {
