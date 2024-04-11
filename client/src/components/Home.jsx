@@ -89,7 +89,7 @@ const Home = () => {
   };
 
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12 min-h-screen">
       {/* Top Bar */}
       <div className="col-span-12 bg-gray-200 p-4 flex justify-between items-center">
         {/* Home Icon */}
@@ -120,22 +120,19 @@ const Home = () => {
 
       {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
-        <div className="overflow-auto lg:hidden fixed top-0 left-0 h-full w-full md:w-2/3 bg-gray-200 z-50">
+        <div className="overflow-auto lg:hidden col-span-12 md:col-span-3 bg-gray-200">
           <div className="p-4">
             <button onClick={toggleSidebar} className="text-2xl float-right">
               <FaTimes />
             </button>
 
             <div className="h-screen flex flex-col">
-              <div className="h-1/2 mb-4 overflow-auto">
+              <div className="h-full mb-4 overflow-auto">
                 <Conversations
                   chatUsers={chatUsers}
                   setChatUsers={setChatUsers}
                   setOpenConvo={setOpenConvo}
                 />
-              </div>
-              <div className="h-1/2 overflow-auto">
-                <Likes />
               </div>
             </div>
           </div>
@@ -152,7 +149,7 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
-      <div className="col-span-12 lg:col-span-6">
+      <div className="col-span-12 lg:col-span-9 bg-white p-4">
         <Routes>
           <Route
             path="/"
@@ -181,11 +178,6 @@ const Home = () => {
             }
           />
         </Routes>
-      </div>
-
-      {/* Likes Section */}
-      <div className="lg:col-span-3 hidden lg:block">
-        <Likes />
       </div>
     </div>
   );
