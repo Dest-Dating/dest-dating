@@ -7,7 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
 import { signup } from "../redux/apiCalls/apiCalls";
-import PasswordInput from "./utilComponents/PasswordInput.jsx";
+import PasswordInput from "./utilComponents/passwordInput.jsx";
+import sideImage from "../assets/frontPageImage.png";
 
 function Register() {
   const [email, setEmail] = useState("j87iuasdf8@gmail.com");
@@ -18,9 +19,7 @@ function Register() {
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
-  );
+  const currentUser = useSelector((state) => state?.user?.currentUser?.data?.user);
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
     setImageLoaded(true);
@@ -43,21 +42,19 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== verifyPassword) {
-      // alert("Passwords do not match");
-      toast.error("Passwords do not match");
-      return;
-    }
+    //get this from backend
+    // if (password !== verifyPassword) {
+    //   // alert("Passwords do not match");
+    //   toast.error("Passwords do not match");
+    //   return;
+    // }
     // Handle registration logic here
-    console.log("Email:", email);
-    console.log("Password:", password);
-    signup(dispatch, setRegistered, {
-      email: email,
-      password: password,
-      passwordConfirm: verifyPassword,
-      phoneNumber: phoneNumber,
+    // console.log("Email:", email);
+    // console.log("Password:", password);
+    await signup(dispatch, setRegistered, {
+      email: email, password: password, passwordConfirm: verifyPassword, phoneNumber: phoneNumber,
     });
-    setRegistered(true);
+    // setRegistered(true);
   };
 
   useEffect(() => {
@@ -72,29 +69,26 @@ function Register() {
     }
   }, [currentUser, navigate]);
 
-  return (
-    <div>
-      {!registered && (
-        <div className="flex h-screen justify-center items-center bg-pink-100">
-          <div className="max-w-xl w-full flex justify-between items-center">
+  return (<div>
+      {!registered && (<div className="flex h-screen justify-center items-center bg-rose-50">
+
+          <div className="flex justify-evenly
+       items-center w-full gap-10 align-middle h-full">
             {/* Left side: Image */}
+
             <div
-              className={`hidden lg:block w-4/5 ${
-                imageLoaded
-                  ? "opacity-100 transition-opacity duration-1000"
-                  : "opacity-0"
-              }`}
+              className={`w-[40%] sm:flex p-4 bg-white shadow-md border rounded-lg hidden items-center justify-center overflow-hidden h-full ${imageLoaded ? "opacity-100 transition-opacity duration-1000" : "opacity-0"}`}
             >
               <img
-                src={registerImage}
+                src={sideImage}
                 alt="Love"
-                className="h-80 w-80"
+                // className="h-[100%]"
                 onLoad={() => setImageLoaded(true)}
               />
             </div>
 
             {/* Right side: Registration form */}
-            <div className="bg-white  rounded-lg shadow-md w-full lg:w-4/5">
+            <div className="bg-white rounded-lg shadow-md lg:w-[30%] sm:w-fit p-10">
               <form
                 onSubmit={handleSubmit}
                 className="bg-white p-10 rounded-lg w-full lg:w-full"
@@ -196,18 +190,17 @@ function Register() {
               {/* Google Sign-In Button */}
             </div>
           </div>
-        </div>
-      )}
+        </div>)}
       {/* Render component after registration */}
-      {registered && (
-        <OtpSection
-          user={{
-            email: email,
-          }}
-        />
-      )}
-    </div>
-  );
+      {registered && (<div>
+        <div>Back</div>
+          <OtpSection
+            user={{
+              email: email
+            }} back={()=>setRegistered(false)}
+          />
+        </div>)}
+    </div>);
 }
 
 export default Register;

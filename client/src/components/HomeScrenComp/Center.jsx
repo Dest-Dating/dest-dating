@@ -1,79 +1,144 @@
-import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { IoHeart } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
+import { useEffect, useRef, useState } from "react";
+import { FaAngleDown } from "react-icons/fa";
+import { FaAngleUp } from "react-icons/fa";
 
-const Center = () => {
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [photos, setPhotos] = useState([
-    "https://dummyimage.com/400x300/000/fff&text=Hariom_image_1",
-    "https://dummyimage.com/400x300/",
-    "https://dummyimage.com/400x300/fff&text=Hariom_image_2",
-    "https://dummyimage.com/400x300/",
-    "https://dummyimage.com/400x300/000/fff&text=Photo+5",
-  ]);
+const Center = ({ user, handleLike, handleReject }) => {
+  //yha p jo user ko display krna h usko prop ke jese pass krdena etc etc
+  // const user = useSelector((state) => state?.user?.currentUser?.data?.user);
+  // console.log("first", user);
+  const imageDivs = useRef([]);
+  const [view, setView] = useState(0);
 
-  const nextPhoto = () => {
-    setCurrentPhotoIndex((prevIndex) =>
-      prevIndex === photos.length - 1 ? 0 : prevIndex + 1
-    );
+  const handleViewChange = (add) => {
+    if (view === 0 && add < 0) return;
+    if (view === user.photosLink.length && add > 0) return;
+    setView(view + add);
   };
 
-  const prevPhoto = () => {
-    setCurrentPhotoIndex((prevIndex) =>
-      prevIndex === 0 ? photos.length - 1 : prevIndex - 1
-    );
-  };
-
-  const handleTick = () => {
-    // Logic for handling tick button click (move to next profile)
-    nextProfile();
-  };
-
-  const handleCross = () => {
-    // Logic for handling cross button click (move to next profile)
-    nextProfile();
-  };
-
-  const nextProfile = () => {
-    // Logic for transitioning to the next profile
-  };
+  useEffect(() => {
+    if (imageDivs.current.length === 0) return;
+    imageDivs.current[view].scrollIntoView({ behavior: "smooth" }); //smooth ni hora
+  }, [view]);
 
   return (
-    <div className="relative w-full h-full p-10 flex justify-center items-center">
-      {/* Profile Photo */}
-      <img
-        src={photos[currentPhotoIndex]}
-        alt={`Profile Photo ${currentPhotoIndex + 1}`}
-        className="w-full h-full object-cover rounded-lg"
-      />
+    <div className="flex justify-center relative h-fit mt-16">
+      <div className="relative">
+        <div>
+          <div
+            style={{
+              backgroundImage:
+                "url(https://images.pexels.com/photos/2088170/pexels-photo-2088170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)",
+            }}
+            className="bg-no-repeat bg-center relative shadow-xl rounded-2xl w-[500px] max-h-[500px]  min-h-[500px] border border-rose-200 bg-rose-50 overflow-y-scroll"
+          >
+            <div className="relative backdrop-blur-sm">
+              <div
+                name="header"
+                className="sticky top-0 -my-[50px] z-1  p-3  bg-gradient-to-b from-[rgba(0,0,0,.3)] to-transparent w-full text-white"
+              >
+                <div
+                  name="username"
+                  className="text-xl font-bold  font-handwritten"
+                >
+                  {user.name}
+                </div>
+                <div style={{ fontSize: "11px" }}>
+                  {/*//todo: fill user details here*/}
+                  <div name="age">(23)</div>
+                  <div name="interest">Web Developer</div>
+                  <div name="age">Leetcode: 23523</div>
+                </div>
+              </div>
 
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevPhoto}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-2 focus:outline-none"
-      >
-        {"<"}
-      </button>
-      <button
-        onClick={nextPhoto}
-        className="absolute top-1/2 right-4 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-2 focus:outline-none"
-      >
-        {">"}
-      </button>
+              <div
+                name="session1"
+                className="border"
+                ref={(ref) => (imageDivs.current[0] = ref)}
+              >
+                <div className="max-h-[500px] flex justify-center items-center w-[100%]">
+                  <img
+                    className="w-full h-[500px] object-cover object-top"
+                    src={user.photosLink[0].photoLink}
+                    alt=""
+                  />
+                </div>
+              </div>
 
-      {/* Action Buttons */}
-      <div className="absolute bottom-8 flex justify-center w-full py-10">
-        <button
-          onClick={handleCross}
-          className="mx-2 w-12 h-12 text-white bg-red-500 rounded-full flex items-center justify-center focus:outline-none"
-        >
-          <span className="text-xl">✕</span>
-        </button>
-        <button
-          onClick={handleTick}
-          className="mx-2 w-12 h-12 text-white bg-pink-500 rounded-full flex items-center justify-center focus:outline-none"
-        >
-          <span className="text-xl">✔</span>
-        </button>
+              {user.photosLink.map((obj) => {
+                return (
+                  <div
+                    key={obj.index + 1}
+                    className="flex items-center"
+                    ref={(ref) => (imageDivs.current[obj.index + 1] = ref)}
+                    name="session2"
+                  >
+                    <div className="h-[500px] min-w-[300px] flex">
+                      <img
+                        className="object-cover h-[500px] w-[300px] object-center"
+                        src={user.photosLink[obj.index].photoLink}
+                        alt=""
+                      />
+                    </div>
+                    <div className="p-3">
+                      scrambled it to make a type specimen book. It has survived
+                      not only five centuries, but also the leap
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div
+            name="up down"
+            className={`absolute flex flex-col gap-4 right-5 top-[70%]`}
+          >
+            <div
+              name="accept"
+              onClick={(e) => handleViewChange(-1)}
+              className={`hover:scale-105 active:scale-100 w-6 h-6 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white ${
+                view === 0 && "opacity-0"
+              }`}
+            >
+              <FaAngleUp />
+            </div>
+            <div
+              name="accept"
+              onClick={(e) => handleViewChange(1)}
+              className={`hover:scale-105 active:scale-100 w-6 h-6 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white ${
+                view === user.photosLink.length && "opacity-0"
+              }`}
+            >
+              <FaAngleDown />
+            </div>
+          </div>
+
+          <div
+            name="controls"
+            className="absolute left-[50%] -translate-x-1/2 flex gap-10 -bottom-10 "
+          >
+            <div
+              name="reject"
+              onClick={() => handleReject()}
+              className="hover:scale-105 active:scale-100 w-20 h-20 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white"
+            >
+              <RxCross2 size={50} color="red" />
+            </div>
+            <div
+              name="accept"
+              onClick={() => handleLike()}
+              className="hover:scale-105 active:scale-100  w-20 h-20 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white"
+            >
+              <IoHeart size={50} color="red" />
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div name="view more"></div>
     </div>
   );
 };

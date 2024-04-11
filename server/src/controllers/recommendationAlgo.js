@@ -3,9 +3,7 @@ const User = require("../models/user.model");
 // Function to fetch recommended users for a given user
 const getRecommendations = async (req, res) => {
   try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email });
+    const user = req.user;
 
     if (!user) {
       return res
@@ -28,8 +26,9 @@ const getRecommendations = async (req, res) => {
       _id: { $ne: user._id },
       gender: user.interestedInGender,
       interestedInGender: user.gender,
-      height: { $gte: minHeight, $lte: maxHeight },
+      // height: { $gte: minHeight, $lte: maxHeight },
     });
+    console.log("--", potentialMatches);
 
     // Filter potential matches based on user preferences
     const filteredMatches = potentialMatches.filter((match) => {
