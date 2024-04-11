@@ -43,7 +43,9 @@ const OtpSection = ({ user, back }) => {
 
   const handleSubmit = async () => {
     const enteredOtp = otp.join("");
-    if (await verifyOtp(dispatch, { ...user, emailVerificationOtp: enteredOtp })) {
+    if (
+      await verifyOtp(dispatch, { ...user, emailVerificationOtp: enteredOtp })
+    ) {
       navigate("/questions");
     }
   };
@@ -54,7 +56,7 @@ const OtpSection = ({ user, back }) => {
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="flex justify-center min-h-screen bg-pink-50">
+      <div className="flex justify-center min-h-screen bg-rose-50">
         <div
           className={`p-4 bg-white mt-10 rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center h-1/3 transition-transform duration-500 ${
             isOpen ? "translate-x-0" : "translate-x-full"
@@ -68,7 +70,7 @@ const OtpSection = ({ user, back }) => {
               <input
                 key={index}
                 ref={(ref) => (otpBlocks.current[index] = ref)}
-                className="w-12 h-12 border border-gray-300 rounded-md text-center text-lg mx-2 outline-none focus:border-pink-500"
+                className="w-12 h-12 border border-gray-300 rounded-md text-center text-lg mx-2 outline-none focus:border-rose-500"
                 type="text"
                 maxLength="1"
                 value={value}
@@ -78,7 +80,7 @@ const OtpSection = ({ user, back }) => {
             ))}
           </div>
           <div className="flex gap-5 mb-4">
-            <button onClick={()=>back()} className="underline text-blue-400">
+            <button onClick={() => back()} className="underline text-blue-400">
               Change email
             </button>
             <button
@@ -87,12 +89,14 @@ const OtpSection = ({ user, back }) => {
               onClick={() => setOtpDisabled(true)}
             >
               {/* put timer */}
-              {otpDisabled ? `You can Resend OTP after 90 seconds` : "Resend OTP"}
+              {otpDisabled
+                ? `You can Resend OTP after 90 seconds`
+                : "Resend OTP"}
             </button>
           </div>
           <button
             onClick={handleSubmit}
-            className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded"
+            className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded"
           >
             Verify
           </button>

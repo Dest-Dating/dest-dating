@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/apiCalls/apiCalls";
 import PasswordInput from "./utilComponents/passwordInput.jsx";
 
-import sideImage from "../assets/frontPageImage.png"
+import sideImage from "../assets/frontPageImage.png";
 import { FaGoogle } from "react-icons/fa";
 
 function Login() {
@@ -50,13 +50,14 @@ function Login() {
 
     // Reset form fields
     await login(dispatch, { loginField: email, password: password });
-    };
+  };
 
   return (
     <div className="flex h-screen justify-center items-center bg-rose-50">
-
-      <div className="flex justify-evenly
-       items-center w-full gap-10 align-middle h-full">
+      <div
+        className="flex justify-evenly
+       items-center w-full gap-10 align-middle h-full"
+      >
         {/* Left side: Image */}
 
         <div
@@ -116,8 +117,10 @@ function Login() {
                 navigate("/register");
               }}
             >
-              Not registered? <span
-              className="text-blue-500 underline cursor-pointer">click here</span>
+              Not registered?{" "}
+              <span className="text-blue-500 underline cursor-pointer">
+                click here
+              </span>
             </div>
 
             <button
@@ -134,7 +137,7 @@ function Login() {
                 googleAuthInitiator(e);
               }}
             >
-             <FaGoogle className="mr-3"/>
+              <FaGoogle className="mr-3" />
               Sign in with Google
             </button>
           </form>

@@ -3,11 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-const DateOfBirthPicker = ({
-  currentStage,
-  setCurrentStage,
-  setUserData,
-}) => {
+const DateOfBirthPicker = ({ currentStage, setCurrentStage, setUserData }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,9 +21,11 @@ const DateOfBirthPicker = ({
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-pink-50">
+    <div className="flex justify-center items-center min-h-screen bg-rose-50">
       <div
-        className={`p-4 bg-white rounded-lg shadow-md w-full lg:w-1/2 h-1/3 transform duration-500 ${isOpen ? "opacity-100" : "opacity-0"}`}
+        className={`p-4 bg-white rounded-lg shadow-md w-full lg:w-1/2 h-1/3 transform duration-500 ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
       >
         <div
           className={`p-4 bg-white rounded-lg w-full  flex flex-col justify-center items-center h-1/3`}
@@ -40,12 +38,12 @@ const DateOfBirthPicker = ({
             placeholder="YYYY-MM-DD"
             required
             autoFocus
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500"
           />
           <div className="flex gap-20 mt-4">
             <span
               onClick={() => setCurrentStage(currentStage - 1)}
-              className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
+              className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
             >
               <IoIosArrowBack />
               Back
@@ -53,7 +51,7 @@ const DateOfBirthPicker = ({
             <button
               type="submit"
               onClick={nextHandler}
-              className="flex items-center justify-center bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded mt-2"
+              className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
             >
               Next
               <IoIosArrowForward />
