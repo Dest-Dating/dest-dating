@@ -1,28 +1,121 @@
-import React, { useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { io } from "socket.io-client";
+
+import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
+
 import { useDispatch } from "react-redux";
-import { logOut } from "../redux/userSlice";
+import { useSelector } from "react-redux";
+import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
+import { publicRequest } from "../requestMethods";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user
+  );
 
+  //chat messages code
+  const [chatUsers, setChatUsers] = useState([]);
+  const [openConvo, setOpenConvo] = useState(null);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("http://localhost:4000", {
+      transports: ["websocket"],
+    });
+
+    socket.current.on("getMessage", (data) =>
+      setArrivalMessage({
+        senderId: data.senderId,
+        message: data.message,
+      })
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", currentUser._id);
+    socket.current.on("getUsers", (users) => console.log(users));
+  }, [currentUser]);
+
+  // chat mssages end-------------
+
+  // match controls
+
+  const [preferredUsers, setPreferredUsers] = useState([]);
+  const handleLike = async () => {
+    await likeUser(dispatch, preferredUsers[0]?.email, currentUser);
+    getPreferredUsers();
+  };
+  const handleReject = async () => {
+    await rejectUser(dispatch, preferredUsers[0]?.email, currentUser);
+    getPreferredUsers();
+  };
+
+  const getPreferredUsers = async () => {
+    const res = await publicRequest.post("/user/getRecommendations");
+    setPreferredUsers(res?.data?.recommendations);
+    // console.log(res?.data?.recommendations[0]);
+  };
+  useEffect(() => {
+    getPreferredUsers();
+  }, []);
+
+  // match controls end-----------
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const handleHomeClick = () => {
+    navigate("/home");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const handleLogout = () => {
+    logoutUser(dispatch, navigate);
+  };
+
   return (
     <div className="grid grid-cols-12">
-      {/* Hamburger Icon for Sidebar */}
-      <div className="lg:hidden col-span-1 flex items-center justify-center">
-        <button onClick={toggleSidebar} className="text-2xl">
-          {sidebarOpen ? <FaTimes /> : <FaBars />}
+      {/* Top Bar */}
+      <div className="col-span-12 bg-gray-200 p-4 flex justify-between items-center">
+        {/* Home Icon */}
+        <button onClick={handleHomeClick} className="text-2xl">
+          <FaHome />
         </button>
+
+        {/* Profile Icon */}
+        <button onClick={handleProfileClick} className="text-2xl mx-4">
+          <FaUser />
+        </button>
+
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-3 py-1 rounded-full"
+        >
+          <FaSignOutAlt />
+        </button>
+
+        {/* Hamburger Icon for Sidebar (only visible on smaller screens) */}
+        <div className="lg:hidden">
+          <button onClick={toggleSidebar} className="text-2xl">
+            {sidebarOpen ? <FaTimes /> : <FaBars />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar for Smaller Screens */}
@@ -35,7 +128,11 @@ const Home = () => {
 
             <div className="h-screen flex flex-col">
               <div className="h-1/2 mb-4 overflow-auto">
-                <Conversations />
+                <Conversations
+                  chatUsers={chatUsers}
+                  setChatUsers={setChatUsers}
+                  setOpenConvo={setOpenConvo}
+                />
               </div>
               <div className="h-1/2 overflow-auto">
                 <Likes />
@@ -47,15 +144,42 @@ const Home = () => {
 
       {/* Conversations Section */}
       <div className="lg:col-span-3 hidden lg:block">
-        <Conversations />
+        <Conversations
+          chatUsers={chatUsers}
+          setChatUsers={setChatUsers}
+          setOpenConvo={setOpenConvo}
+        />
       </div>
 
       {/* Center Section */}
-      <div className="lg:col-span-6">
-        <button onClick={() => dispatch(logOut())}>logout</button>
+      <div className="col-span-12 lg:col-span-6">
         <Routes>
-          <Route path="/" element={<Center />} />
-          <Route path="/chats" element={<ChatSection />} />
+          <Route
+            path="/"
+            element={
+              preferredUsers.length > 0 ? (
+                <Center
+                  user={preferredUsers[0]}
+                  handleLike={handleLike}
+                  handleReject={handleReject}
+                />
+              ) : (
+                <>No Recommendations</>
+              )
+            }
+          />
+          <Route
+            path="/chats"
+            element={
+              <ChatSection
+                chatUsers={chatUsers}
+                arrivalMessage={arrivalMessage}
+                socket={socket}
+                openConvo={openConvo}
+                setOpenConvo={setOpenConvo}
+              />
+            }
+          />
         </Routes>
       </div>
 

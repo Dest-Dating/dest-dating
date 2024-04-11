@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+//todo: add validations
+
 const billSchema = new mongoose.Schema(
   {
     subscriber: {
@@ -13,7 +15,7 @@ const billSchema = new mongoose.Schema(
       type: Date
     },
     amount:{
-      type: Integer
+      type: Number
     },
     transactionId:{
       type: String
@@ -27,4 +29,4 @@ const billSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Bill", userSchema);
+module.exports = mongoose.model("Bill", billSchema);

@@ -146,6 +146,6 @@ psd
 thumb
 sketch
 
-#server/src/config.env
+server/src/config.env
 *.env
 .idea

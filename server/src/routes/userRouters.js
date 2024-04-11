@@ -13,6 +13,7 @@ router.get("/test", (req, res, next) => {
 });
 
 router.post("/login", authController.login); //ok
+router.post("/logout", authController.logout); //ok
 router.get("/getMe", authController.isLoggedIn); //ok
 router.post("/signup", authController.signup); //ok
 router.post("/verifyEmail", authController.verifyEmail); //ok
@@ -22,7 +23,16 @@ router.get("/auth/google/url", oauthGoogleController.getGoogleUrl);
 router.get("/auth/google/", oauthGoogleController.authGoogle);
 
 //for subscription
-router.post("/buySubscription", authController.protect, userController.buySubscription);
+router.post(
+  "/buySubscription",
+  authController.protect,
+  userController.buySubscription
+);
+router.post(
+  "/validateSubscription",
+  authController.protect,
+  userController.validateSubscription
+);
 
 //change user details
 router.post(
@@ -49,7 +59,7 @@ router.post(
 const { getRecommendations } = require("../controllers/recommendationAlgo");
 const { likeUser, rejectUser } = require("../controllers/matchController");
 const { setUserPreferences } = require("../controllers/userController");
-router.get("/getRecommendations", getRecommendations);
+router.post("/getRecommendations", authController.protect, getRecommendations);
 router.put("/likeUser", authController.protect, likeUser);
 router.put("/rejectUser", authController.protect, rejectUser);
 // router.put("/setPreferences", authController.protect, setUserPreferences);

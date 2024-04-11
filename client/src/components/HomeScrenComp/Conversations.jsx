@@ -1,48 +1,80 @@
 import React, { useEffect, useState } from "react";
-import { getConversations } from "../../redux/apiCalls/convoApiCalls";
+import { getConversations, getUsers } from "../../redux/apiCalls/convoApiCalls";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-const Conversations = () => {
-  const [conversationss, setConversationss] = useState([]);
+// eslint-disable-next-line react/prop-types
+const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { _id: userId } = useSelector(
-    (state) => state.user.currentUser?.data?.user
+    (state) => state.user.currentUser?.data?.user,
   );
 
-  // const getConvo = () => {
-  //   getConversations(dispatch, userId);
-  // };
+  const conversations = useSelector(
+    (state) => state.conversations.conversations,
+  );
 
-  // useEffect(() => {
-  //   getConvo();
+  const getConvo = () => {
+    (async () => {
+      await getConversations(dispatch, userId);
+    })();
+  };
 
-  // }, []);
-  // Dummy conversation data
-  const conversations = [
-    {
-      id: 1,
-      profilePicture: "https://via.placeholder.com/50",
-      name: "John Doe",
-      latestMessage: "Hey there!",
-    },
-    {
-      id: 2,
-      profilePicture: "https://via.placeholder.com/50",
-      name: "Jane Smith",
-      latestMessage: "How are you?",
-    },
-    // Add more conversation data as needed
-  ];
+  useEffect(() => {
+    (async () => {
+      await getConvo();
+    })();
+  }, []);
+
+  const setConversation = async (id, userId) => {
+    const selectedConvo = conversations.find((convo) =>
+      convo.members.find((userId) => userId === id),
+    );
+    setOpenConvo(selectedConvo);
+  };
+
+  const getDetails = async (userIds) => {
+    if (userIds.length > 0) {
+      const userDetails = await getUsers(dispatch, userIds);
+      setChatUsers(userDetails);
+    } else setChatUsers([]);
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line no-extra-boolean-cast
+    const userIds = !!conversations[0]?._id
+      ? conversations.map((convo) => {
+        if (convo.members[0] === userId) {
+          return convo.members[1];
+        } else {
+          return convo.members[0];
+        }
+      })
+      : [];
+    (async () => {
+      await getDetails(userIds);
+    })();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversations, userId]);
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md h-screen">
       <h2 className="text-lg font-bold mb-4">Conversations</h2>
       {/* Mapping over conversations array to render each conversation */}
-      {conversations.map((conversation) => (
-        <div key={conversation.id} className="flex items-center mb-4">
+      {chatUsers.map((conversation) => (
+        <div
+          key={conversation.userId}
+          onClick={() => {
+            navigate("/home/chats");
+            setConversation(conversation.userId, userId);
+          }}
+          className="flex items-center mb-4"
+        >
           {/* Profile Picture */}
           <img
-            src={conversation.profilePicture}
+            src={conversation.profilePicture.photoLink}
             alt="Profile"
             className="w-12 h-12 rounded-full mr-4"
           />
