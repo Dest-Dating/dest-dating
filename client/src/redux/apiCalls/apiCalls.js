@@ -30,6 +30,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return true;
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
@@ -39,6 +40,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return false;
   }
 };
 
@@ -212,9 +214,8 @@ export const logoutUser = async (dispatch, navigate) => {
     await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
     dispatch(convoClear());
-    toast("Logged out Successfully!");
+    toast("Logged out Successfully!", { type: "success" });
     navigate("/");
-    toast("Password updated!");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);

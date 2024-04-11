@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
 import { useSocket } from "../context/SocketProvider";
+import { IoMdSend } from "react-icons/io";
 
 const ChatSection = ({
   chatUsers,
@@ -69,6 +70,7 @@ const ChatSection = ({
   // send message
   const sendMessage = async (e) => {
     e.preventDefault();
+    if (newMessage === "") return;
 
     const messageData = {
       message: newMessage,
@@ -109,23 +111,24 @@ const ChatSection = ({
     }
   };
   useEffect(() => {
-    fetchMessages();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    (async () => {
+      await fetchMessages();
+    })();
   }, [openConvo]);
 
   // scroll to current message
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behaviour: "smooth" });
+    scrollRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 
   return (
-    <div className="h-screen flex flex-col  bg-pink-100">
+    <div className="h-[calc(100vh-50px)] flex flex-col  bg-stone-50">
       {/* Top Bar */}
-      <div className="bg-gray-200 p-4 flex justify-between items-center">
+      <div className="bg-gray-200 p-4 shadow-lg flex justify-between items-center">
         <div className="flex items-center">
           <img
-            src={reciver?.profilePicture?.photoLink} // Dummy profile picture
-            alt="Profile"
+            src={reciver?.profilePicture.photoLink}
+            alt="Reciver Image"
             className="w-8 h-8 rounded-full mr-2"
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
@@ -134,13 +137,14 @@ const ChatSection = ({
           onClick={() => {
             handleSubmitForm();
           }}
+          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"
         >
           Join
         </button>
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-grow overflow-y-auto px-4 py-2">
+      <div className="flex-grow overflow-y-auto px-4 py-2 text-lg *:transition">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -151,29 +155,38 @@ const ChatSection = ({
             } mb-2`}
             ref={scrollRef}
           >
-            {message.senderId !== currentUser._id && (
-              <img
-                src="https://via.placeholder.com/50" // Dummy profile picture
-                alt="Receiver"
-                className="w-8 h-8 rounded-full mr-2"
-              />
-            )}
-            <div
-              className={`p-2 rounded-lg ${
-                message.senderId === currentUser._id
-                  ? "bg-pink-500 text-white self-end"
-                  : "bg-pink-300 self-start"
-              }`}
-            >
-              {message.message}
-              <div className="text-xs text-gray-500">{message.timestamp}</div>
-            </div>
+            {/*ye message hmne bheje h*/}
             {message.senderId === currentUser._id && (
-              <img
-                src="https://via.placeholder.com/50" // Dummy profile picture
-                alt="Sender"
-                className="w-8 h-8 rounded-full ml-2"
-              />
+              <div className="chat max-w-[50%] chat-end">
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <img
+                      src={currentUser?.photosLink[0]?.photoLink}
+                      className="shadow-sm"
+                    />
+                  </div>
+                </div>
+                <div className="chat-bubble shadow-sm bg-rose-300 text-black">
+                  {message.message}
+                </div>
+              </div>
+            )}
+
+            {/*ye message _setting_ ke side se aay h*/}
+            {message.senderId !== currentUser._id && (
+              <div className="chat max-w-[50%] chat-start">
+                <div className="chat-image avatar">
+                  <div className="w-10 rounded-full">
+                    <img
+                      src={reciver?.profilePicture.photoLink}
+                      className="shadow-sm"
+                    />
+                  </div>
+                </div>
+                <div className="chat-bubble  shadow-sm bg-rose-400 text-black">
+                  {message.message}
+                </div>
+              </div>
             )}
           </div>
         ))}
@@ -194,22 +207,9 @@ const ChatSection = ({
         />
         <button
           type="submit"
-          className="bg-pink-500 text-white rounded-r-md p-2 focus:outline-none"
+          className="bg-rose-400 text-white rounded-r-md p-2 h-full px-4 focus:outline-none"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
+          <IoMdSend size={30} />
         </button>
       </form>
     </div>

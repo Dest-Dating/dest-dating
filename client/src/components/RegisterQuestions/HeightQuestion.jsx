@@ -1,11 +1,10 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/userSlice";
 import { toast } from "react-toastify";
 
-const UserInfoForm = ({
+const HeightQuestion = ({
   currentStage,
   setCurrentStage,
   userData,
@@ -25,8 +24,8 @@ const UserInfoForm = ({
 
   const nextHandler = (e) => {
     e.preventDefault();
-    if (!userData.name) {
-      setMessage("Enter name!");
+    if (!userData.height) {
+      setMessage("Enter your height!");
       return;
     }
     setCurrentStage(currentStage + 1);
@@ -45,7 +44,7 @@ const UserInfoForm = ({
             className="w-full p-4  flex flex-col justify-center items-center"
           >
             <h2 className="text-lg font-bold mb-4 self-start">
-              What should we call you?
+              Enter your height in cm
             </h2>
             <div
               className="text-red-700 m-1 font-medium"
@@ -54,9 +53,11 @@ const UserInfoForm = ({
               {message}
             </div>
             <input
-              type="text"
-              name="name"
-              value={userData.name}
+              type="number"
+              name="height"
+              min="54"
+              max="275"
+              value={userData.height}
               autoFocus
               onChange={(e) =>
                 setUserData({ ...userData, [e.target.name]: e.target.value })
@@ -100,4 +101,4 @@ const UserInfoForm = ({
   );
 };
 
-export default UserInfoForm;
+export default HeightQuestion;
