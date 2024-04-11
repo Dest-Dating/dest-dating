@@ -14,12 +14,17 @@ exports.likeUser = async (req, res, next) => {
     if (!userToLike || userToLike._id.equals(currentUser._id)) {
       return res
         .status(400)
-        .json({ status: "fail", message: "User not found or cannot like yourself" });
+        .json({
+          status: "fail",
+          message: "User not found or cannot like yourself",
+        });
     }
 
     // Check if the user is already liked
     if (currentUser.likedArray.includes(userToLike._id)) {
-      return res.status(400).json({ status: "fail", message: "Profile already liked" });
+      return res
+        .status(400)
+        .json({ status: "fail", message: "Profile already liked" });
     }
 
     // Add the liked user to the current user's likedArray
@@ -32,13 +37,19 @@ exports.likeUser = async (req, res, next) => {
       // If matched, update both users' matchedArray
       currentUser.matchedArray.push(userToLike._id);
       userToLike.matchedArray.push(currentUser._id);
-      currentUser = currentUser.save({ validateBeforeSave: false, new: true });
-      userToLike = userToLike.save({ validateBeforeSave: false });
+      currentUser = await currentUser.save({
+        validateBeforeSave: false,
+        new: true,
+      });
+      userToLike = await userToLike.save({ validateBeforeSave: false });
       wasAMatch = true;
     }
 
     res.status(200).json({
-      status: "success", wasAMatch, currentUser: currentUser, likedUser: userToLike
+      status: "success",
+      wasAMatch,
+      currentUser: currentUser,
+      likedUser: userToLike,
     });
   } catch (error) {
     return next(new AppError("Some error occurred.", 500));
@@ -71,7 +82,9 @@ exports.rejectUser = async (req, res) => {
     res.status(200).json({ message: "User rejected successfully" });
   } catch (error) {
     return res.status(400).json({
-      success: false, message: "Unable to reject the user", error,
+      success: false,
+      message: "Unable to reject the user",
+      error,
     });
   }
 };

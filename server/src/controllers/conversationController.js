@@ -5,6 +5,13 @@ const AppError = require("../utils/appError");
 
 //New Conversation
 exports.newConversation = catchAsync(async (req, res, next) => {
+  // Checking if conversation already exists
+  const check = await Conversations.find({
+    members: { $all: [req.body.senderId, req.body.receiverId] },
+  });
+  console.log("asdf", check.length);
+  if (check.length > 0) return res.status(202).json("Chat Already Exists");
+
   //Creating the new conversation
   const newConversation = new Conversations({
     members: [req.body.senderId, req.body.receiverId],
@@ -13,7 +20,6 @@ exports.newConversation = catchAsync(async (req, res, next) => {
   try {
     //Saving new Conversation to the database
     const saveConversation = await newConversation.save();
-
     //Sending the response
     res.status(200).json(saveConversation);
   } catch (error) {

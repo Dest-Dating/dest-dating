@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { getConversations, getUsers } from "../../redux/apiCalls/convoApiCalls";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
-const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
+const Conversations = ({
+  chatUsers,
+  setChatUsers,
+  setOpenConvo,
+  matchedUser,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const path = useLocation().pathname.split("/")[2];
   const { _id: userId } = useSelector(
     (state) => state.user.currentUser?.data?.user
   );
@@ -27,6 +33,7 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
     })();
   }, []);
 
+  // starting chat with selected user
   const setConversation = async (id, userId) => {
     const selectedConvo = conversations.find((convo) =>
       convo.members.find((userId) => userId === id)
@@ -34,13 +41,16 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
     setOpenConvo(selectedConvo);
   };
 
+  // getting complete details of users
   const getDetails = async (userIds) => {
     if (userIds.length > 0) {
       const userDetails = await getUsers(dispatch, userIds);
       setChatUsers(userDetails);
     } else setChatUsers([]);
+    console.log(chatUsers);
   };
 
+  // creating a list of userIds of users in conversations
   useEffect(() => {
     // eslint-disable-next-line no-extra-boolean-cast
     const userIds = !!conversations[0]?._id
@@ -55,7 +65,6 @@ const Conversations = ({ chatUsers, setChatUsers, setOpenConvo }) => {
     (async () => {
       await getDetails(userIds);
     })();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversations, userId]);
 
