@@ -11,35 +11,28 @@ const getRecommendations = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
-    // Adjusted height preferences
-    const minHeight =
-      user.preferences.minHeight !== null
-        ? user.preferences.minHeight
-        : user.height - 5;
-    const maxHeight =
-      user.preferences.maxHeight !== null
-        ? user.preferences.maxHeight
-        : user.height + 5;
+    // // Adjusted height preferences
+    // const minHeight =
+    //   user.preferences.minHeight !== null
+    //     ? user.preferences.minHeight
+    //     : user.height - 5;
+    // const maxHeight =
+    //   user.preferences.maxHeight !== null
+    //     ? user.preferences.maxHeight
+    //     : user.height + 5;
 
-    // Fetch potential matches based on criteria
+    // Fetch potential matches based on criteria, excluding liked, rejected, and matched users
     const potentialMatches = await User.find({
       _id: { $ne: user._id },
       gender: user.interestedInGender,
       interestedInGender: user.gender,
-      // height: { $gte: minHeight, $lte: maxHeight },
-    });
-    console.log("--", potentialMatches);
-
-    // Filter potential matches based on user preferences
-    const filteredMatches = potentialMatches.filter((match) => {
-      return (
-        match.gender === user.interestedInGender &&
-        match.interestedInGender === user.gender
-      );
+      _id: {
+        $nin: [...user.likedArray, ...user.rejectedArray, ...user.matchedArray],
+      }, // Exclude liked, rejected, and matched users
     });
 
     // Calculate similarity score for each potential match using cosine similarity
-    const recommendations = filteredMatches.map((match) => {
+    const recommendations = potentialMatches.map((match) => {
       const similarityScore = calculateCosineSimilarity(user, match);
       return { user: match, similarityScore };
     });

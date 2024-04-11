@@ -26,7 +26,9 @@ export const newConversation = async (dispatch, userId, id) => {
       senderId: userId,
       receiverId: id,
     });
-    dispatch(convoPostSuccess(res.data));
+    console.log("cc", res);
+    if (res?.status == 202) return res.data;
+    res?.status == 200 && dispatch(convoPostSuccess(res.data));
     return res.data;
   } catch (error) {
     dispatch(convoFailure());
