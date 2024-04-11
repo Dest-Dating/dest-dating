@@ -39,7 +39,7 @@ const GenderPicker = ({
         <div
           className={`p-4 bg-white rounded-lg w-full  flex flex-col justify-center items-center h-1/3`}
         >
-          <h2 className="text-lg font-bold mb-4">Select Gender</h2>
+          <h2 className="text-lg font-bold mb-4">Select your Gender</h2>
           <div className="text-red-700 m-1 font-medium" style={{ alignSelf: "self-start" }}>{message}</div>
 
           <div className="flex flex-col *:mx-2 justify-center content-center w-full mb-4 md:flex-row">

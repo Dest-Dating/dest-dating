@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import registerImage from "../assets/register.svg";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -70,137 +69,136 @@ function Register() {
   }, [currentUser, navigate]);
 
   return (<div>
-      {!registered && (<div className="flex h-screen justify-center items-center bg-rose-50">
+    {!registered && (<div className="flex h-screen justify-center items-center bg-rose-50">
 
-          <div className="flex justify-evenly
+      <div className="flex justify-evenly
        items-center w-full gap-10 align-middle h-full">
-            {/* Left side: Image */}
+        {/* Left side: Image */}
 
-            <div
-              className={`w-[40%] sm:flex p-4 bg-white shadow-md border rounded-lg hidden items-center justify-center overflow-hidden h-full ${imageLoaded ? "opacity-100 transition-opacity duration-1000" : "opacity-0"}`}
-            >
-              <img
-                src={sideImage}
-                alt="Love"
-                // className="h-[100%]"
-                onLoad={() => setImageLoaded(true)}
+        <div
+          className={`w-[40%] sm:flex p-4 bg-white shadow-md border rounded-lg hidden items-center justify-center overflow-hidden h-full ${imageLoaded ? "opacity-100 transition-opacity duration-1000" : "opacity-0"}`}
+        >
+          <img
+            src={sideImage}
+            alt="Love"
+            // className="h-[100%]"
+            onLoad={() => setImageLoaded(true)}
+          />
+        </div>
+
+        {/* Right side: Registration form */}
+        <div className="bg-white rounded-lg shadow-md lg:w-[30%] sm:w-fit p-10">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-10 rounded-lg w-full lg:w-full"
+          >
+            <h2 className="text-3xl mb-4 text-center font-bold">
+              Hey there👋
+            </h2>
+            <div className="mb-4">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 font-bold mb-2"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={handleEmailChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                placeholder="Enter your email"
+                required
               />
             </div>
-
-            {/* Right side: Registration form */}
-            <div className="bg-white rounded-lg shadow-md lg:w-[30%] sm:w-fit p-10">
-              <form
-                onSubmit={handleSubmit}
-                className="bg-white p-10 rounded-lg w-full lg:w-full"
+            <div className="mb-4">
+              <label
+                htmlFor="phone"
+                className="block text-gray-700 font-bold mb-2"
               >
-                <h2 className="text-3xl mb-4 text-center font-bold">
-                  Hey there👋
-                </h2>
-                <div className="mb-4">
-                  <label
-                    htmlFor="email"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={handleEmailChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                    placeholder="Enter your email"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="phone"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Phone Number
-                  </label>
-                  <input
-                    type="number"
-                    id="phone"
-                    value={phoneNumber}
-                    onChange={handlePhoneChnage}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                    placeholder="Enter your phone number"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="password"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Password
-                  </label>
-                  <PasswordInput
-                    type="password"
-                    id="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="verifyPassword"
-                    className="block text-gray-700 font-bold mb-2"
-                  >
-                    Confirm Password
-                  </label>
-                  <PasswordInput
-                    type="password"
-                    id="verifyPassword"
-                    value={verifyPassword}
-                    onChange={handleVerifyPasswordChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
-                <div
-                  onClick={() => {
-                    navigate("/");
-                  }}
-                  className="mb-2 text-center cursor-pointer text-blue-500"
-                >
-                  Already registered? Click here to sign in
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-                >
-                  Register
-                </button>
-                <button
-                  className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
-                  onClick={(e) => {
-                    googleAuthInitiator(e);
-                  }}
-                >
-                  Google Sign in
-                </button>
-              </form>
-              {/* Google Sign-In Button */}
+                Phone Number
+              </label>
+              <input
+                type="number"
+                id="phone"
+                value={phoneNumber}
+                onChange={handlePhoneChnage}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                placeholder="Enter your phone number"
+                required
+              />
             </div>
-          </div>
-        </div>)}
-      {/* Render component after registration */}
-      {registered && (<div>
-        <div>Back</div>
-          <OtpSection
-            user={{
-              email: email
-            }} back={()=>setRegistered(false)}
-          />
-        </div>)}
-    </div>);
+            <div className="mb-6">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 font-bold mb-2"
+              >
+                Password
+              </label>
+              <PasswordInput
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                htmlFor="verifyPassword"
+                className="block text-gray-700 font-bold mb-2"
+              >
+                Confirm Password
+              </label>
+              <PasswordInput
+                type="password"
+                id="verifyPassword"
+                value={verifyPassword}
+                onChange={handleVerifyPasswordChange}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                placeholder="Confirm your password"
+                required
+              />
+            </div>
+            <div
+              onClick={() => {
+                navigate("/");
+              }}
+              className="mb-2 text-center cursor-pointer text-blue-500"
+            >
+              Already registered? Click here to sign in
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+            >
+              Register
+            </button>
+            <button
+              className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+              onClick={(e) => {
+                googleAuthInitiator(e);
+              }}
+            >
+              Google Sign in
+            </button>
+          </form>
+          {/* Google Sign-In Button */}
+        </div>
+      </div>
+    </div>)}
+    {/* Render component after registration */}
+    {registered && (<div>
+      <OtpSection
+        user={{
+          email: email,
+        }} back={() => setRegistered(false)}
+      />
+    </div>)}
+  </div>);
 }
 
 export default Register;

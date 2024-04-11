@@ -30,6 +30,7 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     interestedInGender: req.body.interestedInGender || user.interestedInGender, //todo: location ?,
     //todo: automate this
     isSignupCompleted: req.body.isSignupCompleted || true,
+    fieldsOfInterests: req.body.fieldsOfInterests || user.fieldsOfInterests,
   };
 
   const updatedUser = await User.findOneAndUpdate(user._id, updates, { new: true });
