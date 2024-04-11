@@ -10,6 +10,7 @@ const ChatSection = ({
   socket,
   openConvo,
   setOpenConvo,
+  setMatchedUser,
 }) => {
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
@@ -17,7 +18,6 @@ const ChatSection = ({
   const reciver = chatUsers.find((user) =>
     openConvo?.members?.find((id) => id === user.userId)
   );
-
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const chatEndRef = useRef(null);
@@ -41,11 +41,11 @@ const ChatSection = ({
     socketForVideo.emit("room:join", {
       email: currentUser?._id,
       room:
-        currentUser?._id < reciver.userId
-          ? `${currentUser?._id}${reciver.userId}`
-          : `${reciver.userId}${currentUser._id}`,
+        currentUser?._id < reciver?.userId
+          ? `${currentUser?._id}${reciver?.userId}`
+          : `${reciver?.userId}${currentUser._id}`,
     });
-  }, [currentUser._id, reciver.userId, socketForVideo]);
+  }, [currentUser?._id, reciver?.userId, socketForVideo]);
 
   // Function to handle joining a room
   const handleJoinRoom = useCallback(
@@ -77,7 +77,7 @@ const ChatSection = ({
     };
 
     socket.current.emit("sendMessage", {
-      reciverId: reciver.userId,
+      reciverId: reciver?.userId,
       senderId: currentUser._id,
       message: newMessage,
     });

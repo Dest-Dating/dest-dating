@@ -10,6 +10,7 @@ import {
   userFailure,
   userStart,
 } from "../userSlice";
+import { newConversation } from "./convoApiCalls";
 
 // function to log into the website
 export const login = async (dispatch, user) => {
@@ -254,19 +255,34 @@ export const oAuthLogin = async (dispatch, navigate) => {
 // match comntrolls
 
 // like
-export const likeUser = async (dispatch, email, completeUser) => {
+export const likeUser = async (
+  dispatch,
+  email,
+  completeUser,
+  setMatchedUser,
+  navigate
+) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {
       email,
     });
-    console.log(res.data);
+    console.log("dildo", res.data);
     dispatch(
       updateSuccess({
         ...completeUser,
-        data: { user: res?.data?.user },
+        data: { user: res?.data?.currentUser },
       })
     );
+    if (res?.data?.wasAMatch) {
+      setMatchedUser(res?.data?.likedUser);
+      newConversation(
+        dispatch,
+        res?.data?.currentUser?._id,
+        res?.data?.likedUser._id
+      );
+      navigate("/home/match");
+    }
     toast("<3");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));

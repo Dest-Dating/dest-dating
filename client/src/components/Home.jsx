@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
+import WasAMatch from "./WasAMatch";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -50,10 +51,17 @@ const Home = () => {
   // chat mssages end-------------
 
   // match controls
-
+  const [matchedUser, setMatchedUser] = useState(null);
   const [preferredUsers, setPreferredUsers] = useState([]);
+
   const handleLike = async () => {
-    await likeUser(dispatch, preferredUsers[0]?.email, currentUser);
+    await likeUser(
+      dispatch,
+      preferredUsers[0]?.email,
+      currentUser,
+      setMatchedUser,
+      navigate
+    );
     getPreferredUsers();
   };
   const handleReject = async () => {
@@ -117,7 +125,7 @@ const Home = () => {
           </button>
         </div>
       </div>
-
+      <button onClick={() => navigate("/home/match")}>match</button>
       {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
         <div className="overflow-auto lg:hidden fixed top-0 left-0 h-full w-full md:w-2/3 bg-gray-200 z-50">
@@ -132,6 +140,7 @@ const Home = () => {
                   chatUsers={chatUsers}
                   setChatUsers={setChatUsers}
                   setOpenConvo={setOpenConvo}
+                  matchedUser={matchedUser}
                 />
               </div>
               <div className="h-1/2 overflow-auto">
@@ -148,6 +157,7 @@ const Home = () => {
           chatUsers={chatUsers}
           setChatUsers={setChatUsers}
           setOpenConvo={setOpenConvo}
+          matchedUser={matchedUser}
         />
       </div>
 
@@ -176,6 +186,17 @@ const Home = () => {
                 arrivalMessage={arrivalMessage}
                 socket={socket}
                 openConvo={openConvo}
+                setOpenConvo={setOpenConvo}
+                setMatchedUser={setMatchedUser}
+              />
+            }
+          />
+          <Route
+            path="/match"
+            element={
+              <WasAMatch
+                currentUser={currentUser}
+                matchedUser={matchedUser}
                 setOpenConvo={setOpenConvo}
               />
             }
