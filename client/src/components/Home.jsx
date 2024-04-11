@@ -29,6 +29,7 @@ const Home = () => {
 
   const handleLogout = () => {
     dispatch(logOut());
+    navigate("/");
   };
 
   return (
