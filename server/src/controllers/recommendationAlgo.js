@@ -28,7 +28,6 @@ const getRecommendations = async (req, res) => {
       interestedInGender: user.gender,
       // height: { $gte: minHeight, $lte: maxHeight },
     });
-    console.log("--", potentialMatches);
 
     // Filter potential matches based on user preferences
     const filteredMatches = potentialMatches.filter((match) => {
