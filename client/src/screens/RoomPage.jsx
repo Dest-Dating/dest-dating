@@ -2,11 +2,11 @@ import React, { useEffect, useCallback, useState } from "react";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import { useSocket } from "../context/SocketProvider";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
 
-const RoomPage = () => {
+const RoomPage = ({}) => {
   const socket = useSocket();
   const navigate = useNavigate();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
@@ -29,9 +29,12 @@ const RoomPage = () => {
   const [lowerHeight, setLowerHeight] = useState("50%");
   const [buttonsVisible, setButtonsVisible] = useState(true);
 
+  const location = useLocation();
+  const movieDate = location.state?.movieDate;
+
   const handleDrag = useCallback((e) => {
     const totalHeight = window.innerHeight;
-    const deltaY = e.clientY - totalHeight * 0.15; // Adjust as needed
+    const deltaY = e.clientY - totalHeight * 0.15;
     const upperPercentage = (deltaY / totalHeight) * 100;
     const lowerPercentage = 100 - upperPercentage;
     setUpperHeight(`${upperPercentage}%`);
@@ -276,39 +279,41 @@ const RoomPage = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-x-hidden overflow-y-hidden bg-black">
-      <div style={{ height: upperHeight }}>
-        {/* Upper part content */}
-        <ReactPlayer
-          className="react-player"
-          width="100%"
-          height="100%"
-          url={url}
-          pip={pip}
-          playing={playing}
-          controls={controls}
-          light={light}
-          loop={loop}
-          playbackRate={playbackRate}
-          volume={volume}
-          muted={muted}
-          onReady={() => console.log("onReady")}
-          onStart={() => console.log("onStart")}
-          onPlay={handlePlay}
-          onEnablePIP={handleEnablePIP}
-          onDisablePIP={handleDisablePIP}
-          onPause={handlePause}
-          onBuffer={() => console.log("onBuffer")}
-          onPlaybackRateChange={handleOnPlaybackRateChange}
-          onSeek={(e) => console.log("onSeek", e)}
-          onEnded={handleEnded}
-          onError={(e) => console.log("onError", e)}
-          onProgress={handleProgress}
-          onDuration={handleDuration}
-          onPlaybackQualityChange={(e) =>
-            console.log("onPlaybackQualityChange", e)
-          }
-        />
-      </div>
+      {movieDate && (
+        <div style={{ height: upperHeight }}>
+          {/* Upper part content */}
+          <ReactPlayer
+            className="react-player"
+            width="100%"
+            height="100%"
+            url={url}
+            pip={pip}
+            playing={playing}
+            controls={controls}
+            light={light}
+            loop={loop}
+            playbackRate={playbackRate}
+            volume={volume}
+            muted={muted}
+            onReady={() => console.log("onReady")}
+            onStart={() => console.log("onStart")}
+            onPlay={handlePlay}
+            onEnablePIP={handleEnablePIP}
+            onDisablePIP={handleDisablePIP}
+            onPause={handlePause}
+            onBuffer={() => console.log("onBuffer")}
+            onPlaybackRateChange={handleOnPlaybackRateChange}
+            onSeek={(e) => console.log("onSeek", e)}
+            onEnded={handleEnded}
+            onError={(e) => console.log("onError", e)}
+            onProgress={handleProgress}
+            onDuration={handleDuration}
+            onPlaybackQualityChange={(e) =>
+              console.log("onPlaybackQualityChange", e)
+            }
+          />
+        </div>
+      )}
       <div
         className="bg-slate-900"
         id="divider"
@@ -322,6 +327,7 @@ const RoomPage = () => {
       <div style={{ overflowY: "hidden" }}>
         <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
           {/* Video Controls */}
+<<<<<<< Updated upstream
           <div className="flex">
             <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
               {/* Play/Pause Button */}
@@ -358,6 +364,62 @@ const RoomPage = () => {
               </button>
             )}
           </div>
+=======
+          {true && (
+            <div className="flex p-2">
+              {movieDate && (
+                <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
+                  {/* Play/Pause Button */}
+                  <button onClick={handlePlayPause} className="">
+                    {playing ? <FaPause /> : <FaPlay />}
+                  </button>
+                </div>
+              )}
+              {buttonsVisible && movieDate && (
+                <input
+                  onChange={(e) => {
+                    setUrlFromInput(e.target.value);
+                  }}
+                  placeholder="Enter URL here . . ."
+                  className="rounded-lg"
+                  type="text"
+                />
+              )}
+              {buttonsVisible && movieDate && (
+                <button
+                  onClick={handleSetClick}
+                  className="text-white rounded-lg px-4 mx-4 bg-slate-700"
+                >
+                  Set
+                </button>
+              )}
+              {buttonsVisible && (
+                <button
+                  onClick={handleEndButtonClick}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+                >
+                  End
+                </button>
+              )}
+              {remoteSocketId && buttonsVisible && (
+                <button
+                  onClick={handleCallUser}
+                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mx-2"
+                >
+                  CALL
+                </button>
+              )}
+              {myStream && buttonsVisible && (
+                <button
+                  onClick={sendStreams}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mx-2"
+                >
+                  Send Stream
+                </button>
+              )}
+            </div>
+          )}
+>>>>>>> Stashed changes
 
           {/* Display remote and local streams */}
           <div className="flex flex-wrap justify-center items-center gap-4">

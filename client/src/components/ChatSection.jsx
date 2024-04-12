@@ -25,6 +25,7 @@ const ChatSection = ({
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
   const [error, setError] = useState("");
+  const [movieDate, setMovieDate] = useState(true);
 
   const socketForVideo = useSocket(); // Get the socket object from context
   const navigate = useNavigate();
@@ -53,9 +54,10 @@ const ChatSection = ({
     (data) => {
       const { room: roomId } = data;
       // Navigate to the specified room
-      navigate(`/room/${roomId}`);
+      // alert(movieDate);
+      navigate(`/room/${roomId}`, { state: { movieDate } });
     },
-    [navigate]
+    [movieDate, navigate]
   );
 
   // Effect to listen for room join event
@@ -133,6 +135,7 @@ const ChatSection = ({
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
         </div>
+<<<<<<< Updated upstream
         <button
           onClick={() => {
             handleSubmitForm();
@@ -141,6 +144,28 @@ const ChatSection = ({
         >
           Join
         </button>
+=======
+        <div>
+          <button
+            onClick={() => {
+              setMovieDate(false);
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded"
+          >
+            <FaVideo />
+          </button>
+          <button
+            onClick={() => {
+              setMovieDate(true);
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded ml-6"
+          >
+            <MdMovie />
+          </button>
+        </div>
+>>>>>>> Stashed changes
       </div>
 
       {/* Chat Messages */}
