@@ -181,7 +181,7 @@ exports.validateSubscription = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
   }
 
-  res.send({
+  res.status(200).json({
     status: "success",
     data: {
       paymentStatus: session.payment_status,

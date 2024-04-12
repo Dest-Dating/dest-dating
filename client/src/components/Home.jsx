@@ -9,6 +9,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getMe,
   likeUser,
   logoutUser,
   rejectUser,
@@ -123,16 +124,17 @@ const Home = () => {
   };
 
   useEffect(() => {
+    getMe();
     getLocation();
   }, []);
 
   return (
     <div className="grid grid-cols-12">
       {/* Top Bar */}
-      <div className="col-span-12 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
+      <div className="col-span-12 h-24 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
         {/* Home Icon */}
-        <button onClick={handleHomeClick}>
-          <img className="w-12 mix-blend-multiply" src={logo} alt="" />
+        <button className="h-full" onClick={handleHomeClick}>
+          <img className="h-full  mix-blend-multiply" src={logo} alt="" />
         </button>
 
         <div className="flex gap-5">

@@ -238,7 +238,7 @@ export const deleteUser = async (dispatch, password) => {
 };
 
 // function to login using google oAuth
-export const oAuthLogin = async (dispatch, navigate) => {
+export const getMe = async (dispatch, navigate) => {
   // start fetching
   dispatch(userStart());
   try {
@@ -262,19 +262,36 @@ export const updateLocation = async (dispatch, location, completeUser) => {
   dispatch(userStart());
   try {
     // api call
-    console.log("apicall", location);
     const res = await publicRequest.post("/user/postLocation", {
       location: {
         coordinates: location,
       },
     });
     // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+  }
+};
+// validate subscription
+
+export const validateSubscription = async (dispatch, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/validateSubscription");
+    // update state if location
     console.log("res", res.data);
     const user = {
       ...completeUser,
       data: res.data.data,
     };
-    console.log("apicall", user);
     dispatch(updateSuccess(user));
   } catch (error) {
     // update state if login unsuccessfull
