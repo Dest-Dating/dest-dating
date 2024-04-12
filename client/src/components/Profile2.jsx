@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaArrowLeft } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaXmark } from "react-icons/fa6";
 import { fetchLeetCode, updateUser } from "../redux/apiCalls/apiCalls";
 
@@ -19,12 +19,20 @@ const ProfilePage = () => {
   const [bio, setBio] = useState("Hey there! I am using dest");
   const [fadeIn, setFadeIn] = useState(false);
 
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   useEffect(() => {
     console.log("leetCode", leetCode);
   }, [leetCode]);
 
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
   const completeUser = useSelector((state) => state?.user?.currentUser);
   const dispatch = useDispatch();
@@ -34,8 +42,8 @@ const ProfilePage = () => {
     setEmail(currentUser.email);
     setHeight(currentUser.height);
     setGender(currentUser.gender);
-    setDob(currentUser.dob);
-    setLeetCode(currentUser.leetcodeData.leetcodeUsername);
+    setDob(formatDate(new Date(currentUser.dob)));
+    setLeetCode(currentUser?.leetcodeData?.leetcodeUsername);
     setBio(currentUser.bio);
     setInterestedIn(currentUser.interestedInGender);
     setFadeIn(true); // Trigger the fade-in animation

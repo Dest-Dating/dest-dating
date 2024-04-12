@@ -4,20 +4,22 @@ import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
 import { useSocket } from "../context/SocketProvider";
 import { IoMdSend } from "react-icons/io";
+import { FaVideo } from "react-icons/fa";
+import { MdMovie } from "react-icons/md";
 
 const ChatSection = ({
-  chatUsers,
-  arrivalMessage,
-  socket,
-  openConvo,
-  setOpenConvo,
-  setMatchedUser,
-}) => {
+                       chatUsers,
+                       arrivalMessage,
+                       socket,
+                       openConvo,
+                       setOpenConvo,
+                       setMatchedUser,
+                     }) => {
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
   const reciver = chatUsers.find((user) =>
-    openConvo?.members?.find((id) => id === user.userId)
+    openConvo?.members?.find((id) => id === user.userId),
   );
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -57,7 +59,7 @@ const ChatSection = ({
       // alert(movieDate);
       navigate(`/room/${roomId}`, { state: { movieDate } });
     },
-    [movieDate, navigate]
+    [movieDate, navigate],
   );
 
   // Effect to listen for room join event
@@ -98,8 +100,8 @@ const ChatSection = ({
 
   useEffect(() => {
     arrivalMessage &&
-      openConvo?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
+    openConvo?.members.includes(arrivalMessage.senderId) &&
+    setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, openConvo]);
 
   // fetch old messages
@@ -135,16 +137,16 @@ const ChatSection = ({
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
         </div>
-<<<<<<< Updated upstream
-        <button
-          onClick={() => {
-            handleSubmitForm();
-          }}
-          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"
-        >
-          Join
-        </button>
-=======
+        {/*<<<<<<< Updated upstream*/}
+        {/*        <button*/}
+        {/*          onClick={() => {*/}
+        {/*            handleSubmitForm();*/}
+        {/*          }}*/}
+        {/*          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"*/}
+        {/*        >*/}
+        {/*          Join*/}
+        {/*        </button>*/}
+        {/*=======*/}
         <div>
           <button
             onClick={() => {
@@ -165,7 +167,7 @@ const ChatSection = ({
             <MdMovie />
           </button>
         </div>
->>>>>>> Stashed changes
+        {/*>>>>>>> Stashed changes*/}
       </div>
 
       {/* Chat Messages */}
