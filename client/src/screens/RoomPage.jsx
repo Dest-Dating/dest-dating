@@ -3,6 +3,8 @@ import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import { useSocket } from "../context/SocketProvider";
 import { useNavigate } from "react-router-dom";
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
 
 const RoomPage = () => {
   const socket = useSocket();
@@ -250,6 +252,10 @@ const RoomPage = () => {
     }
   };
 
+  // const handleUrlChange(()=>{
+
+  // })
+
   const handleEnded = () => {
     console.log("onEnded");
     setPlaying(loop);
@@ -269,7 +275,7 @@ const RoomPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-x-hidden overflow-y-hidden">
+    <div className="flex flex-col h-screen overflow-x-hidden overflow-y-hidden bg-black">
       <div style={{ height: upperHeight }}>
         {/* Upper part content */}
         <ReactPlayer
@@ -310,35 +316,47 @@ const RoomPage = () => {
         onMouseUp={onMouseUp}
         style={{
           cursor: "row-resize",
-          height: "15px",
+          height: "5px",
         }}
       ></div>
       <div style={{ overflowY: "hidden" }}>
-        <div className="flex-grow flex flex-col items-center justify-center bg-black">
+        <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
           {/* Video Controls */}
-          <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300">
-            {/* Play/Pause Button */}
-            <button
-              onClick={handlePlayPause}
-              className="bg-transparent border-none outline-none focus:outline-none"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="w-8 h-8"
+          <div className="flex">
+            <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
+              {/* Play/Pause Button */}
+              <button onClick={handlePlayPause} className="">
+                {playing ? <FaPause /> : <FaPlay />}
+              </button>
+            </div>
+            {buttonsVisible && (
+              <input
+                placeholder="Input URL here ..."
+                className="rounded-lg"
+                type="text"
+              />
+            )}
+            {buttonsVisible && (
+              <button className="text-white rounded-lg px-4 mx-4 bg-slate-700">
+                Set
+              </button>
+            )}
+            {buttonsVisible && (
+              <button
+                onClick={handleEndButtonClick}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
               >
-                {playing ? (
-                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
-                ) : (
-                  <path d="M18 12L6 5v14l12-7z" />
-                )}
-              </svg>
-            </button>
+                End
+              </button>
+            )}
+            {remoteSocketId && buttonsVisible && (
+              <button
+                onClick={handleCallUser}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                CALL
+              </button>
+            )}
           </div>
 
           {/* Display remote and local streams */}
@@ -365,12 +383,6 @@ const RoomPage = () => {
                 </div>
               </div>
             )}
-          </div>
-        </div>
-        {/* Bottom Buttons */}
-        {/* <div className="flex flex-col items-center justify-center bg-slate-900"> */}
-        <div className="flex justify-center items-center bg-white">
-          <div className="fixed bottom-0 left-0 right-0 bg-slate-100 flex justify-around p-4 border-t border-gray-300">
             {myStream && buttonsVisible && (
               <button
                 onClick={sendStreams}
@@ -379,24 +391,13 @@ const RoomPage = () => {
                 Send Stream
               </button>
             )}
-            {remoteSocketId && buttonsVisible && (
-              <button
-                onClick={handleCallUser}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                CALL
-              </button>
-            )}
-            {buttonsVisible && (
-              <button
-                onClick={handleEndButtonClick}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                End
-              </button>
-            )}
           </div>
         </div>
+        {/* Bottom Buttons */}
+        {/* <div className="flex flex-col items-center justify-center bg-slate-900"> */}
+        {/* <div className="flex justify-center items-center bg-white">
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-100 flex justify-around p-4 border-t border-gray-300"></div>
+        </div> */}
         {/* </div> */}
       </div>
     </div>
