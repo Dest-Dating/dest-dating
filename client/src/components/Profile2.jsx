@@ -35,6 +35,8 @@ const ProfilePage = () => {
     setHeight(currentUser.height);
     setGender(currentUser.gender);
     setDob(currentUser.dob);
+    setLeetCode(currentUser.leetcodeData.leetcodeUsername);
+    setBio(currentUser.bio);
     setInterestedIn(currentUser.interestedInGender);
     setFadeIn(true); // Trigger the fade-in animation
     const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms

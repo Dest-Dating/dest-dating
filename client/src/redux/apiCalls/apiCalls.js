@@ -334,14 +334,15 @@ export const updatePreferences = async (
   dispatch(userStart());
   try {
     // api call
-    const res = await publicRequest.post("/user/updatePreferences", userData);
+    const res = await publicRequest.post("/user/setPreferences", userData);
     // update state if location
     const user = {
       ...completeUser,
-      data: res.data,
+      data: res.data.data,
     };
     dispatch(updateSuccess(user));
 
+    toast("Preferences have been updated!");
     navigate("/profile");
   } catch (error) {
     // update state if login unsuccessfull
