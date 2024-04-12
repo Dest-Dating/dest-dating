@@ -18,6 +18,7 @@ import {
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
 import logo from "../assets/destDating.ico";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -61,7 +62,7 @@ const Home = () => {
   const [preferredUsers, setPreferredUsers] = useState([]);
 
   const handleLike = async () => {
-    await likeUser(
+    const status = await likeUser(
       dispatch,
       preferredUsers[0]?.email,
       currentUser,
@@ -100,8 +101,9 @@ const Home = () => {
     navigate("/profile");
   };
 
-  const handleLogout = () => {
-    logoutUser(dispatch, navigate);
+
+  const handleLogout = async () => {
+    await logoutUser(dispatch, navigate);
   };
 
   // update user's location
@@ -130,6 +132,7 @@ const Home = () => {
 
   return (
     <div className="grid grid-cols-12">
+
       {/* Top Bar */}
       <div className="col-span-12 h-24 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
         {/* Home Icon */}

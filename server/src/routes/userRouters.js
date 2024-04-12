@@ -17,6 +17,7 @@ router.post("/logout", authController.logout); //ok
 router.get("/getMe", authController.isLoggedIn); //ok
 router.post("/signup", authController.signup); //ok
 router.post("/verifyEmail", authController.verifyEmail); //ok
+router.post("/fetchLeetcodeData", authController.protect, userController.fetchLeetcodeData);
 
 //for google oauth
 router.get("/auth/google/url", oauthGoogleController.getGoogleUrl);

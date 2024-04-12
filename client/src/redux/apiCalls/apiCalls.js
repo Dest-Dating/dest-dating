@@ -102,7 +102,7 @@ export const addSinglePhoto = async (
   dispatch,
   link,
   currentInd,
-  completeUser
+  completeUser,
 ) => {
   dispatch(userStart());
   const id = toast.loading("Uploading image...");
@@ -116,7 +116,7 @@ export const addSinglePhoto = async (
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.data?.user },
-      })
+      }),
     );
     toast.update(id, {
       render: "Image uploaded.",
@@ -148,7 +148,7 @@ export const deleteSinglePhoto = async (dispatch, link, completeUser) => {
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.data?.user },
-      })
+      }),
     );
     toast.update(id, {
       render: "Image Deleted.",
@@ -172,7 +172,7 @@ export const profileComplete = async (
   dispatch,
   userData,
   completeUser,
-  navigate
+  navigate,
 ) => {
   dispatch(userStart());
   try {
@@ -182,7 +182,7 @@ export const profileComplete = async (
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.user },
-      })
+      }),
     );
     toast("Profile Updated Successfully!");
     navigate("/home");
@@ -216,9 +216,11 @@ export const logoutUser = async (dispatch, navigate) => {
     dispatch(convoClear());
     toast("Logged out Successfully!", { type: "success" });
     navigate("/");
+    return true;
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
+    return false;
   }
 };
 
@@ -307,33 +309,33 @@ export const likeUser = async (
   email,
   completeUser,
   setMatchedUser,
-  navigate
+  navigate,
 ) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {
       email,
     });
-    console.log("dildo", res.data);
     dispatch(
       updateSuccess({
         ...completeUser,
         data: { user: res?.data?.currentUser },
-      })
+      }),
     );
     if (res?.data?.wasAMatch) {
       setMatchedUser(res?.data?.likedUser);
-      newConversation(
+      await newConversation(
         dispatch,
         res?.data?.currentUser?._id,
-        res?.data?.likedUser._id
+        res?.data?.likedUser._id,
       );
       navigate("/home/match");
     }
-    toast("<3");
+    return true;
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
+    return false;
   }
 };
 
@@ -350,7 +352,7 @@ export const rejectUser = async (dispatch, email, completeUser) => {
       updateSuccess({
         ...completeUser,
         data: { user: res?.data?.user },
-      })
+      }),
     );
     toast("</3");
   } catch (error) {
