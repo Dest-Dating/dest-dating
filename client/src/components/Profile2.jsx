@@ -34,6 +34,7 @@ const ProfilePage = () => {
     setEmail(currentUser.email);
     setHeight(currentUser.height);
     setGender(currentUser.gender);
+    setDob(currentUser.dob);
     setInterestedIn(currentUser.interestedInGender);
     setFadeIn(true); // Trigger the fade-in animation
     const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms
@@ -122,7 +123,9 @@ const ProfilePage = () => {
             <button
               className="p-2 w-full md:w-max md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white  md:w-auto mx-auto mb-2"
               onClick={() => {
-                navigate("/preferences");
+                if (currentUser?.subscriptions.length == 0)
+                  navigate("/getPremium");
+                else navigate("/preferences");
               }}
             >
               Update Preferences
