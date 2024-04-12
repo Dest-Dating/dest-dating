@@ -274,6 +274,7 @@ exports.fetchLeetcodeData = catchAsync(async (req, res, next) => {
 
   user = await user.save({ validateBeforeSave: false, new: true });
 
+
   res.status(200).json({
     status: "success", data: {
       user,

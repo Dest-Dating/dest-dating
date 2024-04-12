@@ -18,7 +18,7 @@ const Center = ({ user, handleLike, handleReject }) => {
   const age = Math.abs(ageDate.getUTCFullYear() - 1970);
 
   const imageDivs = useRef([]);
-  const [view, setView] = useState(5);
+  const [view, setView] = useState(0);
 
   const handleViewChange = (add) => {
     if (view === 0 && add < 0) return;
@@ -70,7 +70,7 @@ const Center = ({ user, handleLike, handleReject }) => {
           {user.bio || ""}
         </div>;
       case 1:
-        if (!user.fieldsOfInterests) return <></>;
+        if (user.fieldsOfInterests?.length === 0) return <></>;
         return <div>
           <div className="flex flex-wrap">
             <div className="m-3 text-lg underline">Fields of interest</div>
@@ -84,7 +84,7 @@ const Center = ({ user, handleLike, handleReject }) => {
           </div>
         </div>;
       case 2:
-        if (!user.codingLanguage) return <></>;
+        if (user.codingLanguage?.length === 0) return <></>;
         return <div className="min-w-[200px]">
           <div className="flex flex-wrap">
             <div className="m-3 text-lg underline">Coding languages</div>

@@ -93,11 +93,13 @@ const userSchema = new mongoose.Schema({
   }, sessionIds: [{
     type: String,
   }], subscriptions: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "Bill",
+    type: mongoose.Schema.Types.ObjectId, ref: "Bill", autopopulate: true,
   }], bio: String, fieldsOfInterests: [{ type: String }], codingLanguage: [{ type: String }],
 }, {
   timestamps: true,
 });
+userSchema.plugin(require("mongoose-autopopulate"));
+
 
 function calculateAge(birthDateObj) {
   const today = new Date();
@@ -167,6 +169,7 @@ userSchema.methods.createPasswordResetToken = function() {
   //that is supposed to call createPasswordResetToken
   return resetToken;
 };
+
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
