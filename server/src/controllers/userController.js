@@ -27,8 +27,7 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     name: req.body.name || user.name,
     height: req.body.height || user.height,
     gender: req.body.gender || user.gender,
-    interestedInGender: req.body.interestedInGender || user.interestedInGender, //todo: location ?,
-    //todo: automate this
+    interestedInGender: req.body.interestedInGender || user.interestedInGender,
     isSignupCompleted: req.body.isSignupCompleted || true,
     fieldsOfInterests: req.body.fieldsOfInterests || user.fieldsOfInterests,
     bio: req.body.bio || user.bio,

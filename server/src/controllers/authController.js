@@ -5,6 +5,7 @@ const { promisify } = require("util");
 const crypto = require("crypto");
 const User = require("../models/user.model");
 const axios = require("axios");
+const sendEmail = require("../utils/email");
 
 //todo: login using oauth
 //todo: check for changes as we halting oauth from frontend
@@ -92,11 +93,8 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   console.log(otp);
 
-  //todo: uncomment this=> send email
-  //todo: send mail using arpit api
-  //we need a key value for email
   // await sendEmail({
-  //     email: newUser.email, subject: "Welcome to Duck! Please verify your email", html: `OTP: ${otp}`
+  //   email: newUser.email, subject: "OTP for dest!", message: ``
   // });
 
   res.status(200).json({
@@ -317,7 +315,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //done in pre('save'.... middleware in userModel
 
   //4. log the user in, send jwt
-  createSendToken(user, 200, res, req);
+  await createSendToken(user, 200, res, req);
 });
 
 //user can change his password using current password
@@ -337,7 +335,7 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   await user.save(); //pre-save functions in userModel will check if password and confirm password matches
 
   //4. log in using new password
-  createSendToken(user, 200, res, req);
+  await createSendToken(user, 200, res, req);
 });
 
 //todo: might be deleted if not used in feature
