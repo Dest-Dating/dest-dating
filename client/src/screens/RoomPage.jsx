@@ -28,6 +28,7 @@ const RoomPage = () => {
   const [seeking, setSeeking] = useState(false);
   const [lowerHeight, setLowerHeight] = useState("50%");
   const [buttonsVisible, setButtonsVisible] = useState(true);
+  const [urlFromInput, setUrlFromInput] = useState("");
 
   const handleDrag = useCallback((e) => {
     const totalHeight = window.innerHeight;
@@ -252,9 +253,17 @@ const RoomPage = () => {
     }
   };
 
-  // const handleUrlChange(()=>{
+  useEffect(() => {
+    socket.on("urlChange", (urlFromInput) => {
+      load(urlFromInput.urlFromInput);
+      console.log("urlChange", urlFromInput);
+    });
+  }, [socket]);
 
-  // })
+  const handleSetClick = () => {
+    if (playing) handlePlayPause();
+    socket.emit("urlChange", { urlFromInput });
+  };
 
   const handleEnded = () => {
     console.log("onEnded");
@@ -322,7 +331,7 @@ const RoomPage = () => {
       <div style={{ overflowY: "hidden" }}>
         <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
           {/* Video Controls */}
-          <div className="flex">
+          <div className="flex p-2">
             <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
               {/* Play/Pause Button */}
               <button onClick={handlePlayPause} className="">
@@ -331,13 +340,19 @@ const RoomPage = () => {
             </div>
             {buttonsVisible && (
               <input
-                placeholder="Input URL here ..."
+                onChange={(e) => {
+                  setUrlFromInput(e.target.value);
+                }}
+                placeholder="Enter URL here . . ."
                 className="rounded-lg"
                 type="text"
               />
             )}
             {buttonsVisible && (
-              <button className="text-white rounded-lg px-4 mx-4 bg-slate-700">
+              <button
+                onClick={handleSetClick}
+                className="text-white rounded-lg px-4 mx-4 bg-slate-700"
+              >
                 Set
               </button>
             )}
@@ -352,9 +367,17 @@ const RoomPage = () => {
             {remoteSocketId && buttonsVisible && (
               <button
                 onClick={handleCallUser}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full mx-2"
               >
                 CALL
+              </button>
+            )}
+            {myStream && buttonsVisible && (
+              <button
+                onClick={sendStreams}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mx-2"
+              >
+                Send Stream
               </button>
             )}
           </div>
@@ -382,14 +405,6 @@ const RoomPage = () => {
                   />
                 </div>
               </div>
-            )}
-            {myStream && buttonsVisible && (
-              <button
-                onClick={sendStreams}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                Send Stream
-              </button>
             )}
           </div>
         </div>

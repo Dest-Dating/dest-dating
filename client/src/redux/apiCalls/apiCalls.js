@@ -302,6 +302,54 @@ export const updateLocation = async (dispatch, location, completeUser) => {
     dispatch(userFailure(error?.response?.data?.message));
   }
 };
+
+// update User
+
+export const updateUser = async (dispatch, userDetails, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/updateDetails", userDetails);
+    // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data,
+    };
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+  }
+};
+
+// update Preferences
+export const updatePreferences = async (
+  dispatch,
+  userData,
+  completeUser,
+  navigate
+) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/updatePreferences", userData);
+    // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data,
+    };
+    dispatch(updateSuccess(user));
+
+    navigate("/profile");
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
 // validate subscription
 
 export const validateSubscription = async (dispatch, completeUser) => {

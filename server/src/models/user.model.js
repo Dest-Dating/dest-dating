@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema({
     }, required: this.isEmailVerified,
   }, location: {
     type: {
-      type: String, enum: ["Point"],
+      type: String, enum: ["Point"], required: true,
     }, coordinates: {
-      type: [Number],
+      type: [Number], required: true,
     },
   }, bills: [{
     type: mongoose.Schema.Types.ObjectId, ref: "Bills",
@@ -169,7 +169,6 @@ userSchema.methods.createPasswordResetToken = function() {
   //that is supposed to call createPasswordResetToken
   return resetToken;
 };
-
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
