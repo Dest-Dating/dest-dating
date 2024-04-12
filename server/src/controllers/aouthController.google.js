@@ -9,12 +9,13 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const UI_ROOT_URI = process.env.UI_ROOT_URI;
 const AppError = require("../utils/appError");
+const sendEmail = require("../utils/email");
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
-const createSendToken = (user, status, res, redirect) => {
+const createSendToken = async (user, status, res, req, redirect) => {
   const token = signToken(user._id);
 
   //hide password as we are not 'selecting' user == password is still in user object
@@ -26,6 +27,25 @@ const createSendToken = (user, status, res, redirect) => {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), httpOnly: true, secure: true,
   };
   res.cookie("jwt", token, options);
+
+  //updating leetcode data upon login
+  const updatingUrl = `${req.protocol}://${req.get("host")}/user/fetchLeetcodeData`;
+  console.log("Ahhhhhhhhhhh", updatingUrl);
+  let response;
+  try {
+    response = await axios.create({ withCredentials: true }).post(updatingUrl, req.body, {
+      headers: {
+        Cookie: "jwt=" + token,
+      },
+    });
+
+    if (response.status === 200) {
+      user = response.data.data.user;
+    }
+  } catch (e) {
+    console.log("crap");
+    //pass
+  }
 
   if (redirect) {
     console.log("sent redirect ", redirect);
@@ -127,10 +147,16 @@ exports.authGoogle = catchAsync(async (req, res, next) => {
       $unset: { password: "", passwordConfirm: "" }, isEmailVerified: true,
     }, { new: true, runValidators: false });
 
+    await sendEmail({
+      email: newUser.email,
+      subject: "Welcome to Dest!",
+      message: `Dear ${newUser.name},\nWelcome to Dest. Your Registration is successfull.`,
+    });
+
   } else {
     console.log("OAuth user found in DB");
   }
 
-  return createSendToken(newUser, 200, res, UI_ROOT_URI + "/authComplete");
+  return createSendToken(newUser, 200, res, req, UI_ROOT_URI + "/authComplete");
 });
 

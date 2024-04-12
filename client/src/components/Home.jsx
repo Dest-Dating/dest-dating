@@ -4,21 +4,28 @@ import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import ChatSection from "./ChatSection";
 import { io } from "socket.io-client";
+import { IoLogOut } from "react-icons/io5";
 
 import { FaBars, FaTimes } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
-import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
+import {
+  getMe,
+  likeUser,
+  logoutUser,
+  rejectUser,
+  updateLocation,
+} from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
-
-import logo from "../assets/destDating.ico";
+import logoPng from "../assets/logoPng.png";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user,
+    (state) => state?.user?.currentUser?.data?.user
   );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
 
   //chat messages code
   const [chatUsers, setChatUsers] = useState([]);
@@ -38,13 +45,13 @@ const Home = () => {
       setArrivalMessage({
         senderId: data.senderId,
         message: data.message,
-      }),
+      })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    socket.current.emit("addUser", currentUser._id);
+    socket.current.emit("addUser", currentUser?._id);
     socket.current.on("getUsers", (users) => console.log(users));
   }, [currentUser]);
 
@@ -55,12 +62,12 @@ const Home = () => {
   const [preferredUsers, setPreferredUsers] = useState([]);
 
   const handleLike = async () => {
-    await likeUser(
+    const status = await likeUser(
       dispatch,
       preferredUsers[0]?.email,
       currentUser,
       setMatchedUser,
-      navigate,
+      navigate
     );
     await getPreferredUsers();
   };
@@ -94,30 +101,54 @@ const Home = () => {
     navigate("/profile");
   };
 
-  const handleLogout = () => {
-    logoutUser(dispatch, navigate);
+  const handleLogout = async () => {
+    await logoutUser(dispatch, navigate);
   };
 
+  // update user's location
+
+  const getLocation = async () => {
+    // eslint-disable-next-line no-undef
+    if (navigator.geolocation) {
+      // eslint-disable-next-line no-undef
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          updateLocation(dispatch, [longitude, latitude], completeUser);
+        },
+        (error) => console.log(error)
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  };
+
+  useEffect(() => {
+    getMe();
+    getLocation();
+  }, []);
+
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12 ">
       {/* Top Bar */}
-      <div className="col-span-12 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
+      <div className="col-span-12 h-16 bg-stone-50 sticky top-0 shadow-sm flex px-6 py-2 z-10 lg:px-20 justify-between items-center">
         {/* Home Icon */}
-        <button onClick={handleHomeClick}>
-          <img className="w-12 mix-blend-multiply" src={logo} alt="" />
+        <button className="h-full" onClick={handleHomeClick}>
+          <img className="h-full " src={logoPng} alt="" />
         </button>
 
-        <div className="flex gap-5">
+        <div className="flex justify-center items-center gap-5 h-full p-4">
           {/* Profile Icon */}
-          <button onClick={handleProfileClick} className="text-xl">
-            Profile
-          </button>
+          <div className="avatar " onClick={handleProfileClick}>
+            <div className="w-12 rounded-full border shadow-sm">
+              <img src={currentUser?.photosLink[0].photoLink} />
+            </div>
+          </div>
 
           {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="text-xl">
-            Logout
+          <button onClick={handleLogout} className="text-4xl">
+            <IoLogOut />
           </button>
         </div>
 
@@ -134,14 +165,17 @@ const Home = () => {
 
       {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
-        <div className="overflow-auto absolute top-[49px] z-10 lg:hidden md:col-span-5 bg-gray-200">
-          <div className="p-4">
-            <button onClick={toggleSidebar} className="text-2xl float-right">
+        <div className="overflow-auto absolute top-[78px] z-10 shadow-sm lg:hidden md:col-span-5 bg-gray-200">
+          <div className="p-2">
+            <button
+              onClick={toggleSidebar}
+              className="text-2xl absolute top-0 right-0"
+            >
               <FaTimes />
             </button>
 
-            <div className="h-screen flex flex-col">
-              <div className="h-full mb-4 overflow-auto">
+            <div className=" flex flex-col">
+              <div className=" mb-4 overflow-auto">
                 <Conversations
                   chatUsers={chatUsers}
                   setChatUsers={setChatUsers}
@@ -165,7 +199,10 @@ const Home = () => {
       </div>
 
       {/* Center Section */}
-      <div className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] bg-blue-400">
+      <div
+        className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] pattern-dots pattern-rose-100 pattern-bg-white
+  pattern-size-4 pattern-opacity-100"
+      >
         <Routes>
           <Route
             path="/"
@@ -179,8 +216,12 @@ const Home = () => {
               ) : (
                 <div className="flex justify-center items-center h-full">
                   <div>
-                    <h3 className="text-white underline mb-2">No Recommendations</h3>
-                    <p className="text-stone-300">Please try again after some time or change preferences!</p>
+                    <h3 className="text-stone-500 underline mb-2">
+                      No Recommendations
+                    </h3>
+                    <p className="text-stone-400">
+                      Please try again after some time or change preferences!
+                    </p>
                   </div>
                 </div>
               )

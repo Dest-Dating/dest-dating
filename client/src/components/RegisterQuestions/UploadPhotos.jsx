@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { BACKEND_URL } from "../../config";
 import ImageCropperModal from "../Modals/ImageCropperModal";
@@ -39,7 +39,7 @@ const UploadPhotos = ({
   );
   const completeUser = useSelector((state) => state?.user?.currentUser);
   const dispatch = useDispatch();
-
+  const path = useLocation().pathname.split("/")[1];
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsOpen(true);
@@ -205,8 +205,16 @@ const UploadPhotos = ({
           }}
           className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded my-4"
         >
-          Done
+          {path == "questions" ? "Back" : "Done"}
         </button>
+        {path == "questions" && (
+          <button
+            onClick={(e) => handleSubmit(e)}
+            className="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded my-4"
+          >
+            Submit
+          </button>
+        )}
       </div>
     </div>
   );

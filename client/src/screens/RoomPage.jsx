@@ -2,7 +2,9 @@ import React, { useEffect, useCallback, useState } from "react";
 import ReactPlayer from "react-player";
 import peer from "../service/peer";
 import { useSocket } from "../context/SocketProvider";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaPlay } from "react-icons/fa";
+import { FaPause } from "react-icons/fa";
 
 const RoomPage = () => {
   const socket = useSocket();
@@ -10,6 +12,44 @@ const RoomPage = () => {
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+  const [url, setUrl] = useState("https://www.youtube.com/watch?v=oUFJJNQGwhk");
+  const [pip, setPip] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [controls, setControls] = useState(false);
+  const [light, setLight] = useState(false);
+  const [volume, setVolume] = useState(0.8);
+  const [muted, setMuted] = useState(false);
+  const [played, setPlayed] = useState(0);
+  const [loaded, setLoaded] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [loop, setLoop] = useState(false);
+  const [upperHeight, setUpperHeight] = useState("50%");
+  const [seeking, setSeeking] = useState(false);
+  const [lowerHeight, setLowerHeight] = useState("50%");
+  const [buttonsVisible, setButtonsVisible] = useState(true);
+
+  const location = useLocation();
+  const movieDate = location.state?.movieDate;
+
+  const handleDrag = useCallback((e) => {
+    const totalHeight = window.innerHeight;
+    const deltaY = e.clientY - totalHeight * 0.15;
+    const upperPercentage = (deltaY / totalHeight) * 100;
+    const lowerPercentage = 100 - upperPercentage;
+    setUpperHeight(`${upperPercentage}%`);
+    setLowerHeight(`${lowerPercentage}%`);
+  }, []);
+
+  const onMouseUp = () => {
+    document.removeEventListener("mousemove", handleDrag);
+    document.removeEventListener("mouseup", onMouseUp);
+  };
+
+  const onMouseDown = () => {
+    document.addEventListener("mousemove", handleDrag);
+    document.addEventListener("mouseup", onMouseUp);
+  };
 
   const handleEndButtonClick = () => {
     navigate("/");
@@ -115,74 +155,255 @@ const RoomPage = () => {
     handleNegoNeedFinal,
   ]);
 
+  useEffect(() => {
+    socket.on("playPause", () => {
+      setPlaying(!playing);
+      setButtonsVisible(playing);
+    });
+  }, [playing, socket]);
+
+  const load = (url) => {
+    setUrl(url);
+    setPlayed(0);
+    setLoaded(0);
+    setPip(false);
+  };
+
+  const handlePlayPause = () => {
+    socket.emit("playPause");
+  };
+
+  const handleStop = () => {
+    setUrl(null);
+    setPlaying(false);
+  };
+
+  const handleToggleControls = () => {
+    const newUrl = url;
+    setControls(!controls);
+    setUrl(null);
+    setUrl(newUrl);
+  };
+
+  const handleToggleLight = () => {
+    setLight(!light);
+  };
+
+  const handleToggleLoop = () => {
+    setLoop(!loop);
+  };
+
+  const handleVolumeChange = (e) => {
+    setVolume(parseFloat(e.target.value));
+  };
+
+  const handleToggleMuted = () => {
+    setMuted(!muted);
+  };
+
+  const handleSetPlaybackRate = (e) => {
+    setPlaybackRate(parseFloat(e.target.value));
+  };
+
+  const handleOnPlaybackRateChange = (speed) => {
+    setPlaybackRate(parseFloat(speed));
+  };
+
+  const handleTogglePIP = () => {
+    setPip(!pip);
+  };
+
+  const handlePlay = () => {
+    console.log("onPlay");
+    setPlaying(true);
+  };
+
+  const handleEnablePIP = () => {
+    console.log("onEnablePIP");
+    setPip(true);
+  };
+
+  const handleDisablePIP = () => {
+    console.log("onDisablePIP");
+    setPip(false);
+  };
+
+  const handlePause = () => {
+    console.log("onPause");
+    setPlaying(false);
+  };
+
+  const handleSeekMouseDown = (e) => {
+    console.log("onSeekMouseDown");
+  };
+
+  const handleSeekChange = (e) => {
+    console.log("onSeekChange", e);
+    setPlayed(parseFloat(e.target.value));
+  };
+
+  const handleSeekMouseUp = (e) => {
+    console.log("onSeekMouseUp");
+  };
+
+  const handleProgress = (state) => {
+    console.log("onProgress", state);
+    // We only want to update time slider if we are not currently seeking
+    if (!seeking) {
+      setPlayed(state.played);
+      setLoaded(state.loaded);
+    }
+  };
+
+  // const handleUrlChange(()=>{
+
+  // })
+
+  const handleEnded = () => {
+    console.log("onEnded");
+    setPlaying(loop);
+  };
+
+  const handleDuration = (duration) => {
+    console.log("onDuration", duration);
+    setDuration(duration);
+  };
+
+  const handleClickFullscreen = () => {
+    console.log("onFullscreen");
+  };
+
+  const renderLoadButton = (url, label) => {
+    return <button onClick={() => load(url)}>{label}</button>;
+  };
+
   return (
-    <div className="flex flex-col h-full overflow-x-hidden overflow-y-hidden">
-      <div className="flex-grow flex flex-col items-center justify-center bg-white">
-        <h1 className="text-3xl font-bold mb-4">Room Page</h1>
-        <h4 className="mb-4">
-          {remoteSocketId ? "Connected" : "No one in room"}
-        </h4>
-
-        <div className="flex flex-wrap justify-center items-center gap-4">
-          {myStream && (
-            <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
-              <h1 className="text-xl font-bold mb-2">My Stream</h1>
-              <div className="rounded-lg overflow-hidden">
-                <ReactPlayer
-                  playing
-                  muted
-                  className="w-full"
-                  style={{ aspectRatio: "16/9", borderRadius: "10px" }}
-                  url={myStream}
-                />
-              </div>
-            </div>
-          )}
-
-          {remoteStream && (
-            <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
-              <h1 className="text-xl font-bold mb-2">Remote Stream</h1>
-              <div className="rounded-lg overflow-hidden">
-                <ReactPlayer
-                  playing
-                  muted
-                  className="w-full"
-                  style={{ aspectRatio: "16/9", borderRadius: "10px" }}
-                  url={remoteStream}
-                />
-              </div>
-            </div>
-          )}
+    <div className="flex flex-col h-screen overflow-x-hidden overflow-y-hidden bg-black">
+      {movieDate && (
+        <div style={{ height: upperHeight }}>
+          {/* Upper part content */}
+          <ReactPlayer
+            className="react-player"
+            width="100%"
+            height="100%"
+            url={url}
+            pip={pip}
+            playing={playing}
+            controls={controls}
+            light={light}
+            loop={loop}
+            playbackRate={playbackRate}
+            volume={volume}
+            muted={muted}
+            onReady={() => console.log("onReady")}
+            onStart={() => console.log("onStart")}
+            onPlay={handlePlay}
+            onEnablePIP={handleEnablePIP}
+            onDisablePIP={handleDisablePIP}
+            onPause={handlePause}
+            onBuffer={() => console.log("onBuffer")}
+            onPlaybackRateChange={handleOnPlaybackRateChange}
+            onSeek={(e) => console.log("onSeek", e)}
+            onEnded={handleEnded}
+            onError={(e) => console.log("onError", e)}
+            onProgress={handleProgress}
+            onDuration={handleDuration}
+            onPlaybackQualityChange={(e) =>
+              console.log("onPlaybackQualityChange", e)
+            }
+          />
         </div>
-      </div>
+      )}
+      <div
+        className="bg-slate-900"
+        id="divider"
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        style={{
+          cursor: "row-resize",
+          height: "5px",
+        }}
+      ></div>
+      <div style={{ overflowY: "hidden" }}>
+        <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
+          {/* Video Controls */}
+          <div className="flex">
+            <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
+              {/* Play/Pause Button */}
+              <button onClick={handlePlayPause} className="">
+                {playing ? <FaPause /> : <FaPlay />}
+              </button>
+            </div>
+            {buttonsVisible && (
+              <input
+                placeholder="Input URL here ..."
+                className="rounded-lg"
+                type="text"
+              />
+            )}
+            {buttonsVisible && (
+              <button className="text-white rounded-lg px-4 mx-4 bg-slate-700">
+                Set
+              </button>
+            )}
+            {buttonsVisible && (
+              <button
+                onClick={handleEndButtonClick}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                End
+              </button>
+            )}
+            {remoteSocketId && buttonsVisible && (
+              <button
+                onClick={handleCallUser}
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                CALL
+              </button>
+            )}
+          </div>
 
-      <div className="flex justify-center items-center bg-white">
-        <div className="fixed bottom-0 left-0 right-0 bg-white flex justify-around p-4 border-t border-gray-300">
-          {myStream && (
-            <button
-              onClick={sendStreams}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-            >
-              Send Stream
-            </button>
-          )}
-
-          {remoteSocketId && (
-            <button
-              onClick={handleCallUser}
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
-            >
-              CALL
-            </button>
-          )}
-
-          <button
-            onClick={handleEndButtonClick}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full"
-          >
-            End
-          </button>
+          {/* Display remote and local streams */}
+          <div className="flex flex-wrap justify-center items-center gap-4">
+            {/* Display Remote Stream */}
+            {remoteStream && (
+              <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
+                <div className="rounded-lg overflow-hidden ">
+                  <ReactPlayer playing muted url={remoteStream} />
+                </div>
+              </div>
+            )}
+            {/* Display Local Stream */}
+            {myStream && (
+              <div className="text-center rounded-lg overflow-hidden w-full md:w-auto">
+                <div className="rounded-lg overflow-hidden">
+                  <ReactPlayer
+                    playing
+                    muted
+                    className="w-full"
+                    style={{ aspectRatio: "16/9", borderRadius: "10px" }}
+                    url={myStream}
+                  />
+                </div>
+              </div>
+            )}
+            {myStream && buttonsVisible && (
+              <button
+                onClick={sendStreams}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Send Stream
+              </button>
+            )}
+          </div>
         </div>
+        {/* Bottom Buttons */}
+        {/* <div className="flex flex-col items-center justify-center bg-slate-900"> */}
+        {/* <div className="flex justify-center items-center bg-white">
+          <div className="fixed bottom-0 left-0 right-0 bg-slate-100 flex justify-around p-4 border-t border-gray-300"></div>
+        </div> */}
+        {/* </div> */}
       </div>
     </div>
   );

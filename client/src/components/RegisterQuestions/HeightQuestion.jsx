@@ -3,6 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/userSlice";
 import { toast } from "react-toastify";
+import { IoIosArrowBack } from "react-icons/io";
 
 const HeightQuestion = ({
   currentStage,
@@ -63,15 +64,16 @@ const HeightQuestion = ({
                 setUserData({ ...userData, [e.target.name]: e.target.value })
               }
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500 mb-4"
-              placeholder="Enter your name"
+              placeholder="Enter your height"
             />
             <div className="flex gap-20">
-              <span
-                className="underline text-blue-400"
-                onClick={() => dispatch(logOut())}
+              <button
+                onClick={() => setCurrentStage(currentStage - 1)}
+                className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
               >
-                Logout
-              </span>
+                <IoIosArrowBack />
+                Back
+              </button>
 
               <button
                 type="submit"

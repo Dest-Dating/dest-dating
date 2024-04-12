@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { validateSubscription } from "../redux/apiCalls/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
 
 function PaymentSuccess() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const completeUser = useSelector((state) => state?.user?.currentUser);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,7 +25,8 @@ function PaymentSuccess() {
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
     if (!currentUser) navigate("/");
-  }, [currentUser, navigate]);
+    validateSubscription(dispatch, completeUser);
+  }, []);
 
   return (
     <div

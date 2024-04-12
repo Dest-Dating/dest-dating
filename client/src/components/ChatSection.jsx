@@ -4,20 +4,22 @@ import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
 import { useSocket } from "../context/SocketProvider";
 import { IoMdSend } from "react-icons/io";
+import { FaVideo } from "react-icons/fa";
+import { MdMovie } from "react-icons/md";
 
 const ChatSection = ({
-  chatUsers,
-  arrivalMessage,
-  socket,
-  openConvo,
-  setOpenConvo,
-  setMatchedUser,
-}) => {
+                       chatUsers,
+                       arrivalMessage,
+                       socket,
+                       openConvo,
+                       setOpenConvo,
+                       setMatchedUser,
+                     }) => {
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
   const reciver = chatUsers.find((user) =>
-    openConvo?.members?.find((id) => id === user.userId)
+    openConvo?.members?.find((id) => id === user.userId),
   );
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -25,6 +27,7 @@ const ChatSection = ({
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
   const [error, setError] = useState("");
+  const [movieDate, setMovieDate] = useState(true);
 
   const socketForVideo = useSocket(); // Get the socket object from context
   const navigate = useNavigate();
@@ -53,9 +56,10 @@ const ChatSection = ({
     (data) => {
       const { room: roomId } = data;
       // Navigate to the specified room
-      navigate(`/room/${roomId}`);
+      // alert(movieDate);
+      navigate(`/room/${roomId}`, { state: { movieDate } });
     },
-    [navigate]
+    [movieDate, navigate],
   );
 
   // Effect to listen for room join event
@@ -96,8 +100,8 @@ const ChatSection = ({
 
   useEffect(() => {
     arrivalMessage &&
-      openConvo?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
+    openConvo?.members.includes(arrivalMessage.senderId) &&
+    setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, openConvo]);
 
   // fetch old messages
@@ -133,14 +137,37 @@ const ChatSection = ({
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
         </div>
-        <button
-          onClick={() => {
-            handleSubmitForm();
-          }}
-          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"
-        >
-          Join
-        </button>
+        {/*<<<<<<< Updated upstream*/}
+        {/*        <button*/}
+        {/*          onClick={() => {*/}
+        {/*            handleSubmitForm();*/}
+        {/*          }}*/}
+        {/*          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"*/}
+        {/*        >*/}
+        {/*          Join*/}
+        {/*        </button>*/}
+        {/*=======*/}
+        <div>
+          <button
+            onClick={() => {
+              setMovieDate(false);
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded"
+          >
+            <FaVideo />
+          </button>
+          <button
+            onClick={() => {
+              setMovieDate(true);
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded ml-6"
+          >
+            <MdMovie />
+          </button>
+        </div>
+        {/*>>>>>>> Stashed changes*/}
       </div>
 
       {/* Chat Messages */}

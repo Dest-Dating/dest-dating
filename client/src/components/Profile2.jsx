@@ -1,34 +1,54 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaArrowLeft } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaXmark } from "react-icons/fa6";
+import { fetchLeetCode, updateUser } from "../redux/apiCalls/apiCalls";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [username, setUsername] = useState("JohnDoe");
   const [email, setEmail] = useState("johndoe@example.com");
   const [dob, setDob] = useState("1990-01-01");
   const [name, setName] = useState("John Doe");
   const [height, setHeight] = useState("180 cm");
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
-  const [location, setLocation] = useState("New Delhi, India`");
+  const [leetCode, setLeetCode] = useState("");
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState("Hey there! I am using dest");
+  const [fadeIn, setFadeIn] = useState(false);
 
-  const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
-  );
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
 
   useEffect(() => {
-    setUsername(currentUser.name);
+    console.log("leetCode", leetCode);
+  }, [leetCode]);
+
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user,
+  );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
     setName(currentUser.name);
     setEmail(currentUser.email);
     setHeight(currentUser.height);
     setGender(currentUser.gender);
+    setDob(formatDate(new Date(currentUser.dob)));
+    setLeetCode(currentUser?.leetcodeData?.leetcodeUsername);
+    setBio(currentUser.bio);
     setInterestedIn(currentUser.interestedInGender);
+    setFadeIn(true); // Trigger the fade-in animation
+    const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms
+    return () => clearTimeout(timer); // Cleanup function to clear the timer
   }, []);
 
   const navigate = useNavigate();
@@ -39,7 +59,15 @@ const ProfilePage = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Save changes to backend
+    const userDetails = {
+      name: name,
+      dob: dob,
+      height: height,
+      gender: gender,
+      interestedInGender: interestedIn,
+      bio: bio,
+    };
+    updateUser(dispatch, userDetails, completeUser);
   };
 
   const handleBack = () => {
@@ -51,7 +79,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="w-full  h-full p-8 rounded-lg shadow-md ">
+    <div
+      className={`w-full  h-full p-8 rounded-lg shadow-md profile-page ${
+        fadeIn ? "opacity-100 transition-opacity duration-500" : ""
+      }`}
+    >
       <div className="w-full flex items-center mb-10 lg:flex-row lg:items-center justify-between ">
         <div className="flex flex-row items-center ">
           {/* {console.log(currentUser)} */}
@@ -67,7 +99,7 @@ const ProfilePage = () => {
           </div>
           <div className="">
             <h1 className="lg:text-6xl md:text-4xl text-2xl font-bold md:mb-2 lg:mb-2 text-stone-600">
-              {username}
+              {name}
             </h1>
             <p className="text-gray-900 lg:text-xl md:text-lg text-xs mb-2">
               {email}
@@ -95,13 +127,27 @@ const ProfilePage = () => {
           <FaXmark className="lg:text-5xl md:text-4xl text-lg" />
         </button>
       </div>
-      <div className="w-full flex flex-col ">
-        <button
-          className="p-2 md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white w-full md:w-auto mx-auto mb-10"
-          onClick={handleUploadPhotos}
-        >
-          Upload Photos
-        </button>
+      <div className="w-full flex flex-col md:flex-row justify-center align-middle mb-10">
+        {!openUploadPhotos && (
+          <>
+            <button
+              className="p-2 w-full md:w-max md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white  md:w-auto mx-auto mb-2"
+              onClick={() => {
+                if (currentUser?.subscriptions.length == 0)
+                  navigate("/getPremium");
+                else navigate("/preferences");
+              }}
+            >
+              Update Preferences
+            </button>
+            <button
+              className="p-2 w-full md:w-max md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white  md:w-auto mx-auto mb-2"
+              onClick={handleUploadPhotos}
+            >
+              Upload Photos
+            </button>
+          </>
+        )}
         {openUploadPhotos && (
           <UploadPhotos
             openUploadPhotos={openUploadPhotos}
@@ -112,26 +158,6 @@ const ProfilePage = () => {
 
       <div className="flex flex-col lg:flex-row bg-gray-200 rounded-lg py-4 px-8 ">
         <div className="lg:w-2/3 pr-8">
-          <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
-              readOnly={!isEditing}
-            />
-          </div>
-          <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
-              readOnly={!isEditing}
-            />
-          </div>
           <div className="mb-4  rounded px-5 py-3">
             <label className="block text-gray-900 mb-2">Date of Birth</label>
             <input
@@ -185,14 +211,20 @@ const ProfilePage = () => {
         </div>
         <div className="lg:w-1/3 mt-4 lg:mt-0">
           <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Location</label>
+            <label className="block text-gray-900 mb-2">Leetcode:</label>
             <input
               type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={leetCode}
+              onChange={(e) => setLeetCode(e.target.value)}
               className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
               readOnly={!isEditing}
             />
+            <button
+              className="p-2 md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white w-full mt-4"
+              onClick={() => fetchLeetCode(dispatch, leetCode, completeUser)}
+            >
+              Upload
+            </button>
           </div>
           <div className="mb-4  rounded px-5 py-3">
             <label className="block text-gray-900 mb-2">Bio</label>

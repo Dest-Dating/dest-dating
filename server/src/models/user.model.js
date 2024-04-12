@@ -7,88 +7,173 @@ const { Mongoose } = require("mongoose");
 
 //todo: select only if user if verified
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [this.isEmailVerified, "A user must have a username"],
-    minLength: [5, "name too short(min=5)!"],
-    maxLength: [15, "name too long(max=15)!"],
-  }, dob: {
-    type: Date, required: [this.isEmailVerified, "A user must have a date of birth"],
-  }, email: {
-    type: String,
-    unique: true,
-    lowercase: true,
-    required: [true, "Email is must!"],
-    validate: [validator.isEmail, "Please provide a valid email!"],
-  }, password: {
-    type: String, required: [!this.isOAuth, "Please create a password!"], minlength: 8, select: false, //do not select this ever
-  }, phoneNumber: {
-    type: Number, required: !this.isOAuth, unique: true,
-  }, height: {
-    type: Number, required: this.isEmailVerified, min: 54, max: 275,
-  }, gender: {
-    type: String, enum: {
-      values: ["Male", "Female", "NonBinary"], message: "Invalid gender",
-    }, required: this.isEmailVerified,
-  }, interestedInGender: {
-    type: String, enum: {
-      values: ["Male", "Female", "NonBinary"], message: "Invalid gender",
-    }, required: this.isEmailVerified,
-  }, location: [//todo: this need to be modified
-    {
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [this.isEmailVerified, "A user must have a username"],
+      minLength: [5, "name too short(min=5)!"],
+      maxLength: [15, "name too long(max=15)!"],
+    },
+    dob: {
+      type: Date,
+      required: [this.isEmailVerified, "A user must have a date of birth"],
+    },
+    email: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      required: [true, "Email is must!"],
+      validate: [validator.isEmail, "Please provide a valid email!"],
+    },
+    password: {
+      type: String,
+      required: [!this.isOAuth, "Please create a password!"],
+      minlength: 8,
+      select: false, //do not select this ever
+    },
+    phoneNumber: {
       type: Number,
-    }], bills: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "Bills",
-  }], rejectedArray: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "User",
-  }], likedArray: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "User",
-  }], matchedArray: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "User",
-  }], chatArray: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "Message",
-  }], mainProfilePhotoLink: {
-    type: String, required: [this.isEmailVerified, "User must have a profile image"],
-  }, photosLink: [{
-    index: Number, photoLink: String,
-  }], passwordConfirm: {
-    type: String, required: [!this.isOAuth, "Please confirm the password!"], validate: {
-      validator: function(el) {
-        return el === this.password;
-      }, message: "Passwords are not the same!",
+      required: !this.isOAuth,
+      unique: true,
     },
-  }, passwordChangedAt: {
-    type: Date,
-  }, passwordResetToken: String, passwordResetExpires: Number, emailVerificationOtp: {
-    type: String, select: false,
-  }, isEmailVerified: {
-    type: Boolean, default: false,
-  }, rank: {
-    type: Number, //todo: unique ??
-  }, isOAuth: {
-    type: Boolean, default: false, //todo: checks for possible bugs caused due to this
-  }, // preferences
-  preferences: {
-    minAge: {
-      type: Number, default: null,
-    }, maxAge: {
-      type: Number, default: null,
-    }, minHeight: {
-      type: Number, default: null,
-    }, maxHeight: {
-      type: Number, default: null,
+    height: {
+      type: Number,
+      required: this.isEmailVerified,
+      min: 54,
+      max: 275,
     },
-  }, isSignupCompleted: {
-    type: Boolean, default: false,
-  }, sessionIds: [{
-    type: String,
-  }], subscriptions: [{
-    type: mongoose.Schema.Types.ObjectId, ref: "Bill",
-  }], bio: String, fieldsOfInterests: [{ type: String }],
-}, {
-  timestamps: true,
-});
+    gender: {
+      type: String,
+      enum: {
+        values: ["Male", "Female", "NonBinary"],
+        message: "Invalid gender",
+      },
+      required: this.isEmailVerified,
+    },
+    interestedInGender: {
+      type: String,
+      enum: {
+        values: ["Male", "Female", "NonBinary"],
+        message: "Invalid gender",
+      },
+      required: this.isEmailVerified,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+      },
+      coordinates: {
+        type: [Number],
+      },
+    },
+    bills: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bills",
+      },
+    ],
+    rejectedArray: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    likedArray: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    matchedArray: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    chatArray: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
+    mainProfilePhotoLink: {
+      type: String,
+      required: [this.isEmailVerified, "User must have a profile image"],
+    },
+    photosLink: [
+      {
+        index: Number,
+        photoLink: String,
+      },
+    ],
+    passwordConfirm: {
+      type: String,
+      required: [!this.isOAuth, "Please confirm the password!"],
+      validate: {
+        validator: function(el) {
+          return el === this.password;
+        },
+        message: "Passwords are not the same!",
+      },
+    },
+    passwordChangedAt: {
+      type: Date,
+    },
+    passwordResetToken: String,
+    passwordResetExpires: Number,
+    emailVerificationOtp: {
+      type: String,
+      select: false,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    rank: {
+      type: Number, //todo: unique ??
+    },
+    leetcodeData: {
+      leetcodeUsername: String,
+      updatedAt: Date,
+      streak: Number,
+      submissionCount: {},
+      heatmap: mongoose.Schema.Types.Mixed,
+    },
+    isOAuth: {
+      type: Boolean,
+      default: false,
+    }, // preferences
+    preferences: {
+      type: [String],
+      default: [],
+    },
+    isSignupCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    sessionIds: [
+      {
+        type: String,
+      },
+    ],
+    subscriptions: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Bill",
+        autopopulate: true,
+      },
+    ],
+    bio: String,
+    fieldsOfInterests: [{ type: String }],
+    codingLanguage: [{ type: String }],
+  },
+  {
+    timestamps: true,
+  },
+);
+userSchema.plugin(require("mongoose-autopopulate"));
 
 function calculateAge(birthDateObj) {
   const today = new Date();
@@ -98,7 +183,10 @@ function calculateAge(birthDateObj) {
   let age = today.getFullYear() - birthDateObj.getFullYear();
   const monthDiff = today.getMonth() - birthDateObj.getMonth();
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDateObj.getDate())
+  ) {
     age--;
   }
 
@@ -116,14 +204,20 @@ userSchema.pre("save", async function(next) {
 });
 
 //method to check the password
-userSchema.methods.correctPassword = async function(candidatePassword, userPassword) {
+userSchema.methods.correctPassword = async function(
+  candidatePassword,
+  userPassword,
+) {
   return await bcryptjs.compare(candidatePassword, userPassword);
 };
 
 //returns true if token was created BEFORE change in password
 userSchema.methods.changePasswordAfter = function(JWTTimeStamp) {
   if (this.passwordChangedAt) {
-    const changedTimestamp = parseInt(`${this.passwordChangedAt.getTime() / 1000}`, 10);
+    const changedTimestamp = parseInt(
+      `${this.passwordChangedAt.getTime() / 1000}`,
+      10,
+    );
     return JWTTimeStamp < changedTimestamp;
   }
   return false;

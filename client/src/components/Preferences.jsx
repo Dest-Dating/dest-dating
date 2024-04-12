@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { RxCross2 } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
+import { updatePreferences } from "../redux/apiCalls/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
 
-const InterestFieldsPicker = ({
-  currentStage,
-  setCurrentStage,
-  userData,
-  setUserData,
-}) => {
+const Preferences = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [userData, setUserData] = useState({});
   const [interests, setInterests] = useState([]);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const completeUser = useSelector((state) => state?.user?.currentUser);
 
   let badges = [
     "Web development",
@@ -45,14 +46,15 @@ const InterestFieldsPicker = ({
     setInterests(updatedInterests);
   };
 
-  const nextHandler = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setUserData({ ...userData, fieldsOfInterests: interests });
     if (interests.length === 0) {
-      setMessage("Please select some interests!");
+      setMessage("Select your interests!");
       return;
     }
-    setCurrentStage(currentStage + 1);
+    // call api
+    updatePreferences(dispatch, userData, completeUser, navigate);
   };
 
   return (
@@ -66,7 +68,7 @@ const InterestFieldsPicker = ({
           className={`p-4 bg-white rounded-lg w-full  flex flex-col justify-center items-center h-1/3`}
         >
           <h2 className="text-2xl font-medium underline mb-2">
-            Fields of interest
+            Select Your Preferences
           </h2>
 
           <div
@@ -96,18 +98,18 @@ const InterestFieldsPicker = ({
 
           <div className="flex gap-20">
             <button
-              onClick={() => setCurrentStage(currentStage - 1)}
+              onClick={() => {
+                navigate("/profile");
+              }}
               className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
             >
-              <IoIosArrowBack />
               Back
             </button>
             <button
-              onClick={nextHandler}
+              onClick={handleSubmit}
               className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
             >
-              Next
-              <IoIosArrowForward />
+              Submit
             </button>
           </div>
         </div>
@@ -116,4 +118,4 @@ const InterestFieldsPicker = ({
   );
 };
 
-export default InterestFieldsPicker;
+export default Preferences;

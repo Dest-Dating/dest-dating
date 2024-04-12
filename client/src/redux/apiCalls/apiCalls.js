@@ -216,9 +216,11 @@ export const logoutUser = async (dispatch, navigate) => {
     dispatch(convoClear());
     toast("Logged out Successfully!", { type: "success" });
     navigate("/");
+    return true;
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
+    return false;
   }
 };
 
@@ -238,7 +240,7 @@ export const deleteUser = async (dispatch, password) => {
 };
 
 // function to login using google oAuth
-export const oAuthLogin = async (dispatch, navigate) => {
+export const getMe = async (dispatch, navigate) => {
   // start fetching
   dispatch(userStart());
   try {
@@ -247,11 +249,126 @@ export const oAuthLogin = async (dispatch, navigate) => {
     // update state if login successfull
     dispatch(loginSuccess(res.data));
     // toast("Logged In Successfully!");
-    navigate("/questions");
+    navigate && navigate("/questions");
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
+  }
+};
+// function to get leetcode profile
+export const fetchLeetCode = async (dispatch, leetcode, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/fetchLeetcodeData", {
+      leetcodeUsername: leetcode,
+    });
+    // update state if login successfull
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+    toast("Leetcode Account Updated!");
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
+// update location
+
+export const updateLocation = async (dispatch, location, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/postLocation", {
+      location: {
+        coordinates: location,
+      },
+    });
+    // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+  }
+};
+
+// update User
+
+export const updateUser = async (dispatch, userDetails, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/updateDetails", userDetails);
+    // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data,
+    };
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+  }
+};
+
+// update Preferences
+export const updatePreferences = async (
+  dispatch,
+  userData,
+  completeUser,
+  navigate
+) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/setPreferences", userData);
+    // update state if location
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+
+    toast("Preferences have been updated!");
+    navigate("/profile");
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+
+// validate subscription
+
+export const validateSubscription = async (dispatch, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/validateSubscription");
+    // update state if location
+    console.log("res", res.data);
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
   }
 };
 
@@ -270,7 +387,6 @@ export const likeUser = async (
     const res = await userRequest.put("/user/likeUser", {
       email,
     });
-    console.log("dildo", res.data);
     dispatch(
       updateSuccess({
         ...completeUser,
@@ -279,17 +395,18 @@ export const likeUser = async (
     );
     if (res?.data?.wasAMatch) {
       setMatchedUser(res?.data?.likedUser);
-      newConversation(
+      await newConversation(
         dispatch,
         res?.data?.currentUser?._id,
         res?.data?.likedUser._id
       );
       navigate("/home/match");
     }
-    toast("<3");
+    return true;
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
+    return false;
   }
 };
 
