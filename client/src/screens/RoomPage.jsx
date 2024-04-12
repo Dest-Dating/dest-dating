@@ -328,7 +328,7 @@ const RoomPage = ({}) => {
       <div style={{ overflowY: "hidden" }}>
         <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
           {/* Video Controls */}
-          <div className="flex">
+          <div className="flex p-2">
             {movieDate && (
               <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
                 {/* Play/Pause Button */}
@@ -357,12 +357,20 @@ const RoomPage = ({}) => {
                 End
               </button>
             )}
-            {remoteSocketId && buttonsVisible && (
+            {remoteSocketId && (
               <button
                 onClick={handleCallUser}
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full"
               >
                 CALL
+              </button>
+            )}
+            {myStream && buttonsVisible && (
+              <button
+                onClick={sendStreams}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              >
+                Send Stream
               </button>
             )}
           </div>
@@ -390,14 +398,6 @@ const RoomPage = ({}) => {
                   />
                 </div>
               </div>
-            )}
-            {myStream && buttonsVisible && (
-              <button
-                onClick={sendStreams}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
-              >
-                Send Stream
-              </button>
             )}
           </div>
         </div>
