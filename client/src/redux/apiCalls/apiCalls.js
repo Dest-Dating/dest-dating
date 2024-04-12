@@ -10,6 +10,8 @@ import {
   userFailure,
   userStart,
 } from "../userSlice";
+import { newConversation } from "./convoApiCalls";
+import { convoClear } from "../conversationSlice";
 
 // function to log into the website
 export const login = async (dispatch, user) => {
@@ -28,6 +30,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return true;
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
@@ -37,6 +40,7 @@ export const login = async (dispatch, user) => {
       isLoading: false,
       autoClose: 2000,
     });
+    return false;
   }
 };
 
@@ -209,9 +213,9 @@ export const logoutUser = async (dispatch, navigate) => {
   try {
     await userRequest.post("/user/logout");
     dispatch(logoutSuccess());
-    toast("Logged out Successfully!");
+    dispatch(convoClear());
+    toast("Logged out Successfully!", { type: "success" });
     navigate("/");
-    toast("Password updated!");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));
     toast(error?.response?.data?.message);
@@ -254,19 +258,34 @@ export const oAuthLogin = async (dispatch, navigate) => {
 // match comntrolls
 
 // like
-export const likeUser = async (dispatch, email, completeUser) => {
+export const likeUser = async (
+  dispatch,
+  email,
+  completeUser,
+  setMatchedUser,
+  navigate
+) => {
   dispatch(userStart());
   try {
     const res = await userRequest.put("/user/likeUser", {
       email,
     });
-    console.log(res.data);
+    console.log("dildo", res.data);
     dispatch(
       updateSuccess({
         ...completeUser,
-        data: { user: res?.data?.user },
+        data: { user: res?.data?.currentUser },
       })
     );
+    if (res?.data?.wasAMatch) {
+      setMatchedUser(res?.data?.likedUser);
+      newConversation(
+        dispatch,
+        res?.data?.currentUser?._id,
+        res?.data?.likedUser._id
+      );
+      navigate("/home/match");
+    }
     toast("<3");
   } catch (error) {
     dispatch(userFailure(error?.response?.data?.message));

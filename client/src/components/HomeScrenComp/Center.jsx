@@ -24,7 +24,7 @@ const Center = ({ user, handleLike, handleReject }) => {
   }, [view]);
 
   return (
-    <div className="flex justify-center relative h-fit mt-16">
+    <div className="flex justify-center items-center relative h-full *:transition scale-[.60] xs:scale-75 sm:scale-100 ">
       <div className="relative">
         <div>
           <div
@@ -32,7 +32,7 @@ const Center = ({ user, handleLike, handleReject }) => {
               backgroundImage:
                 "url(https://images.pexels.com/photos/2088170/pexels-photo-2088170.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)",
             }}
-            className="bg-no-repeat bg-center relative shadow-xl rounded-2xl w-[500px] max-h-[500px]  min-h-[500px] border border-rose-200 bg-rose-50 overflow-y-scroll"
+            className="bg-no-repeat bg-center relative shadow-xl rounded-2xl w-[500px] max-h-[500px]  min-h-[500px] outline-0 bg-rose-50 overflow-y-scroll"
           >
             <div className="relative backdrop-blur-sm">
               <div
@@ -130,7 +130,7 @@ const Center = ({ user, handleLike, handleReject }) => {
             <div
               name="accept"
               onClick={() => handleLike()}
-              className="hover:scale-105 active:scale-100  w-20 h-20 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white"
+              className="hover:scale-105 active:scale-100 active:shadow-red-600 active:shadow-2xl w-20 h-20 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white"
             >
               <IoHeart size={50} color="red" />
             </div>

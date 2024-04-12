@@ -16,7 +16,6 @@ import { SocketProvider } from "./context/SocketProvider.jsx";
 // eslint-disable-next-line no-undef
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {/* <GoogleOAuthProvider clientId="188158354298-4uia6palldi5nj7j1e20m68i8t6b7kcm.apps.googleusercontent.com"> */}
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
@@ -26,6 +25,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </BrowserRouter>
       </PersistGate>
     </Provider>
-    {/* </GoogleOAuthProvider> */}
-  </React.StrictMode>
+  </React.StrictMode>,
 );

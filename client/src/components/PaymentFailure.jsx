@@ -30,7 +30,7 @@ function PaymentFailure() {
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="flex justify-center min-h-screen bg-pink-50">
+      <div className="flex justify-center min-h-screen bg-rose-50">
         <div
           className={`p-4 bg-white mt-10 rounded-lg shadow-md w-full lg:w-1/2 flex flex-col justify-center items-center h-1/3 transition-transform duration-500 ${
             isOpen ? "translate-x-0" : "translate-x-full"
@@ -46,10 +46,10 @@ function PaymentFailure() {
             again or explore other payment options.
           </p>
 
-          <button className="mt-4 bg-pink-300 text-white hover:bg-pink-400 px-4 py-2 rounded-md">
+          <button className="mt-4 bg-rose-300 text-white hover:bg-rose-400 px-4 py-2 rounded-md">
             Try Again
           </button>
-          <button className="mt-4 bg-pink-300 text-white hover:bg-pink-400 px-4 py-2 rounded-md">
+          <button className="mt-4 bg-rose-300 text-white hover:bg-rose-400 px-4 py-2 rounded-md">
             Find Me a Match!
           </button>
         </div>

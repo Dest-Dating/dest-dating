@@ -4,6 +4,9 @@ export default {
     extend: {
       fontFamily: {
         handwritten: ["Dancing Script", "cursive"],
+      }, screens: {
+        "xs": "475px",
+        // ...defaultTheme.screens,
       }
     },
   }, plugins: [require("flowbite/plugin"), require("daisyui")],
