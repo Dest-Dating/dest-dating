@@ -9,6 +9,9 @@ const socketidToEmailMap = new Map();
 
 io.on("connection", (socket) => {
   console.log(`Socket Connected`, socket.id);
+  socket.on("playPause", (data) => {
+    io.emit("playPause", data);
+  });
   socket.on("room:join", (data) => {
     const { email, room } = data;
     emailToSocketIdMap.set(email, socket.id);
