@@ -69,7 +69,7 @@ const Conversations = ({
   }, [conversations, userId]);
 
   return (
-    <div className="p-4 bg-red-50 rounded-lg shadow-md h-[calc(100vh-50px)] overflow-y-scroll">
+    <div className="p-4 bg-red-50 rounded-lg shadow-md h-[calc(100vh-100px)] md:h-[calc(100vh-60px)] overflow-y-scroll">
       <h2 className="text-lg font-bold mb-4">Conversations</h2>
       {/* Mapping over conversations array to render each conversation */}
       {chatUsers.map((conversation) => (

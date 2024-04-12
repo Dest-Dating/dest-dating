@@ -124,7 +124,7 @@ const ChatSection = ({
   }, [messages]);
 
   return (
-    <div className="h-[calc(100vh-50px)] flex flex-col  bg-stone-50">
+    <div className="h-[calc(100vh-50px)] flex flex-col  bg-stone-50 shadow">
       {/* Top Bar */}
       <div className="bg-gray-200 p-4 shadow-lg flex justify-between items-center">
         <div className="flex items-center">

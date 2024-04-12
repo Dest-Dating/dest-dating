@@ -51,8 +51,7 @@ const Center = ({ user, handleLike, handleReject }) => {
         if (user.leetcodeData?.submissionCount?.length === 1) return sub.count; else {
           if (sub.difficulty !== "All") return sub.count;
         }
-      }), backgroundColor: ["" +
-      "rgb(153 27 27)", //hard
+      }), backgroundColor: ["" + "rgb(153 27 27)", //hard
         "rgb(249 115 22)", //easy
         "rgb(225 29 72)", //medium
       ], // borderColor: ["#47e9b8", "#aff072", "#008f40"],
@@ -129,9 +128,15 @@ const Center = ({ user, handleLike, handleReject }) => {
         </div>;
       case 4:
         if (!user.leetcodeData?.heatmap) return <></>;
-        return <div className="absolute bottom-10">
-          <Heatmap heatmapData={user.leetcodeData?.heatmap} year={2024} />
-        </div>;
+        return <>
+          <div className="absolute top-10">
+            <div className="m-3 text-lg underline">Leetcode Heatmap</div>
+
+          </div>
+          <div className="absolute bottom-10">
+            <Heatmap heatmapData={user.leetcodeData?.heatmap} year={2024} />
+          </div>
+        </>;
     }
     return <>Meow</>;
   }
@@ -155,7 +160,7 @@ const Center = ({ user, handleLike, handleReject }) => {
                 name="username"
                 className="text-xl font-bold  font-handwritten"
               >
-                {user.name}
+                {user.name[0].toUpperCase() + user.name.slice(1)}
 
               </div>
               <div style={{ fontSize: "11px" }}>

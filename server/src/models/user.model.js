@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema({
     }, required: this.isEmailVerified,
   }, location: {
     type: {
-      type: String, enum: ["Point"], required: true,
+      type: String, enum: ["Point"],
     }, coordinates: {
-      type: [Number], required: true,
+      type: [Number],
     },
   }, bills: [{
     type: mongoose.Schema.Types.ObjectId, ref: "Bills",
