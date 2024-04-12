@@ -83,7 +83,7 @@ const Conversations = ({
           className="flex items-center mb-4"
         >
           {/* Profile Picture */}
-          <div className="rounded-md w-full flex items-center hover:shadow-md bg-transparent/5 shadow p-2">
+          <div className="rounded-md w-full flex items-center hover:shadow-md bg-transparent/5 shadow p-2 cursor-pointer">
             <img
               src={conversation.profilePicture.photoLink}
               alt="Profile"
