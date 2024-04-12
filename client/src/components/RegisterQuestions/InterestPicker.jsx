@@ -25,7 +25,7 @@ const InterestPicker = ({
 
   const nextHandler = (e) => {
     e.preventDefault();
-    setUserData({ ...userData, interestedIn: selectedInterest });
+    setUserData({ ...userData, interestedInGender: selectedInterest });
     if (!selectedInterest) {
       setMessage("Select your interests!");
       return;
