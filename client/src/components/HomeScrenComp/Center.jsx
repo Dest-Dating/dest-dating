@@ -18,7 +18,7 @@ const Center = ({ user, handleLike, handleReject }) => {
   const age = Math.abs(ageDate.getUTCFullYear() - 1970);
 
   const imageDivs = useRef([]);
-  const [view, setView] = useState(5);
+  const [view, setView] = useState(0);
 
   const handleViewChange = (add) => {
     if (view === 0 && add < 0) return;
@@ -51,8 +51,7 @@ const Center = ({ user, handleLike, handleReject }) => {
         if (user.leetcodeData?.submissionCount?.length === 1) return sub.count; else {
           if (sub.difficulty !== "All") return sub.count;
         }
-      }), backgroundColor: ["" +
-      "rgb(153 27 27)", //hard
+      }), backgroundColor: ["" + "rgb(153 27 27)", //hard
         "rgb(249 115 22)", //easy
         "rgb(225 29 72)", //medium
       ], // borderColor: ["#47e9b8", "#aff072", "#008f40"],
@@ -70,7 +69,7 @@ const Center = ({ user, handleLike, handleReject }) => {
           {user.bio || ""}
         </div>;
       case 1:
-        if (!user.fieldsOfInterests) return <></>;
+        if (user.fieldsOfInterests?.length === 0) return <></>;
         return <div>
           <div className="flex flex-wrap">
             <div className="m-3 text-lg underline">Fields of interest</div>
@@ -84,7 +83,7 @@ const Center = ({ user, handleLike, handleReject }) => {
           </div>
         </div>;
       case 2:
-        if (!user.codingLanguage) return <></>;
+        if (user.codingLanguage?.length === 0) return <></>;
         return <div className="min-w-[200px]">
           <div className="flex flex-wrap">
             <div className="m-3 text-lg underline">Coding languages</div>
@@ -129,9 +128,15 @@ const Center = ({ user, handleLike, handleReject }) => {
         </div>;
       case 4:
         if (!user.leetcodeData?.heatmap) return <></>;
-        return <div className="absolute bottom-10">
-          <Heatmap heatmapData={user.leetcodeData?.heatmap} year={2024} />
-        </div>;
+        return <>
+          <div className="absolute top-10">
+            <div className="m-3 text-lg underline">Leetcode Heatmap</div>
+
+          </div>
+          <div className="absolute bottom-10">
+            <Heatmap heatmapData={user.leetcodeData?.heatmap} year={2024} />
+          </div>
+        </>;
     }
     return <>Meow</>;
   }
@@ -155,7 +160,7 @@ const Center = ({ user, handleLike, handleReject }) => {
                 name="username"
                 className="text-xl font-bold  font-handwritten"
               >
-                {user.name}
+                {user.name[0].toUpperCase() + user.name.slice(1)}
 
               </div>
               <div style={{ fontSize: "11px" }}>

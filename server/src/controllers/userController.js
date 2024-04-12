@@ -31,6 +31,7 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     //todo: automate this
     isSignupCompleted: req.body.isSignupCompleted || true,
     fieldsOfInterests: req.body.fieldsOfInterests || user.fieldsOfInterests,
+    bio: req.body.bio || user.bio,
   };
 
   const updatedUser = await User.findOneAndUpdate(user._id, updates, {
@@ -273,6 +274,7 @@ exports.fetchLeetcodeData = catchAsync(async (req, res, next) => {
   user.leetcodeData.heatmap = JSON.parse(response.data.data?.matchedUser?.userCalendar?.submissionCalendar) || [];
 
   user = await user.save({ validateBeforeSave: false, new: true });
+
 
   res.status(200).json({
     status: "success", data: {

@@ -176,6 +176,7 @@ const userSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bill",
+        autopopulate: true,
       },
     ],
     bio: String,
@@ -186,6 +187,7 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+userSchema.plugin(require("mongoose-autopopulate"));
 
 function calculateAge(birthDateObj) {
   const today = new Date();
