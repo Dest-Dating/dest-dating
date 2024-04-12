@@ -127,7 +127,7 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     let updatedUser = await User.findOne({ email });
     updatedUser = { ...updatedUser }._doc;
     await sendEmail({
-      email: user.email, subject: "Welcome to Dest!", message: `Dear ${user.name},\nWelcome to Dest. Your Registration is successfull.`
+      email: user.email, subject: "Welcome to Dest!", message: `Dear user,\nWelcome to Dest. Your Registration is successfull.`
     });
     await createSendToken(updatedUser, 201, res, req);
     return;

@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
@@ -10,16 +9,16 @@ import PasswordInput from "./utilComponents/passwordInput.jsx";
 import sideImage from "../assets/frontPageImage.png";
 
 function Register() {
-  const [email, setEmail] = useState("j87iuasdf8@gmail.com");
-  const [password, setPassword] = useState("123qwe!@#");
-  const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
-  const [phoneNumber, setPhoneNumber] = useState("1234567891");
+  const [email, setEmail] = useState("test@gmail.com");
+  const [password, setPassword] = useState("password");
+  const [verifyPassword, setVerifyPassword] = useState("password");
+  const [phoneNumber, setPhoneNumber] = useState(new Date().getTime().toString().substring(1, 11));
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user
+    (state) => state?.user?.currentUser?.data?.user,
   );
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
