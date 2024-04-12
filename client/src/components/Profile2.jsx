@@ -52,19 +52,36 @@ const ProfilePage = () => {
   return (
     <div className="w-full h-full p-8 bg-white rounded-lg shadow-md">
       <div className="flex items-center mb-4 flex-col lg:flex-row lg:items-start">
-        <button onClick={handleBack} className="mr-4 lg:mr-0">
+        <button
+          onClick={handleBack}
+          className="mr-4 lg:mr-0 bg-gray-100 hover:bg-gray-200 rounded-full p-3"
+        >
           <FaArrowLeft className="text-xl" />
         </button>
-        {/* {console.log(currentUser)} */}
         <div className="lg:mr-4">
-          <div className="w-24 h-24  rounded-full overflow-hidden mb-4 lg:mb-0">
-            <img
-              src={currentUser.photosLink[0]?.photoLink}
-              // src=""
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+          <div>
+            <div className="w-1/10 h-1/5  rounded-full overflow-hidden mb-4 lg:mb-0">
+              <img
+                src={currentUser.photosLink[0]?.photoLink}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
+        </div>
+        <div className="flex flex-col items-center justify-center h-full">
+          <h1 className="text-3xl font-bold mb-2">{username}</h1>
+          <p className="text-gray-600 mb-2">{email}</p>
+        </div>
+      </div>
+      <div>
+        <div className="flex justify-between">
+          <button
+            className="p-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white"
+            onClick={handleUploadPhotos}
+          >
+            Upload Photos
+          </button>
           {isEditing ? (
             <button
               onClick={handleSave}
@@ -82,18 +99,7 @@ const ProfilePage = () => {
             </button>
           )}
         </div>
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{username}</h1>
-          <p className="text-gray-600 mb-2">{email}</p>
-        </div>
-      </div>
-      <div>
-        <button
-          className="p-2 rounded-lg bg-pink-500 hover:bg-pink-600 text-white"
-          onClick={handleUploadPhotos}
-        >
-          Upload Photos
-        </button>
+
         {openUploadPhotos && (
           <UploadPhotos
             openUploadPhotos={openUploadPhotos}
@@ -109,7 +115,7 @@ const ProfilePage = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -119,7 +125,7 @@ const ProfilePage = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -129,7 +135,7 @@ const ProfilePage = () => {
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -139,7 +145,7 @@ const ProfilePage = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -149,7 +155,7 @@ const ProfilePage = () => {
               type="text"
               value={height}
               onChange={(e) => setHeight(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -159,7 +165,7 @@ const ProfilePage = () => {
               type="text"
               value={gender}
               onChange={(e) => setGender(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -169,7 +175,7 @@ const ProfilePage = () => {
               type="text"
               value={interestedIn}
               onChange={(e) => setInterestedIn(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -181,7 +187,7 @@ const ProfilePage = () => {
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               readOnly={!isEditing}
             />
           </div>
@@ -190,7 +196,7 @@ const ProfilePage = () => {
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              className="w-full border rounded px-3 py-2 bg-pink-100"
+              className="w-full  px-3 py-2 focus:outline-none"
               rows="4"
               readOnly={!isEditing}
             />
