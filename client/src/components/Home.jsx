@@ -19,7 +19,6 @@ import {
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
 import logoPng from "../assets/logoPng.png";
-import Preferences from "./Preferences";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -175,84 +174,70 @@ const Home = () => {
               <FaTimes />
             </button>
 
-            <div className=" flex flex-col">
-              <div className=" mb-4 overflow-auto">
-                <Conversations
-                  chatUsers={chatUsers}
-                  setChatUsers={setChatUsers}
-                  setOpenConvo={setOpenConvo}
-                  matchedUser={matchedUser}
-                />
-              </div>
+          <div className=" flex flex-col">
+            <div className=" mb-4 overflow-auto">
+              <Conversations
+                chatUsers={chatUsers}
+                setChatUsers={setChatUsers}
+                setOpenConvo={setOpenConvo}
+                matchedUser={matchedUser}
+              />
             </div>
           </div>
         </div>
-      )}
+      </div>)}
 
-      {/* Conversations Section */}
-      <div className="lg:col-span-2 hidden lg:block">
-        <Conversations
-          chatUsers={chatUsers}
-          setChatUsers={setChatUsers}
-          setOpenConvo={setOpenConvo}
-          matchedUser={matchedUser}
+    {/* Conversations Section */}
+    <div className="lg:col-span-2 hidden lg:block">
+      <Conversations
+        chatUsers={chatUsers}
+        setChatUsers={setChatUsers}
+        setOpenConvo={setOpenConvo}
+        matchedUser={matchedUser}
+      />
+    </div>
+
+    {/* Center Section */}
+    <div className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] pattern-dots pattern-rose-100 pattern-bg-white
+  pattern-size-4 pattern-opacity-100">
+      <Routes>
+        <Route
+          path="/"
+          element={preferredUsers.length > 0 ? (<Center
+            user={preferredUsers[0]}
+            handleLike={handleLike}
+            handleReject={handleReject}
+          />) : (<div className="flex justify-center items-center h-full">
+            <div>
+              <h3 className="text-stone-500 underline mb-2">
+                No Recommendations
+              </h3>
+              <p className="text-stone-400">
+                Please try again after some time or change preferences!
+              </p>
+            </div>
+          </div>)}
         />
-      </div>
-
-      {/* Center Section */}
-      <div
-        className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] pattern-dots pattern-rose-100 pattern-bg-white
-  pattern-size-4 pattern-opacity-100"
-      >
-        <Routes>
-          <Route
-            path="/"
-            element={
-              preferredUsers.length > 0 ? (
-                <Center
-                  user={preferredUsers[0]}
-                  handleLike={handleLike}
-                  handleReject={handleReject}
-                />
-              ) : (
-                <div className="flex justify-center items-center h-full">
-                  <div>
-                    <h3 className="text-stone-500 underline mb-2">
-                      No Recommendations
-                    </h3>
-                    <p className="text-stone-400">
-                      Please try again after some time or change preferences!
-                    </p>
-                  </div>
-                </div>
-              )
-            }
-          />
-          <Route
-            path="/chats"
-            element={
-              <ChatSection
-                chatUsers={chatUsers}
-                arrivalMessage={arrivalMessage}
-                socket={socket}
-                openConvo={openConvo}
-                setOpenConvo={setOpenConvo}
-                setMatchedUser={setMatchedUser}
-              />
-            }
-          />
-          <Route
-            path="/match"
-            element={
-              <WasAMatch
-                currentUser={currentUser}
-                matchedUser={matchedUser}
-                setOpenConvo={setOpenConvo}
-              />
-            }
-          />
-        </Routes>
-      </div>
+        <Route
+          path="/chats"
+          element={<ChatSection
+            chatUsers={chatUsers}
+            arrivalMessage={arrivalMessage}
+            socket={socket}
+            openConvo={openConvo}
+            setOpenConvo={setOpenConvo}
+            setMatchedUser={setMatchedUser}
+          />}
+        />
+        <Route
+          path="/match"
+          element={<WasAMatch
+            currentUser={currentUser}
+            matchedUser={matchedUser}
+            setOpenConvo={setOpenConvo}
+          />}
+        />
+      </Routes>
     </div>
   );
 };

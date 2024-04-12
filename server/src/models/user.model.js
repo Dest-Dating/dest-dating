@@ -146,22 +146,8 @@ const userSchema = new mongoose.Schema(
       default: false,
     }, // preferences
     preferences: {
-      minAge: {
-        type: Number,
-        default: null,
-      },
-      maxAge: {
-        type: Number,
-        default: null,
-      },
-      minHeight: {
-        type: Number,
-        default: null,
-      },
-      maxHeight: {
-        type: Number,
-        default: null,
-      },
+      type: [String],
+      default: [],
     },
     isSignupCompleted: {
       type: Boolean,
