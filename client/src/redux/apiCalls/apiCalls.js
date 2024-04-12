@@ -102,7 +102,7 @@ export const addSinglePhoto = async (
   dispatch,
   link,
   currentInd,
-  completeUser,
+  completeUser
 ) => {
   dispatch(userStart());
   const id = toast.loading("Uploading image...");
@@ -116,7 +116,7 @@ export const addSinglePhoto = async (
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.data?.user },
-      }),
+      })
     );
     toast.update(id, {
       render: "Image uploaded.",
@@ -148,7 +148,7 @@ export const deleteSinglePhoto = async (dispatch, link, completeUser) => {
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.data?.user },
-      }),
+      })
     );
     toast.update(id, {
       render: "Image Deleted.",
@@ -172,7 +172,7 @@ export const profileComplete = async (
   dispatch,
   userData,
   completeUser,
-  navigate,
+  navigate
 ) => {
   dispatch(userStart());
   try {
@@ -182,7 +182,7 @@ export const profileComplete = async (
       photoUploadSuccess({
         ...completeUser,
         data: { user: res?.data?.user },
-      }),
+      })
     );
     toast("Profile Updated Successfully!");
     navigate("/home");
@@ -249,7 +249,29 @@ export const getMe = async (dispatch, navigate) => {
     // update state if login successfull
     dispatch(loginSuccess(res.data));
     // toast("Logged In Successfully!");
-    navigate("/questions");
+    navigate && navigate("/questions");
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
+// function to get leetcode profile
+export const fetchLeetCode = async (dispatch, leetcode, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.post("/user/fetchLeetcodeData", {
+      leetcodeUsername: leetcode,
+    });
+    // update state if login successfull
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    dispatch(updateSuccess(user));
+    toast("Leetcode Account Updated!");
   } catch (error) {
     // update state if login unsuccessfull
     dispatch(userFailure(error?.response?.data?.message));
@@ -309,7 +331,7 @@ export const likeUser = async (
   email,
   completeUser,
   setMatchedUser,
-  navigate,
+  navigate
 ) => {
   dispatch(userStart());
   try {
@@ -320,14 +342,14 @@ export const likeUser = async (
       updateSuccess({
         ...completeUser,
         data: { user: res?.data?.currentUser },
-      }),
+      })
     );
     if (res?.data?.wasAMatch) {
       setMatchedUser(res?.data?.likedUser);
       await newConversation(
         dispatch,
         res?.data?.currentUser?._id,
-        res?.data?.likedUser._id,
+        res?.data?.likedUser._id
       );
       navigate("/home/match");
     }
@@ -352,7 +374,7 @@ export const rejectUser = async (dispatch, email, completeUser) => {
       updateSuccess({
         ...completeUser,
         data: { user: res?.data?.user },
-      }),
+      })
     );
     toast("</3");
   } catch (error) {

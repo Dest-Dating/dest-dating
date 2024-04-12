@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FaXmark } from "react-icons/fa6";
+import { fetchLeetCode } from "../redux/apiCalls/apiCalls";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -14,14 +15,20 @@ const ProfilePage = () => {
   const [height, setHeight] = useState("180 cm");
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
-  const [location, setLocation] = useState([]);
+  const [leetCode, setLeetCode] = useState("");
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState("Hey there! I am using dest");
   const [fadeIn, setFadeIn] = useState(false);
 
+  useEffect(() => {
+    console.log("leetCode", leetCode);
+  }, [leetCode]);
+
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setUsername(currentUser.name);
@@ -30,7 +37,6 @@ const ProfilePage = () => {
     setHeight(currentUser.height);
     setGender(currentUser.gender);
     setInterestedIn(currentUser.interestedInGender);
-    currentUser.location != [] && setLocation(currentUser.location);
     setFadeIn(true); // Trigger the fade-in animation
     const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms
     return () => clearTimeout(timer); // Cleanup function to clear the timer
@@ -194,14 +200,20 @@ const ProfilePage = () => {
         </div>
         <div className="lg:w-1/3 mt-4 lg:mt-0">
           <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Location</label>
+            <label className="block text-gray-900 mb-2">Leetcode:</label>
             <input
               type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={leetCode}
+              onChange={(e) => setLeetCode(e.target.value)}
               className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
               readOnly={!isEditing}
             />
+            <button
+              className="p-2 md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white w-full mt-4"
+              onClick={() => fetchLeetCode(dispatch, leetCode, completeUser)}
+            >
+              Upload
+            </button>
           </div>
           <div className="mb-4  rounded px-5 py-3">
             <label className="block text-gray-900 mb-2">Bio</label>
