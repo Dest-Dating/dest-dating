@@ -255,6 +255,10 @@ export const oAuthLogin = async (dispatch, navigate) => {
   }
 };
 
+// update location
+
+// export const updateLocation(dispatch,{latitude})
+
 // match comntrolls
 
 // like

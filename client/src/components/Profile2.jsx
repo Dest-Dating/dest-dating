@@ -14,13 +14,23 @@ const ProfilePage = () => {
   const [height, setHeight] = useState("180 cm");
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
-  const [location, setLocation] = useState("New Delhi, India`");
+  const [location, setLocation] = useState("");
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState("Hey there! I am using dest");
 
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
+  function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    setLocation({ latitude, longitude });
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+  }
+
+  function error() {
+    console.log("Unable to retrieve your location");
+  }
 
   useEffect(() => {
     setUsername(currentUser.name);
@@ -29,6 +39,12 @@ const ProfilePage = () => {
     setHeight(currentUser.height);
     setGender(currentUser.gender);
     setInterestedIn(currentUser.interestedInGender);
+    currentUser.location != [] && setLocation(currentUser.location);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+      console.log("Geolocation not supported");
+    }
   }, []);
 
   const navigate = useNavigate();
