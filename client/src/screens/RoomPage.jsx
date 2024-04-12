@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa";
 import { FaPause } from "react-icons/fa";
 
-const RoomPage = () => {
+const RoomPage = ({}) => {
   const socket = useSocket();
   const navigate = useNavigate();
   const [remoteSocketId, setRemoteSocketId] = useState(null);
@@ -31,6 +31,7 @@ const RoomPage = () => {
 
   const location = useLocation();
   const movieDate = location.state?.movieDate;
+  // alert(movieDate);
 
   const handleDrag = useCallback((e) => {
     const totalHeight = window.innerHeight;
@@ -328,20 +329,22 @@ const RoomPage = () => {
         <div className="flex-grow flex flex-col items-center justify-center bg-black py-2">
           {/* Video Controls */}
           <div className="flex">
-            <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
-              {/* Play/Pause Button */}
-              <button onClick={handlePlayPause} className="">
-                {playing ? <FaPause /> : <FaPlay />}
-              </button>
-            </div>
-            {buttonsVisible && (
+            {movieDate && (
+              <div className="flex justify-center items-center bg-white p-4 border-t border-gray-300 rounded-full mr-10">
+                {/* Play/Pause Button */}
+                <button onClick={handlePlayPause} className="">
+                  {playing ? <FaPause /> : <FaPlay />}
+                </button>
+              </div>
+            )}
+            {buttonsVisible && movieDate && (
               <input
                 placeholder="Input URL here ..."
                 className="rounded-lg"
                 type="text"
               />
             )}
-            {buttonsVisible && (
+            {buttonsVisible && movieDate && (
               <button className="text-white rounded-lg px-4 mx-4 bg-slate-700">
                 Set
               </button>
