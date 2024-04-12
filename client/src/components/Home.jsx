@@ -4,6 +4,7 @@ import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
 import ChatSection from "./ChatSection";
 import { io } from "socket.io-client";
+import { IoLogOut } from "react-icons/io5";
 
 import { FaBars, FaTimes } from "react-icons/fa";
 
@@ -18,6 +19,7 @@ import {
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
 import logo from "../assets/destDating.ico";
+import logoPng from "../assets/logoPng.png";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -131,21 +133,28 @@ const Home = () => {
   return (
     <div className="grid grid-cols-12">
       {/* Top Bar */}
-      <div className="col-span-12 h-24 bg-stone-50 shadow-xl flex px-6 lg:px-20 justify-between items-center">
+      <div className="col-span-12 h-24 bg-stone-50 shadow-xl flex px-6 py-2 lg:px-20 justify-between items-center">
         {/* Home Icon */}
         <button className="h-full" onClick={handleHomeClick}>
-          <img className="h-full  mix-blend-multiply" src={logo} alt="" />
+          <img className="h-full  mix-blend-multiply" src={logoPng} alt="" />
         </button>
 
-        <div className="flex gap-5">
+        <div className="flex gap-5 h-full p-2">
           {/* Profile Icon */}
-          <button onClick={handleProfileClick} className="text-xl">
-            Profile
+          <button
+            onClick={handleProfileClick}
+            className="h-full aspect-square rounded-full"
+          >
+            <img
+              src={currentUser?.photosLink[0].photoLink}
+              className="h-full aspect-square	rounded-full"
+              alt=""
+            />
           </button>
 
           {/* Logout Button */}
-          <button onClick={handleLogout} className="text-xl">
-            Logout
+          <button onClick={handleLogout} className="text-4xl">
+            <IoLogOut />
           </button>
         </div>
 
