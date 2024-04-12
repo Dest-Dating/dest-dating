@@ -62,6 +62,11 @@ const { setUserPreferences } = require("../controllers/userController");
 router.post("/getRecommendations", authController.protect, getRecommendations);
 router.put("/likeUser", authController.protect, likeUser);
 router.put("/rejectUser", authController.protect, rejectUser);
+router.post(
+  "/postLocation",
+  authController.protect,
+  userController.setLocation
+);
 // router.put("/setPreferences", authController.protect, setUserPreferences);
 
 module.exports = router;

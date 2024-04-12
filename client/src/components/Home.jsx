@@ -8,17 +8,22 @@ import { io } from "socket.io-client";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
-import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
+import {
+  likeUser,
+  logoutUser,
+  rejectUser,
+  updateLocation,
+} from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
-
 import logo from "../assets/destDating.ico";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user,
+    (state) => state?.user?.currentUser?.data?.user
   );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
 
   //chat messages code
   const [chatUsers, setChatUsers] = useState([]);
@@ -38,13 +43,13 @@ const Home = () => {
       setArrivalMessage({
         senderId: data.senderId,
         message: data.message,
-      }),
+      })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    socket.current.emit("addUser", currentUser._id);
+    socket.current.emit("addUser", currentUser?._id);
     socket.current.on("getUsers", (users) => console.log(users));
   }, [currentUser]);
 
@@ -60,7 +65,7 @@ const Home = () => {
       preferredUsers[0]?.email,
       currentUser,
       setMatchedUser,
-      navigate,
+      navigate
     );
     await getPreferredUsers();
   };
@@ -98,6 +103,29 @@ const Home = () => {
     logoutUser(dispatch, navigate);
   };
 
+  // update user's location
+
+  const getLocation = async () => {
+    // eslint-disable-next-line no-undef
+    if (navigator.geolocation) {
+      // eslint-disable-next-line no-undef
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          updateLocation(dispatch, [longitude, latitude], completeUser);
+        },
+        (error) => console.log(error)
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
   return (
     <div className="grid grid-cols-12">
       {/* Top Bar */}
@@ -114,9 +142,7 @@ const Home = () => {
           </button>
 
           {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="text-xl">
+          <button onClick={handleLogout} className="text-xl">
             Logout
           </button>
         </div>
@@ -179,8 +205,12 @@ const Home = () => {
               ) : (
                 <div className="flex justify-center items-center h-full">
                   <div>
-                    <h3 className="text-white underline mb-2">No Recommendations</h3>
-                    <p className="text-stone-300">Please try again after some time or change preferences!</p>
+                    <h3 className="text-white underline mb-2">
+                      No Recommendations
+                    </h3>
+                    <p className="text-stone-300">
+                      Please try again after some time or change preferences!
+                    </p>
                   </div>
                 </div>
               )

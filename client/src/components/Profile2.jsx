@@ -14,7 +14,7 @@ const ProfilePage = () => {
   const [height, setHeight] = useState("180 cm");
   const [gender, setGender] = useState("Male");
   const [interestedIn, setInterestedIn] = useState("Female");
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState([]);
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState("Hey there! I am using dest");
   const [fadeIn, setFadeIn] = useState(false);
@@ -22,16 +22,6 @@ const ProfilePage = () => {
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
-  function success(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    setLocation({ latitude, longitude });
-    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-  }
-
-  function error() {
-    console.log("Unable to retrieve your location");
-  }
 
   useEffect(() => {
     setUsername(currentUser.name);
@@ -41,11 +31,9 @@ const ProfilePage = () => {
     setGender(currentUser.gender);
     setInterestedIn(currentUser.interestedInGender);
     currentUser.location != [] && setLocation(currentUser.location);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(success, error);
-    } else {
-      console.log("Geolocation not supported");
-    }
+    setFadeIn(true); // Trigger the fade-in animation
+    const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms
+    return () => clearTimeout(timer); // Cleanup function to clear the timer
   }, []);
 
   const navigate = useNavigate();
@@ -68,7 +56,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="w-full  h-full p-8 rounded-lg shadow-md ">
+    <div
+      className={`w-full  h-full p-8 rounded-lg shadow-md profile-page ${
+        fadeIn ? "opacity-100 transition-opacity duration-500" : ""
+      }`}
+    >
       <div className="w-full flex items-center mb-10 lg:flex-row lg:items-center justify-between ">
         <div className="flex flex-row items-center ">
           {/* {console.log(currentUser)} */}

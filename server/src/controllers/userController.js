@@ -7,7 +7,8 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 exports.test = (req, res, next) => {
   res.status(200).json({
-    status: "success", message: "test completed",
+    status: "success",
+    message: "test completed",
   });
 };
 
@@ -33,10 +34,13 @@ exports.updateUserDetails = catchAsync(async (req, res, next) => {
     fieldsOfInterests: req.body.fieldsOfInterests || user.fieldsOfInterests,
   };
 
-  const updatedUser = await User.findOneAndUpdate(user._id, updates, { new: true });
+  const updatedUser = await User.findOneAndUpdate(user._id, updates, {
+    new: true,
+  });
 
   res.status(200).json({
-    status: "success", user: updatedUser,
+    status: "success",
+    user: updatedUser,
   });
 });
 
@@ -51,7 +55,8 @@ exports.updateProfilePick = catchAsync(async (req, res, next) => {
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success", data: {
+    status: "success",
+    data: {
       user,
     },
   });
@@ -62,14 +67,16 @@ exports.addPhotoLink = catchAsync(async (req, res, next) => {
   const photoLink = req.body.photoLink;
   const index = req.body.index;
 
-  if (!photoLink || typeof index != "number") return next(new AppError("Photo Link not provided.", 400));
+  if (!photoLink || typeof index != "number")
+    return next(new AppError("Photo Link not provided.", 400));
 
   user.photosLink = user.photosLink.filter((obj) => obj.index !== index);
   user.photosLink = user.photosLink.push({ photoLink, index });
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success", data: {
+    status: "success",
+    data: {
       user,
     },
   });
@@ -81,11 +88,14 @@ exports.deletePhotoLink = catchAsync(async (req, res, next) => {
 
   if (!photoLink) return next(new AppError("Photo Link not provided.", 400));
 
-  user.photosLink = user.photosLink.filter((link) => link.photoLink !== photoLink);
+  user.photosLink = user.photosLink.filter(
+    (link) => link.photoLink !== photoLink
+  );
   user = await user.save({ new: true, validateBeforeSave: false });
 
   res.status(200).json({
-    status: "success", data: {
+    status: "success",
+    data: {
       user,
     },
   });
@@ -94,13 +104,18 @@ exports.deletePhotoLink = catchAsync(async (req, res, next) => {
 exports.buySubscription = catchAsync(async (req, res, next) => {
   const user = req.user;
 
-  const lineItems = [{
-    price_data: {
-      currency: "inr", product_data: {
-        name: "Dest Premium Membership",
-      }, unit_amount: 599 * 100,
-    }, quantity: 1,
-  }];
+  const lineItems = [
+    {
+      price_data: {
+        currency: "inr",
+        product_data: {
+          name: "Dest Premium Membership",
+        },
+        unit_amount: 599 * 100,
+      },
+      quantity: 1,
+    },
+  ];
   //
   // const lineItems = products.map((product) => ({
   //   price_data: {
@@ -136,7 +151,9 @@ exports.validateSubscription = catchAsync(async (req, res, next) => {
   console.log(session);
 
   if (session.payment_status === "paid") {
-    const lastSubscription = await Bill.findById(user.subscriptions.slice(-1)[0]);
+    const lastSubscription = await Bill.findById(
+      user.subscriptions.slice(-1)[0]
+    );
     //todo: extract to a function
     //add subscription upon success
     let startDate = new Date();
@@ -150,10 +167,13 @@ exports.validateSubscription = catchAsync(async (req, res, next) => {
     endDate.setMinutes(59);
     endDate.setSeconds(59);
 
-
     const bill = await Bill.create({
-      subscriber: user._id, startDate, endDate, amount: 599, //todo get it from session status!
-      transactionId: "_dummy_transaction_id_", billingAddress: "_dummy_billing_address_",
+      subscriber: user._id,
+      startDate,
+      endDate,
+      amount: 599, //todo get it from session status!
+      transactionId: "_dummy_transaction_id_",
+      billingAddress: "_dummy_billing_address_",
     });
 
     user.subscriptions.push(bill);
@@ -162,8 +182,26 @@ exports.validateSubscription = catchAsync(async (req, res, next) => {
   }
 
   res.send({
-    status: "success", data: {
-      paymentStatus: session.payment_status, user,
+    status: "success",
+    data: {
+      paymentStatus: session.payment_status,
+      user,
+    },
+  });
+});
+
+exports.setLocation = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const coordinates = req.body.location.coordinates;
+
+  const newUser = await User.findById(user._id);
+  newUser.location.type = "Point";
+  newUser.location.coordinates = coordinates;
+  await newUser.save({ validateBeforeSave: false });
+  res.send({
+    status: "success",
+    data: {
+      user: newUser,
     },
   });
 });

@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { publicRequest } from "../requestMethods";
 import { useSocket } from "../context/SocketProvider";
 import { IoMdSend } from "react-icons/io";
+import { FaVideo } from "react-icons/fa6";
+import { MdMovie } from "react-icons/md";
 
 const ChatSection = ({
   chatUsers,
@@ -133,14 +135,24 @@ const ChatSection = ({
           />
           <span className="text-lg font-bold">{reciver?.name}</span>
         </div>
-        <button
-          onClick={() => {
-            handleSubmitForm();
-          }}
-          className="border shadow-sm hover:shadow-xl transition  px-6 py-1 text-white bg-rose-400 rounded"
-        >
-          Join
-        </button>
+        <div>
+          <button
+            onClick={() => {
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded"
+          >
+            <FaVideo />
+          </button>
+          <button
+            onClick={() => {
+              handleSubmitForm();
+            }}
+            className="border shadow-sm hover:shadow-xl transition  px-6 py-2 text-xl text-white bg-rose-400 rounded ml-6"
+          >
+            <MdMovie />
+          </button>
+        </div>
       </div>
 
       {/* Chat Messages */}

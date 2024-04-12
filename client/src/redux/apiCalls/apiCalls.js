@@ -257,7 +257,30 @@ export const oAuthLogin = async (dispatch, navigate) => {
 
 // update location
 
-// export const updateLocation(dispatch,{latitude})
+export const updateLocation = async (dispatch, location, completeUser) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    console.log("apicall", location);
+    const res = await publicRequest.post("/user/postLocation", {
+      location: {
+        coordinates: location,
+      },
+    });
+    // update state if location
+    console.log("res", res.data);
+    const user = {
+      ...completeUser,
+      data: res.data.data,
+    };
+    console.log("apicall", user);
+    dispatch(updateSuccess(user));
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+  }
+};
 
 // match comntrolls
 
