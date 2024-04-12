@@ -139,7 +139,7 @@ const Home = () => {
           <img className="h-full  mix-blend-multiply" src={logoPng} alt="" />
         </button>
 
-        <div className="flex gap-5 h-full p-2">
+        <div className="flex gap-5 h-full p-4">
           {/* Profile Icon */}
           <button
             onClick={handleProfileClick}
