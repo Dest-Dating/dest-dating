@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema({
     }, required: this.isEmailVerified,
   }, location: {
     type: {
-      type: String, enum: ["Point"], required: true,
+      type: String, enum: ["Point"],
     }, coordinates: {
-      type: [Number], required: true,
+      type: [Number],
     },
   }, bills: [{
     type: mongoose.Schema.Types.ObjectId, ref: "Bills",
@@ -79,15 +79,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean, default: false,
   }, // preferences
   preferences: {
-    minAge: {
-      type: Number, default: null,
-    }, maxAge: {
-      type: Number, default: null,
-    }, minHeight: {
-      type: Number, default: null,
-    }, maxHeight: {
-      type: Number, default: null,
-    },
+    type: [String], default: [],
   }, isSignupCompleted: {
     type: Boolean, default: false,
   }, sessionIds: [{

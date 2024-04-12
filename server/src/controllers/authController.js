@@ -93,9 +93,9 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   console.log(otp);
 
-  // await sendEmail({
-  //   email: newUser.email, subject: "OTP for dest!", message: ``
-  // });
+  await sendEmail({
+    email: newUser.email, subject: "OTP for Dest!", message: `Your OTP for email verification is \n ${otp}.`
+  });
 
   res.status(200).json({
     status: "success", data: {
@@ -126,6 +126,9 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     await User.updateOne({ email }, { isEmailVerified: true, emailVerificationOtp: null }, { new: true });
     let updatedUser = await User.findOne({ email });
     updatedUser = { ...updatedUser }._doc;
+    await sendEmail({
+      email: user.email, subject: "Welcome to Dest!", message: `Dear ${user.name},\nWelcome to Dest. Your Registration is successfull.`
+    });
     await createSendToken(updatedUser, 201, res, req);
     return;
   }
