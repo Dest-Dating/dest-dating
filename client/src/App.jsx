@@ -18,6 +18,10 @@ import Lobby from "./screens/Lobby";
 import RoomPage from "./screens/RoomPage";
 import Profile2 from "./components/Profile2";
 import Test from "./components/Test.jsx";
+import NotFoundPage from "./components/NotFoundPage.jsx";
+import ResetPassword from "./components/ProfileComponents/ResetPassword.jsx";
+import ChangePassword from "./components/ProfileComponents/ChangePassword.jsx";
+import DeleteAccount from "./components/ProfileComponents/DeleteAccount.jsx";
 
 function App() {
   // user data of currently logged in user from redux state
@@ -34,7 +38,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
+        <Route path="/resetpassword" element={<ResetPassword />}></Route>
+        <Route path="/resetpassword/:id" element={<ChangePassword />}></Route>
         <Route path="/questions" element={<QuestionsPage />}></Route>
+        <Route
+          path="/profile/deleteaccount"
+          element={<DeleteAccount />}
+        ></Route>
         <Route path="/home/*" element={<Home />}></Route>
         <Route path="/profile" element={<Profile2 />}></Route>
         <Route path="/getPremium" element={<BuyPremium />}></Route>
@@ -43,7 +53,8 @@ function App() {
         <Route path="/authComplete" element={<AuthCompletePage />}></Route>
         <Route path="/lobby" element={<Lobby />}></Route>
         <Route path="/room/:roomId" element={<RoomPage />}></Route>
-        <Route path="/test" element={<Test/>}></Route>
+        <Route path="/test" element={<Test />}></Route>
+        <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
     </>
   );

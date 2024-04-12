@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const [location, setLocation] = useState("New Delhi, India`");
   const [openUploadPhotos, setOpenUploadPhotos] = useState(false);
   const [bio, setBio] = useState("Hey there! I am using dest");
+  const [fadeIn, setFadeIn] = useState(false);
 
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
@@ -29,6 +30,9 @@ const ProfilePage = () => {
     setHeight(currentUser.height);
     setGender(currentUser.gender);
     setInterestedIn(currentUser.interestedInGender);
+    setFadeIn(true); // Trigger the fade-in animation
+    const timer = setTimeout(() => setFadeIn(false), 500); // Reset the animation after 500ms
+    return () => clearTimeout(timer); // Cleanup function to clear the timer
   }, []);
 
   const navigate = useNavigate();
@@ -51,7 +55,11 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="w-full  h-full p-8 rounded-lg shadow-md ">
+    <div
+      className={`w-full  h-full p-8 rounded-lg shadow-md profile-page ${
+        fadeIn ? "opacity-100 transition-opacity duration-500" : ""
+      }`}
+    >
       <div className="w-full flex items-center mb-10 lg:flex-row lg:items-center justify-between ">
         <div className="flex flex-row items-center ">
           {/* {console.log(currentUser)} */}
