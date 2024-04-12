@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { FaCross } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 
 const InterestFieldsPicker = ({
