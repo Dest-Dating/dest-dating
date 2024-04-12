@@ -17,7 +17,11 @@ router.post("/logout", authController.logout); //ok
 router.get("/getMe", authController.isLoggedIn); //ok
 router.post("/signup", authController.signup); //ok
 router.post("/verifyEmail", authController.verifyEmail); //ok
-router.post("/fetchLeetcodeData", authController.protect, userController.fetchLeetcodeData);
+router.post(
+  "/fetchLeetcodeData",
+  authController.protect,
+  userController.fetchLeetcodeData
+);
 
 //for google oauth
 router.get("/auth/google/url", oauthGoogleController.getGoogleUrl);
@@ -59,7 +63,10 @@ router.post(
 
 const { getRecommendations } = require("../controllers/recommendationAlgo");
 const { likeUser, rejectUser } = require("../controllers/matchController");
-const { setUserPreferences } = require("../controllers/userController");
+const {
+  setUserPreferences,
+  setPreferences,
+} = require("../controllers/userController");
 router.post("/getRecommendations", authController.protect, getRecommendations);
 router.put("/likeUser", authController.protect, likeUser);
 router.put("/rejectUser", authController.protect, rejectUser);
@@ -68,6 +75,6 @@ router.post(
   authController.protect,
   userController.setLocation
 );
-// router.put("/setPreferences", authController.protect, setUserPreferences);
 
+router.post("/setPreferences", authController.protect, setPreferences);
 module.exports = router;
