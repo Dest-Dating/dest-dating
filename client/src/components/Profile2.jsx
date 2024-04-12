@@ -4,11 +4,10 @@ import { useNavigate } from "react-router-dom";
 import UploadPhotos from "./RegisterQuestions/UploadPhotos";
 import { useSelector, useDispatch } from "react-redux";
 import { FaXmark } from "react-icons/fa6";
-import { fetchLeetCode } from "../redux/apiCalls/apiCalls";
+import { fetchLeetCode, updateUser } from "../redux/apiCalls/apiCalls";
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [username, setUsername] = useState("JohnDoe");
   const [email, setEmail] = useState("johndoe@example.com");
   const [dob, setDob] = useState("1990-01-01");
   const [name, setName] = useState("John Doe");
@@ -31,7 +30,6 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    setUsername(currentUser.name);
     setName(currentUser.name);
     setEmail(currentUser.email);
     setHeight(currentUser.height);
@@ -50,7 +48,15 @@ const ProfilePage = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Save changes to backend
+    const userDetails = {
+      name: name,
+      dob: dob,
+      height: height,
+      gender: gender,
+      interestedInGender: interestedIn,
+      bio: bio,
+    };
+    updateUser(dispatch, userDetails, completeUser);
   };
 
   const handleBack = () => {
@@ -82,7 +88,7 @@ const ProfilePage = () => {
           </div>
           <div className="">
             <h1 className="lg:text-6xl md:text-4xl text-2xl font-bold md:mb-2 lg:mb-2 text-stone-600">
-              {username}
+              {name}
             </h1>
             <p className="text-gray-900 lg:text-xl md:text-lg text-xs mb-2">
               {email}
@@ -110,13 +116,25 @@ const ProfilePage = () => {
           <FaXmark className="lg:text-5xl md:text-4xl text-lg" />
         </button>
       </div>
-      <div className="w-full flex flex-col ">
-        <button
-          className="p-2 md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white w-full md:w-auto mx-auto mb-10"
-          onClick={handleUploadPhotos}
-        >
-          Upload Photos
-        </button>
+      <div className="w-full flex flex-col md:flex-row justify-center align-middle mb-10">
+        {!openUploadPhotos && (
+          <>
+            <button
+              className="p-2 w-full md:w-max md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white  md:w-auto mx-auto mb-2"
+              onClick={() => {
+                navigate("/preferences");
+              }}
+            >
+              Update Preferences
+            </button>
+            <button
+              className="p-2 w-full md:w-max md:px-12 rounded bg-rose-500  hover:bg-rose-700 text-white  md:w-auto mx-auto mb-2"
+              onClick={handleUploadPhotos}
+            >
+              Upload Photos
+            </button>
+          </>
+        )}
         {openUploadPhotos && (
           <UploadPhotos
             openUploadPhotos={openUploadPhotos}
@@ -127,26 +145,6 @@ const ProfilePage = () => {
 
       <div className="flex flex-col lg:flex-row bg-gray-200 rounded-lg py-4 px-8 ">
         <div className="lg:w-2/3 pr-8">
-          <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Username</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
-              readOnly={!isEditing}
-            />
-          </div>
-          <div className="mb-4  rounded px-5 py-3">
-            <label className="block text-gray-900 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border-none shadow-md outline-none  rounded px-3  py-2"
-              readOnly={!isEditing}
-            />
-          </div>
           <div className="mb-4  rounded px-5 py-3">
             <label className="block text-gray-900 mb-2">Date of Birth</label>
             <input
