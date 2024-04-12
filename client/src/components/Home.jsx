@@ -18,9 +18,8 @@ import {
 } from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
 import WasAMatch from "./WasAMatch";
-import logo from "../assets/destDating.ico";
 import logoPng from "../assets/logoPng.png";
-import { toast } from "react-toastify";
+import Preferences from "./Preferences";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -228,6 +227,8 @@ const Home = () => {
               )
             }
           />
+
+          <Route path="/preferences" element={<Preferences />} />
           <Route
             path="/chats"
             element={

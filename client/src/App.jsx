@@ -22,6 +22,7 @@ import NotFoundPage from "./components/NotFoundPage.jsx";
 import ResetPassword from "./components/ProfileComponents/ResetPassword.jsx";
 import ChangePassword from "./components/ProfileComponents/ChangePassword.jsx";
 import DeleteAccount from "./components/ProfileComponents/DeleteAccount.jsx";
+import Preferences from "./components/Preferences.jsx";
 
 function App() {
   // user data of currently logged in user from redux state
@@ -54,6 +55,7 @@ function App() {
         <Route path="/lobby" element={<Lobby />}></Route>
         <Route path="/room/:roomId" element={<RoomPage />}></Route>
         <Route path="/test" element={<Test />}></Route>
+        <Route path="/preferences" element={<Preferences />}></Route>
         <Route path="*" element={<NotFoundPage />}></Route>
       </Routes>
     </>
