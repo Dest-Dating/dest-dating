@@ -14,7 +14,7 @@ const Center = ({ user, handleLike, handleReject }) => {
 
   const handleViewChange = (add) => {
     if (view === 0 && add < 0) return;
-    if (view === user.photosLink.length && add > 0) return;
+    if (view === user?.photosLink.length && add > 0) return;
     setView(view + add);
   };
 
@@ -61,13 +61,13 @@ const Center = ({ user, handleLike, handleReject }) => {
                 <div className="max-h-[500px] flex justify-center items-center w-[100%]">
                   <img
                     className="w-full h-[500px] object-cover object-top"
-                    src={user.photosLink[0].photoLink}
+                    src={user?.photosLink[0]?.photoLink}
                     alt=""
                   />
                 </div>
               </div>
 
-              {user.photosLink.map((obj) => {
+              {user?.photosLink?.map((obj) => {
                 return (
                   <div
                     key={obj.index + 1}
@@ -78,7 +78,7 @@ const Center = ({ user, handleLike, handleReject }) => {
                     <div className="h-[500px] min-w-[300px] flex">
                       <img
                         className="object-cover h-[500px] w-[300px] object-center"
-                        src={user.photosLink[obj.index].photoLink}
+                        src={user?.photosLink[obj.index]?.photoLink}
                         alt=""
                       />
                     </div>
@@ -109,7 +109,7 @@ const Center = ({ user, handleLike, handleReject }) => {
               name="accept"
               onClick={(e) => handleViewChange(1)}
               className={`hover:scale-105 active:scale-100 w-6 h-6 border rounded-full flex justify-center items-center shadow-xl  border-stone-200 bg-white ${
-                view === user.photosLink.length && "opacity-0"
+                view === user?.photosLink.length && "opacity-0"
               }`}
             >
               <FaAngleDown />
