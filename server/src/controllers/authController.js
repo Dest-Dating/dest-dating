@@ -4,6 +4,8 @@ const AppError = require("../utils/appError");
 const { promisify } = require("util");
 const crypto = require("crypto");
 const User = require("../models/user.model");
+const axios = require("axios");
+const sendEmail = require("../utils/email");
 
 //todo: login using oauth
 //todo: check for changes as we halting oauth from frontend
@@ -19,7 +21,7 @@ const signToken = (id) => {
 
 //creates a jwt token using user's _id, put it into a cookie and send it as response
 //checked normal, checked oauth
-const createSendToken = (user, status, res, redirect) => {
+const createSendToken = async (user, status, res, req, redirect) => {
   const token = signToken(user._id);
 
   //hide password as we are not 'selecting' user == password is still in user object
@@ -31,6 +33,25 @@ const createSendToken = (user, status, res, redirect) => {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), httpOnly: true, secure: true,
   };
   res.cookie("jwt", token, options);
+
+
+  //updating leetcode data upon login
+  const updatingUrl = `${req.protocol}://${req.get("host")}/user/fetchLeetcodeData`;
+  let response;
+  try {
+    response = await axios.create({ withCredentials: true }).post(updatingUrl, req.body, {
+      headers: {
+        Cookie: "jwt=" + token,
+      },
+    });
+
+    if (response.status === 200) {
+      user = response.data.data.user;
+    }
+  } catch (e) {
+    console.log("crap");
+    //pass
+  }
 
   if (redirect) {
     res.redirect(redirect);
@@ -72,12 +93,9 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   console.log(otp);
 
-  //todo: uncomment this=> send email
-  //todo: send mail using arpit api
-  //we need a key value for email
-  // await sendEmail({
-  //     email: newUser.email, subject: "Welcome to Duck! Please verify your email", html: `OTP: ${otp}`
-  // });
+  await sendEmail({
+    email: newUser.email, subject: "OTP for Dest!", message: `Your OTP for email verification is \n ${otp}.`
+  });
 
   res.status(200).json({
     status: "success", data: {
@@ -108,7 +126,10 @@ exports.verifyEmail = catchAsync(async (req, res, next) => {
     await User.updateOne({ email }, { isEmailVerified: true, emailVerificationOtp: null }, { new: true });
     let updatedUser = await User.findOne({ email });
     updatedUser = { ...updatedUser }._doc;
-    createSendToken(updatedUser, 201, res);
+    await sendEmail({
+      email: user.email, subject: "Welcome to Dest!", message: `Dear user,\nWelcome to Dest. Your Registration is successfull.`
+    });
+    await createSendToken(updatedUser, 201, res, req);
     return;
   }
 
@@ -133,8 +154,7 @@ exports.login = catchAsync(async (req, res, next) => {
   let user = await User.findOne(filter).select("+password");
   if (!user) return next(new AppError("Incorrect phone number/email or password!", 401));
 
-  if (user.isOAuth && !user.password)
-    return next(new AppError("Please login using OAuth.", 403));
+  if (user.isOAuth && !user.password) return next(new AppError("Please login using OAuth.", 403));
 
   if (!password) {
     return next(new AppError("Please provide phone number/email and password", 400));
@@ -142,9 +162,10 @@ exports.login = catchAsync(async (req, res, next) => {
 
   if (!user || !(await user.correctPassword(password, user.password))) return next(new AppError("Incorrect phone number/email or password!", 401));
 
-  user = { ...user }._doc;
 
-  createSendToken(user, 200, res);
+  // user = { ...user }._doc;
+
+  await createSendToken(user, 200, res, req);
 });
 
 //checked normal
@@ -212,7 +233,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // check if user still exists => to check the case if user has jwt token but the user was deleted!
-  const freshUser = await User.findOne({ _id: decoded.id });
+  const freshUser = await User.findOne({ _id: decoded.id }).populate("subscriptions");
   if (!freshUser) {
     return next(new AppError("The user belonging to this token does not exist.", 401));
   }
@@ -297,7 +318,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //done in pre('save'.... middleware in userModel
 
   //4. log the user in, send jwt
-  createSendToken(user, 200, res);
+  await createSendToken(user, 200, res, req);
 });
 
 //user can change his password using current password
@@ -317,7 +338,7 @@ exports.updateMyPassword = catchAsync(async (req, res, next) => {
   await user.save(); //pre-save functions in userModel will check if password and confirm password matches
 
   //4. log in using new password
-  createSendToken(user, 200, res);
+  await createSendToken(user, 200, res, req);
 });
 
 //todo: might be deleted if not used in feature

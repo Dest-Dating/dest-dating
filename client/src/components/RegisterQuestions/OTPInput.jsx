@@ -95,7 +95,7 @@ const OTPInput = ({ verified, setVerified }) => {
         </div>
         <button
           onClick={handleSubmit}
-          className="mt-4 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="mt-4 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
           Submit
         </button>

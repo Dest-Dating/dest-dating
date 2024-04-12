@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react";
-import registerImage from "../assets/register.svg";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { googleAuthInitiator } from "../utils/googleOAuth";
 import OtpSection from "./OtpSection";
@@ -11,15 +9,17 @@ import PasswordInput from "./utilComponents/passwordInput.jsx";
 import sideImage from "../assets/frontPageImage.png";
 
 function Register() {
-  const [email, setEmail] = useState("j87iuasdf8@gmail.com");
-  const [password, setPassword] = useState("123qwe!@#");
-  const [verifyPassword, setVerifyPassword] = useState("123qwe!@#");
-  const [phoneNumber, setPhoneNumber] = useState("1234567891");
+  const [email, setEmail] = useState("test@gmail.com");
+  const [password, setPassword] = useState("password");
+  const [verifyPassword, setVerifyPassword] = useState("password");
+  const [phoneNumber, setPhoneNumber] = useState(new Date().getTime().toString().substring(1, 11));
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state?.user?.currentUser?.data?.user);
+  const currentUser = useSelector(
+    (state) => state?.user?.currentUser?.data?.user,
+  );
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect
     setImageLoaded(true);
@@ -52,7 +52,10 @@ function Register() {
     // console.log("Email:", email);
     // console.log("Password:", password);
     await signup(dispatch, setRegistered, {
-      email: email, password: password, passwordConfirm: verifyPassword, phoneNumber: phoneNumber,
+      email: email,
+      password: password,
+      passwordConfirm: verifyPassword,
+      phoneNumber: phoneNumber,
     });
     // setRegistered(true);
   };
@@ -69,15 +72,22 @@ function Register() {
     }
   }, [currentUser, navigate]);
 
-  return (<div>
-      {!registered && (<div className="flex h-screen justify-center items-center bg-rose-50">
-
-          <div className="flex justify-evenly
-       items-center w-full gap-10 align-middle h-full">
+  return (
+    <div>
+      {!registered && (
+        <div className="flex h-screen justify-center items-center bg-rose-50">
+          <div
+            className="flex justify-evenly
+       items-center w-full gap-10 align-middle h-full"
+          >
             {/* Left side: Image */}
 
             <div
-              className={`w-[40%] sm:flex p-4 bg-white shadow-md border rounded-lg hidden items-center justify-center overflow-hidden h-full ${imageLoaded ? "opacity-100 transition-opacity duration-1000" : "opacity-0"}`}
+              className={`w-[40%] sm:flex p-4 bg-white shadow-md border rounded-lg hidden items-center justify-center overflow-hidden h-full ${
+                imageLoaded
+                  ? "opacity-100 transition-opacity duration-1000"
+                  : "opacity-0"
+              }`}
             >
               <img
                 src={sideImage}
@@ -108,7 +118,7 @@ function Register() {
                     id="email"
                     value={email}
                     onChange={handleEmailChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500"
                     placeholder="Enter your email"
                     required
                   />
@@ -125,7 +135,7 @@ function Register() {
                     id="phone"
                     value={phoneNumber}
                     onChange={handlePhoneChnage}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500"
                     placeholder="Enter your phone number"
                     required
                   />
@@ -142,7 +152,7 @@ function Register() {
                     id="password"
                     value={password}
                     onChange={handlePasswordChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500"
                     placeholder="Enter your password"
                     required
                   />
@@ -159,7 +169,7 @@ function Register() {
                     id="verifyPassword"
                     value={verifyPassword}
                     onChange={handleVerifyPasswordChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-pink-500"
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500"
                     placeholder="Confirm your password"
                     required
                   />
@@ -174,7 +184,7 @@ function Register() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
+                  className="w-full bg-rose-500 hover:bg-rose-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mb-4"
                 >
                   Register
                 </button>
@@ -190,17 +200,21 @@ function Register() {
               {/* Google Sign-In Button */}
             </div>
           </div>
-        </div>)}
+        </div>
+      )}
       {/* Render component after registration */}
-      {registered && (<div>
-        <div>Back</div>
+      {registered && (
+        <div>
           <OtpSection
             user={{
-              email: email
-            }} back={()=>setRegistered(false)}
+              email: email,
+            }}
+            back={() => setRegistered(false)}
           />
-        </div>)}
-    </div>);
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Register;

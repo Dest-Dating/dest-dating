@@ -1,11 +1,11 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/userSlice";
 import { toast } from "react-toastify";
+import { IoIosArrowBack } from "react-icons/io";
 
-const UserInfoForm = ({
+const HeightQuestion = ({
   currentStage,
   setCurrentStage,
   userData,
@@ -25,8 +25,8 @@ const UserInfoForm = ({
 
   const nextHandler = (e) => {
     e.preventDefault();
-    if (!userData.name) {
-      setMessage("Enter name!");
+    if (!userData.height) {
+      setMessage("Enter your height!");
       return;
     }
     setCurrentStage(currentStage + 1);
@@ -45,7 +45,7 @@ const UserInfoForm = ({
             className="w-full p-4  flex flex-col justify-center items-center"
           >
             <h2 className="text-lg font-bold mb-4 self-start">
-              What should we call you?
+              Enter your height in cm
             </h2>
             <div
               className="text-red-700 m-1 font-medium"
@@ -54,23 +54,26 @@ const UserInfoForm = ({
               {message}
             </div>
             <input
-              type="text"
-              name="name"
-              value={userData.name}
+              type="number"
+              name="height"
+              min="54"
+              max="275"
+              value={userData.height}
               autoFocus
               onChange={(e) =>
                 setUserData({ ...userData, [e.target.name]: e.target.value })
               }
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-rose-500 mb-4"
-              placeholder="Enter your name"
+              placeholder="Enter your height"
             />
             <div className="flex gap-20">
-              <span
-                className="underline text-blue-400"
-                onClick={() => dispatch(logOut())}
+              <button
+                onClick={() => setCurrentStage(currentStage - 1)}
+                className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
               >
-                Logout
-              </span>
+                <IoIosArrowBack />
+                Back
+              </button>
 
               <button
                 type="submit"
@@ -100,4 +103,4 @@ const UserInfoForm = ({
   );
 };
 
-export default UserInfoForm;
+export default HeightQuestion;

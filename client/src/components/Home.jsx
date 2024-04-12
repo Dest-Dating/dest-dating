@@ -1,23 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Conversations from "./HomeScrenComp/Conversations";
 import Center from "./HomeScrenComp/Center";
-import Likes from "./HomeScrenComp/Likes";
 import ChatSection from "./ChatSection";
 import { io } from "socket.io-client";
+import { IoLogOut } from "react-icons/io5";
 
-import { FaBars, FaTimes, FaHome, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { likeUser, logoutUser, rejectUser } from "../redux/apiCalls/apiCalls";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getMe,
+  likeUser,
+  logoutUser,
+  rejectUser,
+  updateLocation,
+} from "../redux/apiCalls/apiCalls";
 import { publicRequest } from "../requestMethods";
+import WasAMatch from "./WasAMatch";
+import logoPng from "../assets/logoPng.png";
 
 const Home = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
+  const completeUser = useSelector((state) => state?.user?.currentUser);
 
   //chat messages code
   const [chatUsers, setChatUsers] = useState([]);
@@ -43,22 +51,29 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    socket.current.emit("addUser", currentUser._id);
+    socket.current.emit("addUser", currentUser?._id);
     socket.current.on("getUsers", (users) => console.log(users));
   }, [currentUser]);
 
   // chat mssages end-------------
 
   // match controls
-
+  const [matchedUser, setMatchedUser] = useState(null);
   const [preferredUsers, setPreferredUsers] = useState([]);
+
   const handleLike = async () => {
-    await likeUser(dispatch, preferredUsers[0]?.email, currentUser);
-    getPreferredUsers();
+    const status = await likeUser(
+      dispatch,
+      preferredUsers[0]?.email,
+      currentUser,
+      setMatchedUser,
+      navigate
+    );
+    await getPreferredUsers();
   };
   const handleReject = async () => {
     await rejectUser(dispatch, preferredUsers[0]?.email, currentUser);
-    getPreferredUsers();
+    await getPreferredUsers();
   };
 
   const getPreferredUsers = async () => {
@@ -67,7 +82,9 @@ const Home = () => {
     // console.log(res?.data?.recommendations[0]);
   };
   useEffect(() => {
-    getPreferredUsers();
+    (async () => {
+      await getPreferredUsers();
+    })();
   }, []);
 
   // match controls end-----------
@@ -84,31 +101,56 @@ const Home = () => {
     navigate("/profile");
   };
 
-  const handleLogout = () => {
-    logoutUser(dispatch, navigate);
+  const handleLogout = async () => {
+    await logoutUser(dispatch, navigate);
   };
 
+  // update user's location
+
+  const getLocation = async () => {
+    // eslint-disable-next-line no-undef
+    if (navigator.geolocation) {
+      // eslint-disable-next-line no-undef
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          updateLocation(dispatch, [longitude, latitude], completeUser);
+        },
+        (error) => console.log(error)
+      );
+    } else {
+      console.log("Geolocation not supported");
+    }
+  };
+
+  useEffect(() => {
+    getMe();
+    getLocation();
+  }, []);
+
   return (
-    <div className="grid grid-cols-12">
+    <div className="grid grid-cols-12 ">
       {/* Top Bar */}
-      <div className="col-span-12 bg-gray-200 p-4 flex justify-between items-center">
+      <div className="col-span-12 h-16 bg-stone-50 sticky top-0 shadow-sm flex px-6 py-2 z-10 lg:px-20 justify-between items-center">
         {/* Home Icon */}
-        <button onClick={handleHomeClick} className="text-2xl">
-          <FaHome />
+        <button className="h-full" onClick={handleHomeClick}>
+          <img className="h-full " src={logoPng} alt="" />
         </button>
 
-        {/* Profile Icon */}
-        <button onClick={handleProfileClick} className="text-2xl mx-4">
-          <FaUser />
-        </button>
+        <div className="flex justify-center items-center gap-5 h-full p-4">
+          {/* Profile Icon */}
+          <div className="avatar " onClick={handleProfileClick}>
+            <div className="w-12 rounded-full border shadow-sm">
+              <img src={currentUser?.photosLink[0].photoLink} />
+            </div>
+          </div>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-3 py-1 rounded-full"
-        >
-          <FaSignOutAlt />
-        </button>
+          {/* Logout Button */}
+          <button onClick={handleLogout} className="text-4xl">
+            <IoLogOut />
+          </button>
+        </div>
 
         {/* Hamburger Icon for Sidebar (only visible on smaller screens) */}
         <div className="lg:hidden">
@@ -118,24 +160,28 @@ const Home = () => {
         </div>
       </div>
 
+      {/*????????????????? what is this ??????????????????*/}
+      {/*<button onClick={() => navigate("/home/match")}>match</button>*/}
+
       {/* Sidebar for Smaller Screens */}
       {sidebarOpen && (
-        <div className="overflow-auto lg:hidden fixed top-0 left-0 h-full w-full md:w-2/3 bg-gray-200 z-50">
-          <div className="p-4">
-            <button onClick={toggleSidebar} className="text-2xl float-right">
+        <div className="overflow-auto absolute top-[78px] z-10 shadow-sm lg:hidden md:col-span-5 bg-gray-200">
+          <div className="p-2">
+            <button
+              onClick={toggleSidebar}
+              className="text-2xl absolute top-0 right-0"
+            >
               <FaTimes />
             </button>
 
-            <div className="h-screen flex flex-col">
-              <div className="h-1/2 mb-4 overflow-auto">
+            <div className=" flex flex-col">
+              <div className=" mb-4 overflow-auto">
                 <Conversations
                   chatUsers={chatUsers}
                   setChatUsers={setChatUsers}
                   setOpenConvo={setOpenConvo}
+                  matchedUser={matchedUser}
                 />
-              </div>
-              <div className="h-1/2 overflow-auto">
-                <Likes />
               </div>
             </div>
           </div>
@@ -143,16 +189,20 @@ const Home = () => {
       )}
 
       {/* Conversations Section */}
-      <div className="lg:col-span-3 hidden lg:block">
+      <div className="lg:col-span-2 hidden lg:block">
         <Conversations
           chatUsers={chatUsers}
           setChatUsers={setChatUsers}
           setOpenConvo={setOpenConvo}
+          matchedUser={matchedUser}
         />
       </div>
 
       {/* Center Section */}
-      <div className="col-span-12 lg:col-span-6">
+      <div
+        className="col-span-12 lg:col-span-10 w-full min-h-[calc(100vh-50px)] pattern-dots pattern-rose-100 pattern-bg-white
+  pattern-size-4 pattern-opacity-100"
+      >
         <Routes>
           <Route
             path="/"
@@ -164,7 +214,16 @@ const Home = () => {
                   handleReject={handleReject}
                 />
               ) : (
-                <>No Recommendations</>
+                <div className="flex justify-center items-center h-full">
+                  <div>
+                    <h3 className="text-stone-500 underline mb-2">
+                      No Recommendations
+                    </h3>
+                    <p className="text-stone-400">
+                      Please try again after some time or change preferences!
+                    </p>
+                  </div>
+                </div>
               )
             }
           />
@@ -177,15 +236,21 @@ const Home = () => {
                 socket={socket}
                 openConvo={openConvo}
                 setOpenConvo={setOpenConvo}
+                setMatchedUser={setMatchedUser}
+              />
+            }
+          />
+          <Route
+            path="/match"
+            element={
+              <WasAMatch
+                currentUser={currentUser}
+                matchedUser={matchedUser}
+                setOpenConvo={setOpenConvo}
               />
             }
           />
         </Routes>
-      </div>
-
-      {/* Likes Section */}
-      <div className="lg:col-span-3 hidden lg:block">
-        <Likes />
       </div>
     </div>
   );
