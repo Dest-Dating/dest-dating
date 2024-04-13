@@ -12,8 +12,6 @@
 
 On the laptop screen, a sleek interface showcases the features of their app: "Skills Sync, Hearts Click."
 
-[INSERT SCREENSHOT]
-
 **Tech Stack:** MERN
 
 **Features:**
