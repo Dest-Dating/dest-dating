@@ -8,13 +8,13 @@ import { FaVideo } from "react-icons/fa";
 import { MdMovie } from "react-icons/md";
 
 const ChatSection = ({
-  chatUsers,
-  arrivalMessage,
-  socket,
-  openConvo,
-  setOpenConvo,
-  setMatchedUser,
-}) => {
+                       chatUsers,
+                       arrivalMessage,
+                       socket,
+                       openConvo,
+                       setOpenConvo,
+                       setMatchedUser,
+                     }) => {
   const currentUser = useSelector(
     (state) => state?.user?.currentUser?.data?.user
   );
@@ -100,8 +100,8 @@ const ChatSection = ({
 
   useEffect(() => {
     arrivalMessage &&
-      openConvo?.members.includes(arrivalMessage.senderId) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
+    openConvo?.members.includes(arrivalMessage.senderId) &&
+    setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, openConvo]);
 
   // fetch old messages
