@@ -3,7 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/userSlice";
 import { toast } from "react-toastify";
-import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 const HeightQuestion = ({
   currentStage,
@@ -69,7 +69,7 @@ const HeightQuestion = ({
             <div className="flex gap-20">
               <button
                 onClick={() => setCurrentStage(currentStage - 1)}
-                className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded mt-2"
+                className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded "
               >
                 <IoIosArrowBack />
                 Back
@@ -80,20 +80,7 @@ const HeightQuestion = ({
                 className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded"
               >
                 Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 ml-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <IoIosArrowForward />
               </button>
             </div>
           </form>

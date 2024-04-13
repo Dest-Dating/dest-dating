@@ -32,7 +32,7 @@ const ProfilePage = () => {
   }, [leetCode]);
 
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user,
+    (state) => state?.user?.currentUser?.data?.user
   );
   const completeUser = useSelector((state) => state?.user?.currentUser);
   const dispatch = useDispatch();
@@ -181,7 +181,7 @@ const ProfilePage = () => {
           <div className="mb-4  rounded px-5 py-3">
             <label className="block text-gray-900 mb-2">Height</label>
             <input
-              type="text"
+              type="number"
               value={height}
               onChange={(e) => setHeight(e.target.value)}
               className="w-full border-none shadow-md outline-none  rounded px-3  py-2"

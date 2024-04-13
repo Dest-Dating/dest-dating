@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch } from "react-redux";
 import { logOut } from "../../redux/userSlice";
 import { toast } from "react-toastify";
+import { IoIosArrowForward } from "react-icons/io";
 
 const UserInfoForm = ({
   currentStage,
@@ -65,32 +66,19 @@ const UserInfoForm = ({
               placeholder="Enter your name"
             />
             <div className="flex gap-20">
-              <span
-                className="underline text-blue-400"
+              <button
+                className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded"
                 onClick={() => dispatch(logOut())}
               >
                 Logout
-              </span>
+              </button>
 
               <button
                 type="submit"
                 className="flex items-center justify-center bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded"
               >
                 Next
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 ml-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <IoIosArrowForward />
               </button>
             </div>
           </form>

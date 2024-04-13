@@ -51,6 +51,10 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    console.log("arrivalMessage", arrivalMessage);
+  }, [arrivalMessage]);
+
+  useEffect(() => {
     socket.current.emit("addUser", currentUser?._id);
     socket.current.on("getUsers", (users) => console.log(users));
   }, [currentUser]);
@@ -142,7 +146,7 @@ const Home = () => {
           {/* Profile Icon */}
           <div className="avatar " onClick={handleProfileClick}>
             <div className="w-12 rounded-full border shadow-sm">
-              <img src={currentUser?.photosLink[0].photoLink} />
+              <img src={currentUser?.photosLink[0]?.photoLink} />
             </div>
           </div>
 
