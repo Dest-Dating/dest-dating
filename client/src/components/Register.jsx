@@ -9,16 +9,16 @@ import PasswordInput from "./utilComponents/passwordInput.jsx";
 import sideImage from "../assets/frontPageImage.png";
 
 function Register() {
-  const [email, setEmail] = useState("test@gmail.com");
-  const [password, setPassword] = useState("password");
-  const [verifyPassword, setVerifyPassword] = useState("password");
-  const [phoneNumber, setPhoneNumber] = useState(new Date().getTime().toString().substring(1, 11));
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [verifyPassword, setVerifyPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [registered, setRegistered] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector(
-    (state) => state?.user?.currentUser?.data?.user,
+    (state) => state?.user?.currentUser?.data?.user
   );
   useEffect(() => {
     // Once the component mounts or email/password changes, set imageLoaded to true to trigger the fade-in effect

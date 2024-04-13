@@ -3,9 +3,15 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
-const DateOfBirthPicker = ({ currentStage, setCurrentStage, setUserData }) => {
+const DateOfBirthPicker = ({
+  currentStage,
+  setCurrentStage,
+  userData,
+  setUserData,
+}) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,6 +22,10 @@ const DateOfBirthPicker = ({ currentStage, setCurrentStage, setUserData }) => {
   }, []); // Run only once on component mount
 
   const nextHandler = () => {
+    if (!selectedDate) {
+      setMessage("Enter date!");
+      return;
+    }
     setUserData((p) => ({ ...p, dob: selectedDate }));
     setCurrentStage(currentStage + 1);
   };
@@ -31,6 +41,12 @@ const DateOfBirthPicker = ({ currentStage, setCurrentStage, setUserData }) => {
           className={`p-4 bg-white rounded-lg w-full  flex flex-col justify-center items-center h-1/3`}
         >
           <h2 className="text-lg font-bold mb-4">Date of Birth</h2>
+          <div
+            className="text-red-700 m-1 font-medium"
+            style={{ alignSelf: "self-start" }}
+          >
+            {message}
+          </div>
           <input
             onChange={(e) => setSelectedDate(e.target.value)}
             type="date"
