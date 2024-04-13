@@ -10,7 +10,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getMe,
+  getMe2,
   likeUser,
   logoutUser,
   rejectUser,
@@ -129,8 +129,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getMe();
     getLocation();
+    getMe2(dispatch);
   }, []);
 
   return (
