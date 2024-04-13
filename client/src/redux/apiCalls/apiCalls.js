@@ -256,6 +256,22 @@ export const getMe = async (dispatch, navigate) => {
     toast(error?.response?.data?.message);
   }
 };
+// function to login using google oAuth
+export const getMe2 = async (dispatch) => {
+  // start fetching
+  dispatch(userStart());
+  try {
+    // api call
+    const res = await publicRequest.get("/user/getMe");
+    // update state if login successfull
+    dispatch(loginSuccess(res.data));
+    // toast("Logged In Successfully!");
+  } catch (error) {
+    // update state if login unsuccessfull
+    dispatch(userFailure(error?.response?.data?.message));
+    toast(error?.response?.data?.message);
+  }
+};
 // function to get leetcode profile
 export const fetchLeetCode = async (dispatch, leetcode, completeUser) => {
   // start fetching

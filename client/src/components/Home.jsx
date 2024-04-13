@@ -10,7 +10,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getMe,
+  getMe2,
   likeUser,
   logoutUser,
   rejectUser,
@@ -49,6 +49,10 @@ const Home = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log("arrivalMessage", arrivalMessage);
+  }, [arrivalMessage]);
 
   useEffect(() => {
     socket.current.emit("addUser", currentUser?._id);
@@ -125,8 +129,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getMe();
     getLocation();
+    getMe2(dispatch);
   }, []);
 
   return (
@@ -142,7 +146,7 @@ const Home = () => {
           {/* Profile Icon */}
           <div className="avatar " onClick={handleProfileClick}>
             <div className="w-12 rounded-full border shadow-sm">
-              <img src={currentUser?.photosLink[0].photoLink} />
+              <img src={currentUser?.photosLink[0]?.photoLink} />
             </div>
           </div>
 

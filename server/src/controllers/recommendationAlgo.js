@@ -29,7 +29,7 @@ const getRecommendations = async (req, res) => {
       _id: {
         $nin: [...user.likedArray, ...user.rejectedArray, ...user.matchedArray],
       }, // Exclude liked, rejected, and matched users
-      height: { $min: user.height - 10, $max: user.height + 10 },
+      height: { $gte: user.height - 40, $lte: user.height + 40 },
     });
 
     // Calculate similarity score for each potential match using cosine similarity
